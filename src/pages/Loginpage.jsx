@@ -28,9 +28,9 @@ function LoginPage() {
       const data = await res.json();
 
       if (res.ok) {
-        // Redirect based on role
-        if (data.user.Role === "seeker") navigate("/seeker-dashboard");
-        else if (data.user.Role === "recruiter") navigate("/recruiter-dashboard");
+        
+        if (data.user.Role === "seeker") navigate("/seeker");
+        else if (data.user.Role === "recruiter") navigate("/recruiter");
       } else {
         alert(data.message);
       }

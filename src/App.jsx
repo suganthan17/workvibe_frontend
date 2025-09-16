@@ -1,26 +1,24 @@
 import React from 'react'
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import LandingPage from './pages/LandingPage';
-<<<<<<< HEAD
-=======
 import Signuppage from './pages/Signuppage';
 import Loginpage from './pages/Loginpage';
->>>>>>> 9ac492f (added auth)
+import SeekerDashboard from './pages/SeekerDashboard';
+import RecruiterDashboard from './pages/RecruiterDashboard'; // ✅ add this import
 
 function App() {
   return (
     <Router>
       <Routes>
-<<<<<<< HEAD
-        <Route path='/' element={<LandingPage/>}/>
-=======
-        {/* <Route path='/' element={<LandingPage/>}/> */}
-        <Route path='/' element={<Signuppage/>}/>
-        <Route path='/login' element={<Loginpage/>}/>
->>>>>>> 9ac492f (added auth)
+        {/* Auth Pages */}
+        <Route path='/' element={<Signuppage />} />
+        <Route path='/login' element={<Loginpage />} />
+
+        {/* Dashboards */}
+        <Route path='/seeker' element={<SeekerDashboard />} />
+        <Route path='/recruiter' element={<RecruiterDashboard />} />
       </Routes>
     </Router>
   )
 }
 
-export default App
+export default App;
