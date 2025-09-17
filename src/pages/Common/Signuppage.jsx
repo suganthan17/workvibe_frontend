@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import img1 from "../assets/5.svg";
+import SignupImg from "/src/assets/3.svg";
 import { Blend } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 
@@ -12,7 +12,6 @@ function Signuppage() {
   });
 
   const navigate = useNavigate();
-
   const inputClass =
     "p-3 border font-semibold rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500";
 
@@ -31,8 +30,9 @@ function Signuppage() {
       });
 
       const data = await res.json();
-      alert(data.message); // "Signup successful, please login"
-      if (res.ok) navigate("/login");
+      alert(data.message); 
+
+      if (res.ok) navigate("/");
     } catch (err) {
       console.error(err);
     }
@@ -40,12 +40,14 @@ function Signuppage() {
 
   return (
     <div className="flex h-screen font-poppins">
-      {/* Left Side - Image */}
       <div className="w-1/2">
-        <img src={img1} alt="Branding" className="w-full h-full object-cover" />
+        <img
+          src={SignupImg}
+          alt="Branding"
+          className="w-full h-full object-cover"
+        />
       </div>
 
-      {/* Right Side - Form */}
       <div className="w-1/2 flex flex-col justify-center px-16">
         <div className="flex items-center mb-4">
           <Blend size={35} className="text-emerald-700 mr-2" />
@@ -105,7 +107,10 @@ function Signuppage() {
 
         <p className="mt-4 text-gray-600">
           Already have an account?{" "}
-          <Link to="/login" className="text-emerald-600 font-semibold hover:underline">
+          <Link
+            to="/"
+            className="text-emerald-600 font-semibold hover:underline"
+          >
             Login
           </Link>
         </p>

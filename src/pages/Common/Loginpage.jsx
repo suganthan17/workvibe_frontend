@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import img1 from "../assets/3.svg";
+import LoginImg from "/src/assets/3.svg";
 import { Blend } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 
@@ -28,9 +28,14 @@ function LoginPage() {
       const data = await res.json();
 
       if (res.ok) {
-        
-        if (data.user.Role === "seeker") navigate("/seeker");
-        else if (data.user.Role === "recruiter") navigate("/recruiter");
+        // Save user info to localStorage
+        localStorage.setItem("user", JSON.stringify(data.user));
+
+        alert("Login successful");
+
+        // Navigate based on role
+        if (data.user.Role === "seeker") navigate("/seekerhome");
+        else navigate("/recruiterhome");
       } else {
         alert(data.message);
       }
@@ -41,7 +46,6 @@ function LoginPage() {
 
   return (
     <div className="flex h-screen font-poppins">
-      {/* Left Side - Form */}
       <div className="w-1/2 flex flex-col justify-center px-16">
         <div className="flex items-center mb-4">
           <Blend size={35} className="text-emerald-700 mr-2" />
@@ -81,15 +85,14 @@ function LoginPage() {
 
         <p className="mt-4 text-gray-600">
           Don't have an account?{" "}
-          <Link to="/" className="text-emerald-600 font-semibold hover:underline">
+          <Link to="/signup" className="text-emerald-600 font-semibold hover:underline">
             Sign Up
           </Link>
         </p>
       </div>
 
-      {/* Right Side - Image */}
       <div className="w-1/2">
-        <img src={img1} alt="Branding" className="w-full h-full object-cover" />
+        <img src={LoginImg} alt="Branding" className="w-full h-full object-cover" />
       </div>
     </div>
   );
