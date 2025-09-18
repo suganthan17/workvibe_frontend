@@ -6,17 +6,12 @@ import { useNavigate } from "react-router-dom";
 
 function SidebarRecruiter() {
   const navigate = useNavigate();
-  const [user, setUser] = useState({
-      Email: "",
-    });
-  
-    useEffect(() => {
-      const userData = localStorage.getItem("user");
-      if (userData) {
-        setUser(JSON.parse(userData));
-      }
-    }, []);
-  
+  const [user, setUser] = useState({ Email: "" });
+
+  useEffect(() => {
+    const userData = localStorage.getItem("user");
+    if (userData) setUser(JSON.parse(userData));
+  }, []);
 
   const handleLogout = async () => {
     try {
@@ -36,38 +31,40 @@ function SidebarRecruiter() {
   };
 
   return (
-    <div className="bg-emerald-50 flex flex-col border-r w-1/6 h-screen p-4 rounded-r-2xl font-poppins">
+    <div className="bg-purple-200 flex flex-col border-r w-1/6 h-screen p-4 rounded-r-2xl font-poppins">
+      {/* Logo */}
       <div className="flex items-center gap-2 mb-6">
-        <Blend size={28} className="text-emerald-700" />
-        <span className="text-2xl font-extrabold text-emerald-700">
+        <Blend size={28} className="text-purple-800" />
+        <span className="text-2xl font-extrabold text-purple-800">
           ᗯOᖇKᐯIᗷE
         </span>
       </div>
 
-      <div className="flex flex-col bg-emerald-100 rounded-lg p-3 mb-6">
-
-         <p className=" text-md font-bold font-mono">Recruiter</p>
+      {/* User Info */}
+      <div className="flex flex-col bg-purple-100 rounded-lg p-3 mb-6">
+        <p className="text-md font-bold font-mono">Recruiter</p>
         <p className="text-xs">{user.Email}</p>
-       
       </div>
 
+      {/* Sidebar Items */}
       <div className="flex flex-col border-t border-b py-4 gap-4 w-full flex-grow">
         {RecruiterSidebar.map((item) => (
           <button
             key={item.name}
             onClick={() => navigate(item.path)}
-            className="flex items-center gap-3 text-black text-md cursor-pointer font-semibold hover:bg-emerald-600 hover:text-white px-3 py-2 rounded text-left transition-colors duration-200"
+            className="flex items-center gap-3 text-black text-md cursor-pointer font-semibold hover:bg-purple-800 hover:text-white px-3 py-2 rounded text-left transition-colors duration-200"
           >
             {item.icon && (
               <item.icon
                 size={20}
-                className="text-emerald-700 group-hover:text-white"
+                className="text-purple-700 group-hover:text-white"
               />
             )}
             {item.name}
           </button>
         ))}
 
+        {/* Logout */}
         <button
           onClick={handleLogout}
           className="flex items-center gap-3 text-red-600 text-md cursor-pointer font-semibold hover:bg-red-600 hover:text-white px-3 py-2 rounded text-left transition-colors duration-200"

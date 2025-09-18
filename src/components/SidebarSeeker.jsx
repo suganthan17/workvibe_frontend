@@ -6,15 +6,11 @@ import { useNavigate } from "react-router-dom";
 
 function SidebarSeeker() {
   const navigate = useNavigate();
-  const [user, setUser] = useState({
-    Email: "",
-  });
+  const [user, setUser] = useState({ Email: "" });
 
   useEffect(() => {
     const userData = localStorage.getItem("user");
-    if (userData) {
-      setUser(JSON.parse(userData));
-    }
+    if (userData) setUser(JSON.parse(userData));
   }, []);
 
   const handleLogout = async () => {
@@ -35,19 +31,19 @@ function SidebarSeeker() {
   };
 
   return (
-    <div className="bg-emerald-50 flex flex-col border-r w-1/6 h-screen p-4 rounded-r-2xl font-poppins">
+    <div className="bg-purple-200 flex flex-col border-r w-1/6 h-screen p-4 rounded-r-2xl font-poppins">
       {/* Logo */}
       <div className="flex items-center gap-2 mb-6">
-        <Blend size={28} className="text-emerald-700" />
-        <span className="text-2xl font-extrabold text-emerald-700">
+        <Blend size={28} className="text-purple-800" />
+        <span className="text-2xl font-extrabold text-purple-800">
           ᗯOᖇKᐯIᗷE
         </span>
       </div>
 
       {/* User Info */}
-      <div className="flex flex-col bg-emerald-100 rounded-lg p-3 mb-6">
+      <div className="flex flex-col bg-purple-100 rounded-lg p-3 mb-6">
         <p className="text-md font-bold font-mono">Job Seeker</p>
-        <p className="text-xs ">{user.Email}</p>
+        <p className="text-xs">{user.Email}</p>
       </div>
 
       {/* Sidebar Items */}
@@ -56,12 +52,12 @@ function SidebarSeeker() {
           <button
             key={item.name}
             onClick={() => navigate(item.path)}
-            className="flex items-center gap-3 text-black text-md cursor-pointer font-semibold hover:bg-emerald-600 hover:text-white px-3 py-2 rounded text-left transition-colors duration-200"
+            className="flex items-center gap-3 text-black text-md cursor-pointer font-semibold hover:bg-purple-800 hover:text-white px-3 py-2 rounded text-left transition-colors duration-200"
           >
             {item.icon && (
               <item.icon
                 size={20}
-                className="text-emerald-800 group-hover:text-white"
+                className="text-purple-700 group-hover:text-white"
               />
             )}
             {item.name}
