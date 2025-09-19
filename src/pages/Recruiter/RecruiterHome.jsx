@@ -11,7 +11,7 @@ function RecruiterHome() {
         <SidebarRecruiter />
 
         <div className="flex-1 bg-gray-50 min-h-screen">
-          <div className="flex items-center justify-between border-b  px-8 py-1 shadow-sm">
+          <div className="flex items-center justify-between border-b  px-8 shadow-sm">
             <div className="">
               <h1 className="text-2xl font-bold">Welcome</h1>
               <p className="text-gray-800 text-sm">

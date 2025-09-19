@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import SidebarRecruiter from "../../components/SidebarRecruiter";
+import { Trash2 } from "lucide-react";
 
 function JobsPosted() {
   const [jobcard, setJobcard] = useState([]);
@@ -9,15 +10,16 @@ function JobsPosted() {
       try {
         const res = await fetch("http://localhost:5000/getjobs", {
           method: "GET",
-          credentials: "include", // ✅ important
+          credentials: "include",
           headers: { "Content-Type": "application/json" },
         });
 
+        const data = await res.json();
+
         if (!res.ok) {
-          throw new Error(`HTTP error! status: ${res.status}`);
+          throw new Error(data.message || `HTTP error! status: ${res.status}`);
         }
 
-        const data = await res.json();
         setJobcard(data.jobs);
       } catch (error) {
         console.error("Error fetching jobs:", error);
@@ -27,16 +29,28 @@ function JobsPosted() {
     fetchJobs();
   }, []);
 
+  const handleDelete = async (id) => {
+    try {
+      const res = await fetch(`http://localhost:5000/deletejobs/${id}`, {
+        method: "DELETE",
+      });
+      const data = await res.json();
+      alert(data.message);
+      setJobcard((prevJobs) => prevJobs.filter((job) => job._id !== id));
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   const cardTitleClass = "text-lg font-bold text-black";
   const cardTextClass = "text-black text-sm mt-1";
 
   return (
     <div className="flex bg-gray-100 min-h-screen">
       <SidebarRecruiter />
-
       <div className="flex-1 bg-gray-100 min-h-screen">
         <div className="flex items-center justify-between border-b border-gray-300 px-8 py-4 shadow-sm bg-gray-50">
-          <div>
+          <div> 
             <h1 className="text-2xl font-bold text-black">Jobs Posted</h1>
             <p className="text-black text-sm">
               View all the jobs you have published.
@@ -44,8 +58,7 @@ function JobsPosted() {
           </div>
         </div>
 
-        {/* Job Cards */}
-        <div className="max-w-5xl mx-auto p-5 space-y-6">
+        <div className="max-w-5xl ml-4  p-5 space-y-6">
           {jobcard.length === 0 ? (
             <p className="text-gray-500">No jobs posted yet.</p>
           ) : (
@@ -54,7 +67,6 @@ function JobsPosted() {
                 key={job._id}
                 className="border border-gray-300 rounded-xl p-6 bg-gray-200 shadow-sm shadow-black"
               >
-                {/* Tags */}
                 <div className="flex space-x-2 mb-3">
                   {job.experienceLevel && (
                     <span className="bg-gray-800 text-white text-xs px-2 py-1 rounded-full">
@@ -66,12 +78,10 @@ function JobsPosted() {
                   </span>
                 </div>
 
-                {/* Job Info */}
                 <h2 className={cardTitleClass}>{job.jobTitle}</h2>
                 <p className="text-black font-medium">{job.companyName}</p>
                 <p className={cardTextClass}>{job.location}</p>
 
-                {/* Salary & Employment Type */}
                 <div className="flex items-center space-x-2 mt-3 text-sm text-gray-700">
                   <span className="bg-gray-400 text-black font-semibold px-2 py-1 rounded">
                     ₹{job.salaryMin} - ₹{job.salaryMax} / month
@@ -81,8 +91,11 @@ function JobsPosted() {
                   </span>
                 </div>
 
-                {/* Description */}
                 <p className={cardTextClass + " mt-3"}>{job.jobDescription}</p>
+
+                <p className="mt-5 cursor-pointer">
+                  <Trash2 onClick={()=>handleDelete(job._id)} size={23} />
+                </p>
               </div>
             ))
           )}

@@ -1,17 +1,26 @@
 // src/pages/SeekerProfile.jsx
 import React, { useState } from "react";
 import SidebarSeeker from "../../components/SidebarSeeker";
-import { SquarePenIcon,CheckCheck } from "lucide-react";
+import { SquarePenIcon, CheckCheck,User } from "lucide-react";
 
 const SeekerProfile = () => {
   const [profilePic, setProfilePic] = useState(null);
 
   // Personal Info
-  const [info, setInfo] = useState({ name: "", email: "", phone: "", location: "" });
+  const [info, setInfo] = useState({
+    name: "",
+    email: "",
+    phone: "",
+    location: "",
+  });
   const [editInfo, setEditInfo] = useState(false);
 
   // Education
-  const [education, setEducation] = useState({ degree: "", institution: "", cgpa: "" });
+  const [education, setEducation] = useState({
+    degree: "",
+    institution: "",
+    cgpa: "",
+  });
   const [editEducation, setEditEducation] = useState(false);
 
   // Skills
@@ -31,7 +40,7 @@ const SeekerProfile = () => {
   const [editAchievements, setEditAchievements] = useState(false);
 
   const inputClass =
-    "border border-gray-400 shadow-lg p-2 rounded w-full focus:ring-1 focus:ring-purple-400 focus:outline-none bg-white font-semibold text-sm";
+    "border border-gray-300 p-2 rounded-md w-full focus:ring-1 focus:ring-gray-500 focus:outline-none text-sm";
 
   const handlePicChange = (e) => {
     if (e.target.files && e.target.files[0]) {
@@ -44,176 +53,221 @@ const SeekerProfile = () => {
     alert("Section updated successfully!");
   };
 
+  const buttonClass = (isEditing) =>
+    isEditing
+      ? "flex items-center gap-2 px-3 py-1 bg-green-600 text-white rounded-md hover:bg-green-700 text-sm"
+      : "flex items-center gap-2 px-3 py-1 bg-gray-700 text-white rounded-md hover:bg-gray-800 text-sm";
+
   return (
-    <div className="flex">
+    <div className="flex bg-gray-200 min-h-screen">
       <SidebarSeeker />
-      <div className="flex-1 bg-gray-50 min-h-screen">
+      <div className="flex-1 bg-gray-100">
         {/* Header */}
-        <div className="flex items-center justify-between border-b px-8 py-3 shadow-sm">
+        <div className="flex items-center justify-between border-b px-8 py-3 shadow-sm bg-white">
           <div>
-            <h1 className="text-2xl font-bold text-gray-800">Your Profile</h1>
-            <p className="text-gray-500 text-sm">Let’s Know About You</p>
+            <h1 className="text-2xl font-bold text-gray-900">My Profile</h1>
+            <p className="text-gray-500 text-sm">
+              Manage and update your personal details.
+            </p>
           </div>
         </div>
 
-        <div className="relative px-8  mt-6 ">
-          {/* Profile Card */}
-          <div className="bg-gray-200  border border-gray-300  shadow-black shadow-sm p-6 rounded-lg relative z-0 mt-16">
+        {/* Content */}
+        <div className="p-6 grid grid-cols-3 gap-6">
+          {/* LEFT SIDE */}
+          <div className="col-span-1 space-y-6">
             {/* Profile Picture */}
-            <div className="absolute -top-12 left-8 z-10">
-              <div className="relative w-24 h-24">
+            <div className="bg-gray-200 border border-gray-300 shadow-md rounded-xl p-6 text-center">
+              <h2 className="text-lg font-bold text-gray-800 mb-3">
+                Profile Picture
+              </h2>
+              <div className="relative w-28 h-28 mx-auto mb-4">
                 {profilePic ? (
                   <img
                     src={profilePic}
                     alt="Profile"
-                    className="w-24 h-24 rounded-full object-cover border-4 border-white shadow"
+                    className="w-28 h-28 rounded-full object-cover border-4 border-white shadow"
                   />
                 ) : (
-                  <div className="w-24 h-24 rounded-full bg-gray-300 flex items-center justify-center text-gray-600 text-2xl border-4 border-white shadow">
-                    ?
+                  <div className="w-28 h-28 rounded-full bg-gray-500 flex items-center justify-center text-black text-2xl border-4 border-white shadow">
+                    <User size={30}/>
                   </div>
                 )}
-                <label className="absolute bottom-0 right-0 bg-gray-800 w-7 h-7 rounded-full flex items-center justify-center cursor-pointer border-2 border-white">
-                  <input type="file" accept="image/*" onChange={handlePicChange} className="hidden" />
-                  <SquarePenIcon size={14} color="white" />
-                </label>
               </div>
+              <label className="px-4 py-2 bg-gray-700 text-white text-sm rounded-lg cursor-pointer hover:bg-gray-800">
+                Upload New
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handlePicChange}
+                  className="hidden"
+                />
+              </label>
             </div>
 
             {/* Personal Info */}
-            <div className="flex justify-between items-center mb-2 mt-16">
-              <h2 className="font-bold text-lg">Personal Info</h2>
-              <div className="flex gap-2">
+            <div className="bg-gray-200 border border-gray-300 shadow-md rounded-xl p-6">
+              <div className="flex justify-between items-center mb-3">
+                <h2 className="text-lg font-bold text-gray-800">
+                  Personal Information
+                </h2>
                 <button
-                  onClick={() => editInfo ? saveSection(setEditInfo) : setEditInfo(true)}
-                  className="flex items-center gap-1  text-black px-2 py-1 rounded  cursor-pointer"
+                  onClick={() =>
+                    editInfo ? saveSection(setEditInfo) : setEditInfo(true)
+                  }
+                  className={buttonClass(editInfo)}
                 >
-                  <SquarePenIcon size={20} />
-                  {editInfo ? "Save" : ""}
+                  {editInfo ? (
+                    <CheckCheck size={16} />
+                  ) : (
+                    <SquarePenIcon size={16} />
+                  )}
+                  {editInfo ? "Save" : "Edit"}
                 </button>
-                {editInfo && (
-                  <button
-                    onClick={() => setEditInfo(false)}
-                    className="bg-gray-400 text-white px-2 py-1 rounded hover:bg-gray-500"
-                  >
-                    Cancel
-                  </button>
-                )}
               </div>
-            </div>
 
-            {editInfo ? (
-              <div className="grid grid-cols-2 gap-4 mt-2">
-                <input
-                  placeholder="Name"
-                  value={info.name}
-                  onChange={(e) => setInfo({ ...info, name: e.target.value })}
-                  className={inputClass}
-                />
-                <input
-                  placeholder="Email"
-                  value={info.email}
-                  onChange={(e) => setInfo({ ...info, email: e.target.value })}
-                  className={inputClass}
-                />
-                <input
-                  placeholder="Phone"
-                  value={info.phone}
-                  onChange={(e) => setInfo({ ...info, phone: e.target.value })}
-                  className={inputClass}
-                />
-                <input
-                  placeholder="Location"
-                  value={info.location}
-                  onChange={(e) => setInfo({ ...info, location: e.target.value })}
-                  className={inputClass}
-                />
-              </div>
-            ) : (
-              <ul className="space-y-1 mt-2 text-sm">
-                <li><span className="font-medium">Name:</span> {info.name}</li>
-                <li><span className="font-medium">Email:</span> {info.email}</li>
-                <li><span className="font-medium">Phone:</span> {info.phone}</li>
-                <li><span className="font-medium">Location:</span> {info.location}</li>
-              </ul>
-            )}
+              {editInfo ? (
+                <div className="space-y-2">
+                  <input
+                    placeholder="Name"
+                    value={info.name}
+                    onChange={(e) => setInfo({ ...info, name: e.target.value })}
+                    className={inputClass}
+                  />
+                  <input
+                    placeholder="Email"
+                    value={info.email}
+                    onChange={(e) =>
+                      setInfo({ ...info, email: e.target.value })
+                    }
+                    className={inputClass}
+                  />
+                  <input
+                    placeholder="Phone"
+                    value={info.phone}
+                    onChange={(e) =>
+                      setInfo({ ...info, phone: e.target.value })
+                    }
+                    className={inputClass}
+                  />
+                  <input
+                    placeholder="Location"
+                    value={info.location}
+                    onChange={(e) =>
+                      setInfo({ ...info, location: e.target.value })
+                    }
+                    className={inputClass}
+                  />
+                </div>
+              ) : (
+                <ul className="space-y-2 text-sm">
+                  <li>
+                    <span className="font-semibold">Name:</span> {info.name}
+                  </li>
+                  <li>
+                    <span className="font-semibold">Email:</span> {info.email}
+                  </li>
+                  <li>
+                    <span className="font-semibold">Phone:</span> {info.phone}
+                  </li>
+                  <li>
+                    <span className="font-semibold">Location:</span>{" "}
+                    {info.location}
+                  </li>
+                </ul>
+              )}
+            </div>
           </div>
 
-          {/* Other Sections Grid */}
-          <div className="pt-5 grid grid-cols-2 gap-6 text-sm">
+          {/* RIGHT SIDE */}
+          <div className="col-span-2 space-y-6">
             {/* Education */}
-            <div className="bg-gray-200 border border-gray-300 p-4 rounded-lg shadow-black shadow-sm">
-              <div className="flex justify-between items-center mb-2">
-                <h2 className="font-bold text-lg">Education</h2>
-                <div className="flex gap-2">
-                  <button
-                    onClick={() => editEducation ? saveSection(setEditEducation) : setEditEducation(true)}
-                    className="flex items-center gap-1  text-black px-2 py-1 rounded  cursor-pointer"
-                  >
-                    <SquarePenIcon size={20} />
-                    {editEducation ? "Save" : ""}
-                  </button>
-                  {editEducation && (
-                    <button
-                      onClick={() => setEditEducation(false)}
-                      className="bg-gray-400 cursor-pointer text-white px-2 py-1 rounded hover:bg-gray-500"
-                    >
-                      Cancel
-                    </button>
+            <div className="bg-gray-200 border border-gray-300 shadow-md rounded-xl p-6">
+              <div className="flex justify-between items-center mb-3">
+                <h2 className="text-lg font-bold text-gray-800">Education</h2>
+                <button
+                  onClick={() =>
+                    editEducation
+                      ? saveSection(setEditEducation)
+                      : setEditEducation(true)
+                  }
+                  className={buttonClass(editEducation)}
+                >
+                  {editEducation ? (
+                    <CheckCheck size={16} />
+                  ) : (
+                    <SquarePenIcon size={16} />
                   )}
-                </div>
+                  {editEducation ? "Save" : "Edit"}
+                </button>
               </div>
               {editEducation ? (
                 <div className="space-y-2">
                   <input
                     placeholder="Degree"
                     value={education.degree}
-                    onChange={(e) => setEducation({ ...education, degree: e.target.value })}
+                    onChange={(e) =>
+                      setEducation({ ...education, degree: e.target.value })
+                    }
                     className={inputClass}
                   />
                   <input
                     placeholder="Institution"
                     value={education.institution}
-                    onChange={(e) => setEducation({ ...education, institution: e.target.value })}
+                    onChange={(e) =>
+                      setEducation({
+                        ...education,
+                        institution: e.target.value,
+                      })
+                    }
                     className={inputClass}
                   />
                   <input
                     placeholder="CGPA"
                     value={education.cgpa}
-                    onChange={(e) => setEducation({ ...education, cgpa: e.target.value })}
+                    onChange={(e) =>
+                      setEducation({ ...education, cgpa: e.target.value })
+                    }
                     className={inputClass}
                   />
                 </div>
               ) : (
-                <ul className="space-y-1">
-                  <li><span className="font-medium">Degree:</span> {education.degree}</li>
-                  <li><span className="font-medium">Institution:</span> {education.institution}</li>
-                  <li><span className="font-medium">CGPA:</span> {education.cgpa}</li>
+                <ul className="space-y-1 text-sm">
+                  <li>
+                    <span className="font-semibold">Degree:</span>{" "}
+                    {education.degree}
+                  </li>
+                  <li>
+                    <span className="font-semibold">Institution:</span>{" "}
+                    {education.institution}
+                  </li>
+                  <li>
+                    <span className="font-semibold">CGPA:</span>{" "}
+                    {education.cgpa}
+                  </li>
                 </ul>
               )}
             </div>
 
             {/* Skills */}
-            <div className="bg-gray-200 border border-gray-300 p-4 rounded-lg shadow-black shadow-sm">
-              <div className="flex justify-between items-center mb-2">
-                <h2 className="font-bold text-lg" >Skills</h2>
-                <div className="flex gap-2">
-                  <button
-                    onClick={() => editSkills ? saveSection(setEditSkills) : setEditSkills(true)}
-                    className="flex items-center gap-1  cursor-pointer text-black px-2 py-1"
-                  >
-                    <SquarePenIcon size={20} />
-                    {editSkills ? "Save" : ""}
-                  </button>
-                  {editSkills && (
-                    <button
-                      onClick={() => setEditSkills(false)}
-                      className="bg-gray-400 text-white px-2 py-1 rounded hover:bg-gray-500"
-                    >
-                      Cancel
-                    </button>
+            <div className="bg-gray-200 border border-gray-300 shadow-md rounded-xl p-6">
+              <div className="flex justify-between items-center mb-3">
+                <h2 className="text-lg font-bold text-gray-800">Skills</h2>
+                <button
+                  onClick={() =>
+                    editSkills
+                      ? saveSection(setEditSkills)
+                      : setEditSkills(true)
+                  }
+                  className={buttonClass(editSkills)}
+                >
+                  {editSkills ? (
+                    <CheckCheck size={16} />
+                  ) : (
+                    <SquarePenIcon size={16} />
                   )}
-                </div>
+                  {editSkills ? "Save" : "Edit"}
+                </button>
               </div>
               {editSkills ? (
                 <textarea
@@ -222,31 +276,29 @@ const SeekerProfile = () => {
                   onChange={(e) => setSkills(e.target.value)}
                 />
               ) : (
-                <p>{skills}</p>
+                <p className="text-sm">{skills}</p>
               )}
             </div>
 
             {/* Experience */}
-            <div className="bg-gray-200 border border-gray-300 p-4 rounded-lg shadow-black shadow-sm">
-              <div className="flex justify-between items-center mb-2">
-                <h2 className="font-bold text-lg">Experience</h2>
-                <div className="flex gap-2">
-                  <button
-                    onClick={() => editExperience ? saveSection(setEditExperience) : setEditExperience(true)}
-                    className="flex items-center gap-1 cursor-pointer text-black px-2 py-1"
-                  >
-                    <SquarePenIcon size={20} />
-                    {editExperience ? "Save" : ""}
-                  </button>
-                  {editExperience && (
-                    <button
-                      onClick={() => setEditExperience(false)}
-                      className="bg-gray-400 text-white px-2 py-1  rounded hover:bg-gray-500"
-                    >
-                      Cancel
-                    </button>
+            <div className="bg-gray-200 border border-gray-300 shadow-md rounded-xl p-6">
+              <div className="flex justify-between items-center mb-3">
+                <h2 className="text-lg font-bold text-gray-800">Experience</h2>
+                <button
+                  onClick={() =>
+                    editExperience
+                      ? saveSection(setEditExperience)
+                      : setEditExperience(true)
+                  }
+                  className={buttonClass(editExperience)}
+                >
+                  {editExperience ? (
+                    <CheckCheck size={16} />
+                  ) : (
+                    <SquarePenIcon size={16} />
                   )}
-                </div>
+                  {editExperience ? "Save" : "Edit"}
+                </button>
               </div>
               {editExperience ? (
                 <textarea
@@ -255,31 +307,29 @@ const SeekerProfile = () => {
                   onChange={(e) => setExperience(e.target.value)}
                 />
               ) : (
-                <p>{experience}</p>
+                <p className="text-sm">{experience}</p>
               )}
             </div>
 
             {/* Projects */}
-            <div className="bg-gray-200 border border-gray-300 p-4 rounded-lg shadow-black shadow-sm">
-              <div className="flex justify-between items-center mb-2">
-                <h2 className="font-bold text-lg">Projects</h2>
-                <div className="flex gap-2">
-                  <button
-                    onClick={() => editProjects ? saveSection(setEditProjects) : setEditProjects(true)}
-                    className="flex items-center gap-1 cursor-pointer text-black px-2 py-1 "
-                  >
-                    <SquarePenIcon size={20} />
-                    {editProjects ? "Save" : ""}
-                  </button>
-                  {editProjects && (
-                    <button
-                      onClick={() => setEditProjects(false)}
-                      className="bg-gray-400 text-white px-2  py-1 rounded hover:bg-gray-500"
-                    >
-                      Cancel
-                    </button>
+            <div className="bg-gray-200 border border-gray-300 shadow-md rounded-xl p-6">
+              <div className="flex justify-between items-center mb-3">
+                <h2 className="text-lg font-bold text-gray-800">Projects</h2>
+                <button
+                  onClick={() =>
+                    editProjects
+                      ? saveSection(setEditProjects)
+                      : setEditProjects(true)
+                  }
+                  className={buttonClass(editProjects)}
+                >
+                  {editProjects ? (
+                    <CheckCheck size={16} />
+                  ) : (
+                    <SquarePenIcon size={16} />
                   )}
-                </div>
+                  {editProjects ? "Save" : "Edit"}
+                </button>
               </div>
               {editProjects ? (
                 <textarea
@@ -288,31 +338,31 @@ const SeekerProfile = () => {
                   onChange={(e) => setProjects(e.target.value)}
                 />
               ) : (
-                <p>{projects}</p>
+                <p className="text-sm">{projects}</p>
               )}
             </div>
 
             {/* Achievements */}
-            <div className="bg-gray-200 border border-gray-300 p-4 rounded-lg shadow-black shadow-smU">
-              <div className="flex justify-between items-center mb-2">
-                <h2 className="font-bold text-lg">Achievements</h2>
-                <div className="flex gap-2">
-                  <button
-                    onClick={() => editAchievements ? saveSection(setEditAchievements) : setEditAchievements(true)}
-                    className="flex items-center gap-1 text-black cursor-pointer px-2 py-1"
-                  >
-                    <SquarePenIcon size={20} />
-                    {editAchievements ? "Save" : ""}
-                  </button>
-                  {editAchievements && (
-                    <button
-                      onClick={() => setEditAchievements(false)}
-                      className="bg-gray-400 text-white px-2  py-1 rounded hover:bg-gray-500"
-                    >
-                      Cancel
-                    </button>
+            <div className="bg-gray-200 border border-gray-300 shadow-md rounded-xl p-6">
+              <div className="flex justify-between items-center mb-3">
+                <h2 className="text-lg font-bold text-gray-800">
+                  Achievements
+                </h2>
+                <button
+                  onClick={() =>
+                    editAchievements
+                      ? saveSection(setEditAchievements)
+                      : setEditAchievements(true)
+                  }
+                  className={buttonClass(editAchievements)}
+                >
+                  {editAchievements ? (
+                    <CheckCheck size={16} />
+                  ) : (
+                    <SquarePenIcon size={16} />
                   )}
-                </div>
+                  {editAchievements ? "Save" : "Edit"}
+                </button>
               </div>
               {editAchievements ? (
                 <textarea
@@ -321,7 +371,7 @@ const SeekerProfile = () => {
                   onChange={(e) => setAchievements(e.target.value)}
                 />
               ) : (
-                <p>{achievements}</p>
+                <p className="text-sm">{achievements}</p>
               )}
             </div>
           </div>
