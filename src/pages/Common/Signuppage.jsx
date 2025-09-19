@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import SignupImg from "/src/assets/3.svg";
+import SignupImg from "/src/assets/6.svg";
 import { Blend } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 
@@ -13,7 +13,7 @@ function Signuppage() {
 
   const navigate = useNavigate();
   const inputClass =
-    "p-3 border font-semibold rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500";
+    "p-3 border font-semibold rounded-md focus:outline-none focus:ring-2 focus:ring-gray-500";
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -50,11 +50,11 @@ function Signuppage() {
 
       <div className="w-1/2 flex flex-col justify-center px-16">
         <div className="flex items-center mb-4">
-          <Blend size={35} className="text-emerald-700 mr-2" />
-          <span className="text-3xl font-extrabold text-emerald-700">ᗯOᖇKᐯIᗷE</span>
+          <Blend size={35} className="text-gray-700 mr-2" />
+          <span className="text-4xl font-extrabold text-gray-700">ᗯOᖇKᐯIᗷE</span>
         </div>
 
-        <h2 className="text-2xl font-bold mb-2">Welcome To WorkVibe</h2>
+        <h2 className="text-xl font-semibold mb-2">Welcome To WorkVibe</h2>
         <p className="text-gray-600 mb-6">Create your account</p>
 
         <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
@@ -99,7 +99,7 @@ function Signuppage() {
 
           <button
             type="submit"
-            className="bg-emerald-600 text-white p-3 font-semibold rounded-md hover:bg-emerald-700 transition"
+            className="bg-gray-700 text-white p-3 font-semibold rounded-md hover:bg-gray-900 cursor-pointer transition"
           >
             Create
           </button>
@@ -109,7 +109,7 @@ function Signuppage() {
           Already have an account?{" "}
           <Link
             to="/"
-            className="text-emerald-600 font-semibold hover:underline"
+            className="text-gray-700 cursor-pointer font-semibold hover:underline"
           >
             Login
           </Link>

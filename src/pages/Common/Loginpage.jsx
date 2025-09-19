@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import LoginImg from "/src/assets/3.svg";
+import LoginImg from "/src/assets/7.svg";
 import { Blend } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 
@@ -8,7 +8,7 @@ function LoginPage() {
   const navigate = useNavigate();
 
   const inputClass =
-    "p-3 border font-semibold rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500";
+    "p-3 border font-semibold rounded-md focus:outline-none focus:ring-2 focus:ring-gray-500";
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -48,11 +48,11 @@ function LoginPage() {
     <div className="flex h-screen font-poppins">
       <div className="w-1/2 flex flex-col justify-center px-16">
         <div className="flex items-center mb-4">
-          <Blend size={35} className="text-emerald-700 mr-2" />
-          <span className="text-3xl font-extrabold text-emerald-700">ᗯOᖇKᐯIᗷE</span>
+          <Blend size={35} className="text-gray-700 mr-2" />
+          <span className="text-4xl font-extrabold text-gray-700">ᗯOᖇKᐯIᗷE</span>
         </div>
 
-        <h2 className="text-2xl font-bold mb-2">Welcome Back</h2>
+        <h2 className="text-xl font-semibold mb-2">Welcome Back</h2>
         <p className="text-gray-600 mb-6">Login to your account</p>
 
         <form className="flex flex-col gap-4" onSubmit={handleLogin}>
@@ -77,7 +77,7 @@ function LoginPage() {
 
           <button
             type="submit"
-            className="bg-emerald-600 text-white p-3 font-semibold rounded-md hover:bg-emerald-700 transition"
+            className="bg-gray-700 text-white p-3 font-semibold rounded-md hover:bg-gray-900 transition"
           >
             Login
           </button>
@@ -85,7 +85,7 @@ function LoginPage() {
 
         <p className="mt-4 text-gray-600">
           Don't have an account?{" "}
-          <Link to="/signup" className="text-emerald-600 font-semibold hover:underline">
+          <Link to="/signup" className="text-gray-600 font-semibold hover:underline">
             Sign Up
           </Link>
         </p>

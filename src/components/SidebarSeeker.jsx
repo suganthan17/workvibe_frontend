@@ -31,17 +31,17 @@ function SidebarSeeker() {
   };
 
   return (
-    <div className="bg-purple-200 flex flex-col border-r w-1/6 h-screen p-4 rounded-r-2xl font-poppins">
+    <div className="bg-gray-300 flex flex-col border border-gray-400 w-1/6 h-screen p-4 font-poppins">
       {/* Logo */}
       <div className="flex items-center gap-2 mb-6">
-        <Blend size={28} className="text-purple-800" />
-        <span className="text-2xl font-extrabold text-purple-800">
-          ᗯOᖇKᐯIᗷE
+        <Blend size={28} className="text-gray-800" />
+        <span className="text-2xl font-extrabold text-gray-800">
+          ᗯOᖇK<span className="text-gray-700">ᐯIᗷE</span> 
         </span>
       </div>
 
       {/* User Info */}
-      <div className="flex flex-col bg-purple-100 rounded-lg p-3 mb-6">
+      <div className="flex flex-col bg-gray-100 rounded-lg p-3 mb-6">
         <p className="text-md font-bold font-mono">Job Seeker</p>
         <p className="text-xs">{user.Email}</p>
       </div>
@@ -52,12 +52,12 @@ function SidebarSeeker() {
           <button
             key={item.name}
             onClick={() => navigate(item.path)}
-            className="flex items-center gap-3 text-black text-md cursor-pointer font-semibold hover:bg-purple-800 hover:text-white px-3 py-2 rounded text-left transition-colors duration-200"
+            className="flex items-center gap-3 text-black text-md cursor-pointer font-semibold hover:bg-gray-800 hover:text-white px-3 py-2 rounded text-left transition-colors duration-200"
           >
             {item.icon && (
               <item.icon
                 size={20}
-                className="text-purple-700 group-hover:text-white"
+                className="text-black group-hover:text-white"
               />
             )}
             {item.name}

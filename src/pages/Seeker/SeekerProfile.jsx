@@ -1,7 +1,7 @@
 // src/pages/SeekerProfile.jsx
 import React, { useState } from "react";
 import SidebarSeeker from "../../components/SidebarSeeker";
-import { Edit2 } from "lucide-react";
+import { SquarePenIcon,CheckCheck } from "lucide-react";
 
 const SeekerProfile = () => {
   const [profilePic, setProfilePic] = useState(null);
@@ -51,14 +51,14 @@ const SeekerProfile = () => {
         {/* Header */}
         <div className="flex items-center justify-between border-b px-8 py-3 shadow-sm">
           <div>
-            <h1 className="text-2xl font-semibold text-purple-800">Welcome</h1>
-            <p className="text-gray-500 text-sm">Let’s find your next opportunity.</p>
+            <h1 className="text-2xl font-bold text-gray-800">Your Profile</h1>
+            <p className="text-gray-500 text-sm">Let’s Know About You</p>
           </div>
         </div>
 
-        <div className="relative px-8 mt-6">
+        <div className="relative px-8  mt-6 ">
           {/* Profile Card */}
-          <div className="bg-purple-100 p-6 rounded-lg shadow relative z-0 mt-16">
+          <div className="bg-gray-200  border border-gray-300  shadow-black shadow-sm p-6 rounded-lg relative z-0 mt-16">
             {/* Profile Picture */}
             <div className="absolute -top-12 left-8 z-10">
               <div className="relative w-24 h-24">
@@ -73,23 +73,23 @@ const SeekerProfile = () => {
                     ?
                   </div>
                 )}
-                <label className="absolute bottom-0 right-0 bg-purple-600 w-7 h-7 rounded-full flex items-center justify-center cursor-pointer border-2 border-white">
+                <label className="absolute bottom-0 right-0 bg-gray-800 w-7 h-7 rounded-full flex items-center justify-center cursor-pointer border-2 border-white">
                   <input type="file" accept="image/*" onChange={handlePicChange} className="hidden" />
-                  <Edit2 size={14} color="white" />
+                  <SquarePenIcon size={14} color="white" />
                 </label>
               </div>
             </div>
 
             {/* Personal Info */}
             <div className="flex justify-between items-center mb-2 mt-16">
-              <h2 className="font-semibold text-lg">Personal Info</h2>
+              <h2 className="font-bold text-lg">Personal Info</h2>
               <div className="flex gap-2">
                 <button
                   onClick={() => editInfo ? saveSection(setEditInfo) : setEditInfo(true)}
-                  className="flex items-center gap-1 bg-purple-600 text-white px-2 py-1 rounded hover:bg-purple-700"
+                  className="flex items-center gap-1  text-black px-2 py-1 rounded  cursor-pointer"
                 >
-                  <Edit2 size={14} />
-                  {editInfo ? "Save" : "Edit"}
+                  <SquarePenIcon size={20} />
+                  {editInfo ? "Save" : ""}
                 </button>
                 {editInfo && (
                   <button
@@ -140,23 +140,23 @@ const SeekerProfile = () => {
           </div>
 
           {/* Other Sections Grid */}
-          <div className="p-8 grid grid-cols-2 gap-6 text-sm">
+          <div className="pt-5 grid grid-cols-2 gap-6 text-sm">
             {/* Education */}
-            <div className="bg-purple-100 p-4 rounded-lg shadow">
+            <div className="bg-gray-200 border border-gray-300 p-4 rounded-lg shadow-black shadow-sm">
               <div className="flex justify-between items-center mb-2">
-                <h2 className="font-semibold">Education</h2>
+                <h2 className="font-bold text-lg">Education</h2>
                 <div className="flex gap-2">
                   <button
                     onClick={() => editEducation ? saveSection(setEditEducation) : setEditEducation(true)}
-                    className="flex items-center gap-1 bg-purple-600 text-white px-2 py-1 rounded hover:bg-purple-700"
+                    className="flex items-center gap-1  text-black px-2 py-1 rounded  cursor-pointer"
                   >
-                    <Edit2 size={14} />
-                    {editEducation ? "Save" : "Edit"}
+                    <SquarePenIcon size={20} />
+                    {editEducation ? "Save" : ""}
                   </button>
                   {editEducation && (
                     <button
                       onClick={() => setEditEducation(false)}
-                      className="bg-gray-400 text-white px-2 py-1 rounded hover:bg-gray-500"
+                      className="bg-gray-400 cursor-pointer text-white px-2 py-1 rounded hover:bg-gray-500"
                     >
                       Cancel
                     </button>
@@ -194,16 +194,16 @@ const SeekerProfile = () => {
             </div>
 
             {/* Skills */}
-            <div className="bg-purple-100 p-4 rounded-lg shadow">
+            <div className="bg-gray-200 border border-gray-300 p-4 rounded-lg shadow-black shadow-sm">
               <div className="flex justify-between items-center mb-2">
-                <h2 className="font-semibold">Skills</h2>
+                <h2 className="font-bold text-lg" >Skills</h2>
                 <div className="flex gap-2">
                   <button
                     onClick={() => editSkills ? saveSection(setEditSkills) : setEditSkills(true)}
-                    className="flex items-center gap-1 bg-purple-600 text-white px-2 py-1 rounded hover:bg-purple-700"
+                    className="flex items-center gap-1  cursor-pointer text-black px-2 py-1"
                   >
-                    <Edit2 size={14} />
-                    {editSkills ? "Save" : "Edit"}
+                    <SquarePenIcon size={20} />
+                    {editSkills ? "Save" : ""}
                   </button>
                   {editSkills && (
                     <button
@@ -227,21 +227,21 @@ const SeekerProfile = () => {
             </div>
 
             {/* Experience */}
-            <div className="bg-purple-100 p-4 rounded-lg shadow">
+            <div className="bg-gray-200 border border-gray-300 p-4 rounded-lg shadow-black shadow-sm">
               <div className="flex justify-between items-center mb-2">
-                <h2 className="font-semibold">Experience</h2>
+                <h2 className="font-bold text-lg">Experience</h2>
                 <div className="flex gap-2">
                   <button
                     onClick={() => editExperience ? saveSection(setEditExperience) : setEditExperience(true)}
-                    className="flex items-center gap-1 bg-purple-600 text-white px-2 py-1 rounded hover:bg-purple-700"
+                    className="flex items-center gap-1 cursor-pointer text-black px-2 py-1"
                   >
-                    <Edit2 size={14} />
-                    {editExperience ? "Save" : "Edit"}
+                    <SquarePenIcon size={20} />
+                    {editExperience ? "Save" : ""}
                   </button>
                   {editExperience && (
                     <button
                       onClick={() => setEditExperience(false)}
-                      className="bg-gray-400 text-white px-2 py-1 rounded hover:bg-gray-500"
+                      className="bg-gray-400 text-white px-2 py-1  rounded hover:bg-gray-500"
                     >
                       Cancel
                     </button>
@@ -260,21 +260,21 @@ const SeekerProfile = () => {
             </div>
 
             {/* Projects */}
-            <div className="bg-purple-100 p-4 rounded-lg shadow">
+            <div className="bg-gray-200 border border-gray-300 p-4 rounded-lg shadow-black shadow-sm">
               <div className="flex justify-between items-center mb-2">
-                <h2 className="font-semibold">Projects</h2>
+                <h2 className="font-bold text-lg">Projects</h2>
                 <div className="flex gap-2">
                   <button
                     onClick={() => editProjects ? saveSection(setEditProjects) : setEditProjects(true)}
-                    className="flex items-center gap-1 bg-purple-600 text-white px-2 py-1 rounded hover:bg-purple-700"
+                    className="flex items-center gap-1 cursor-pointer text-black px-2 py-1 "
                   >
-                    <Edit2 size={14} />
-                    {editProjects ? "Save" : "Edit"}
+                    <SquarePenIcon size={20} />
+                    {editProjects ? "Save" : ""}
                   </button>
                   {editProjects && (
                     <button
                       onClick={() => setEditProjects(false)}
-                      className="bg-gray-400 text-white px-2 py-1 rounded hover:bg-gray-500"
+                      className="bg-gray-400 text-white px-2  py-1 rounded hover:bg-gray-500"
                     >
                       Cancel
                     </button>
@@ -293,21 +293,21 @@ const SeekerProfile = () => {
             </div>
 
             {/* Achievements */}
-            <div className="bg-purple-100 p-4 rounded-lg shadow">
+            <div className="bg-gray-200 border border-gray-300 p-4 rounded-lg shadow-black shadow-smU">
               <div className="flex justify-between items-center mb-2">
-                <h2 className="font-semibold">Achievements</h2>
+                <h2 className="font-bold text-lg">Achievements</h2>
                 <div className="flex gap-2">
                   <button
                     onClick={() => editAchievements ? saveSection(setEditAchievements) : setEditAchievements(true)}
-                    className="flex items-center gap-1 bg-purple-600 text-white px-2 py-1 rounded hover:bg-purple-700"
+                    className="flex items-center gap-1 text-black cursor-pointer px-2 py-1"
                   >
-                    <Edit2 size={14} />
-                    {editAchievements ? "Save" : "Edit"}
+                    <SquarePenIcon size={20} />
+                    {editAchievements ? "Save" : ""}
                   </button>
                   {editAchievements && (
                     <button
                       onClick={() => setEditAchievements(false)}
-                      className="bg-gray-400 text-white px-2 py-1 rounded hover:bg-gray-500"
+                      className="bg-gray-400 text-white px-2  py-1 rounded hover:bg-gray-500"
                     >
                       Cancel
                     </button>
