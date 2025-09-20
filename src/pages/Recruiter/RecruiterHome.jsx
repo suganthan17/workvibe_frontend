@@ -1,10 +1,34 @@
-import React from "react";
+import React, { useState,useEffect } from "react";
 import SidebarRecruiter from "../../components/SidebarRecruiter";
 
 function RecruiterHome() {
-  const jobposted = 0;
+  const [jobposted,setJobposted] = useState(0);
   const totalapplicants = 0;
   const totalhired = 0;
+
+
+  useEffect(()=>{
+    const fetchjobs =async()=>{
+      try {
+        const res= await fetch("http://localhost:5000/getjobs",{
+          method:"GET",
+          credentials:"include",
+          headers:{"content-Type":"application/json"},
+        })
+        const data =await res.json();
+        if (res.ok)
+        {
+          setJobposted(data.jobs.length)
+        }
+
+        
+      } catch (error) {
+        console.log(error)
+        
+      }
+    }
+    fetchjobs();
+  },[])
   return (
     <>
       <div className="flex">

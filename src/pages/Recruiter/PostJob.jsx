@@ -30,9 +30,10 @@ const PostJob = () => {
       const res = await fetch("http://localhost:5000/postjob", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        credentials: "include",
+        credentials: "include", 
         body: JSON.stringify(formData),
       });
+      
 
       const data = await res.json();
       if (!res.ok) throw new Error(data.message || "Failed to post job");
@@ -235,7 +236,9 @@ const PostJob = () => {
                 ></textarea>
               </div>
               <div>
-                <label className={labelClass}>Requirements / Skills Needed</label>
+                <label className={labelClass}>
+                  Requirements / Skills Needed
+                </label>
                 <textarea
                   name="requirements"
                   value={formData.requirements}
@@ -250,7 +253,9 @@ const PostJob = () => {
 
             {/* Application Info */}
             <div className="bg-gray-200 border border-gray-300 shadow-md rounded-xl p-6 space-y-6">
-              <h2 className="text-lg font-bold text-gray-800">Application Info</h2>
+              <h2 className="text-lg font-bold text-gray-800">
+                Application Info
+              </h2>
               <p className="text-sm text-gray-600">
                 Specify how candidates should apply and provide additional
                 instructions.

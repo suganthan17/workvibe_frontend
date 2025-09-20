@@ -6,11 +6,21 @@ import { useNavigate } from "react-router-dom";
 
 function SidebarSeeker() {
   const navigate = useNavigate();
-  const [user, setUser] = useState({ Email: "" });
+  const [user, setUser] = useState({ Email: "", name: "" });
 
   useEffect(() => {
-    const userData = localStorage.getItem("user");
-    if (userData) setUser(JSON.parse(userData));
+    const fetchUser = async () => {
+      try {
+        const res = await axios.get(
+          "http://localhost:5000/api/seeker/profile/sidebar",
+          { withCredentials: true }
+        );
+        setUser({ Email: res.data.email, name: res.data.name });
+      } catch (err) {
+        console.error("Failed to fetch user", err);
+      }
+    };
+    fetchUser();
   }, []);
 
   const handleLogout = async () => {
@@ -20,33 +30,28 @@ function SidebarSeeker() {
         {},
         { withCredentials: true }
       );
-      localStorage.removeItem("role");
-      localStorage.removeItem("token");
       navigate("/");
-      window.alert("Logout success");
+      window.alert("Logout successful");
     } catch (error) {
       window.alert("Logout failed");
-      console.log("logout failed", error);
+      console.error("Logout failed", error);
     }
   };
 
   return (
     <div className="bg-gray-300 flex flex-col border border-gray-400 w-1/6 h-screen p-4 font-poppins">
-      {/* Logo */}
       <div className="flex items-center gap-2 mb-6">
         <Blend size={28} className="text-gray-800" />
         <span className="text-2xl font-extrabold text-gray-800">
-          ᗯOᖇK<span className="text-gray-700">ᐯIᗷE</span> 
+          ᗯOᖇK<span className="text-gray-700">ᐯIᗷE</span>
         </span>
       </div>
 
-      {/* User Info */}
       <div className="flex flex-col bg-gray-100 rounded-lg p-3 mb-6">
-        <p className="text-md font-bold font-mono">Job Seeker</p>
+        <p className="text-md font-bold font-mono">{user.name || "Job Seeker"}</p>
         <p className="text-xs">{user.Email}</p>
       </div>
 
-      {/* Sidebar Items */}
       <div className="flex flex-col border-t border-b py-4 gap-4 w-full flex-grow">
         {SeekerSidebar.map((item) => (
           <button
@@ -64,7 +69,6 @@ function SidebarSeeker() {
           </button>
         ))}
 
-        {/* Logout */}
         <button
           onClick={handleLogout}
           className="flex items-center gap-3 text-red-600 text-md cursor-pointer font-semibold hover:bg-red-600 hover:text-white px-3 py-2 rounded text-left transition-colors duration-200"
