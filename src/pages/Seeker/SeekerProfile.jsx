@@ -2,6 +2,11 @@ import React, { useState, useEffect } from "react";
 import SidebarSeeker from "../../components/SidebarSeeker";
 import { SquarePenIcon, CheckCheck, User } from "lucide-react";
 
+const BASE_URL =
+  window.location.hostname === "localhost"
+    ? "http://localhost:5000"
+    : "https://workvibe-backend.onrender.com"; 
+
 const SeekerProfile = () => {
   const [profilePic, setProfilePic] = useState(null);
   const [info, setInfo] = useState({ name: "", email: "", phone: "", location: "" });
@@ -22,7 +27,7 @@ const SeekerProfile = () => {
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const res = await fetch("http://localhost:5000/api/seeker/profile", { credentials: "include" });
+        const res = await fetch(`${BASE_URL}/api/seeker/profile`, { credentials: "include" });
         if (res.ok) {
           const data = await res.json();
           setInfo(data.info || { name: "", email: "", phone: "", location: "" });
@@ -55,7 +60,7 @@ const SeekerProfile = () => {
     setter(false);
     try {
       const body = { info, education, skills, experience, projects, achievements, profilePic };
-      const res = await fetch("http://localhost:5000/api/seeker/profile", {
+      const res = await fetch(`${BASE_URL}/api/seeker/profile`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         credentials: "include",

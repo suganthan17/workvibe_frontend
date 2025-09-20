@@ -2,6 +2,11 @@
 import React, { useState } from "react";
 import SidebarRecruiter from "../../components/SidebarRecruiter";
 
+const BASE_URL =
+  window.location.hostname === "localhost"
+    ? "http://localhost:5000"
+    : "https://workvibe-backend.onrender.com"; 
+
 const PostJob = () => {
   const [formData, setFormData] = useState({
     jobTitle: "",
@@ -27,7 +32,7 @@ const PostJob = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await fetch("http://localhost:5000/postjob", {
+      const res = await fetch(`${BASE_URL}/postjob`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include", 

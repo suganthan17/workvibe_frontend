@@ -1,13 +1,19 @@
 import React, { useEffect, useState } from "react";
 import SidebarSeeker from "../../components/SidebarSeeker";
 
+
+const BASE_URL =
+  window.location.hostname === "localhost"
+    ? "http://localhost:5000"
+    : "https://workvibe-backend.onrender.com"; 
+
 function BrowseJobs() {
   const [jobs, setJobs] = useState([]);
 
   useEffect(() => {
     const fetchAllJobs = async () => {
       try {
-        const res = await fetch("http://localhost:5000/getalljobs", {
+        const res = await fetch(`${BASE_URL}/getalljobs`, {
           method: "GET",
           headers: { "Content-Type": "application/json" },
         });

@@ -4,6 +4,11 @@ import { Blend, LogOut } from "lucide-react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
+const BASE_URL =
+  window.location.hostname === "localhost"
+    ? "http://localhost:5000"
+    : "https://workvibe-backend.onrender.com"; 
+
 function SidebarRecruiter() {
   const navigate = useNavigate();
   const [user, setUser] = useState({ Email: "" });
@@ -16,7 +21,7 @@ function SidebarRecruiter() {
   const handleLogout = async () => {
     try {
       await axios.post(
-        "http://localhost:5000/logout",
+        `${BASE_URL}/logout`,
         {},
         { withCredentials: true }
       );

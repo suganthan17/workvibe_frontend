@@ -2,13 +2,18 @@ import React, { useEffect, useState } from "react";
 import SidebarRecruiter from "../../components/SidebarRecruiter";
 import { Trash2 } from "lucide-react";
 
+const BASE_URL =
+  window.location.hostname === "localhost"
+    ? "http://localhost:5000"
+    : "https://workvibe-backend.onrender.com"; 
+
 function JobsPosted() {
   const [jobcard, setJobcard] = useState([]);
 
   useEffect(() => {
     const fetchJobs = async () => {
       try {
-        const res = await fetch("http://localhost:5000/getjobs", {
+        const res = await fetch(`${BASE_URL}/getjobs`, {
           method: "GET",
           credentials: "include",
           headers: { "Content-Type": "application/json" },
@@ -27,7 +32,7 @@ function JobsPosted() {
 
   const handleDelete = async (id) => {
     try {
-      const res = await fetch(`http://localhost:5000/deletejobs/${id}`, {
+      const res = await fetch(`${BASE_URL}/deletejobs/${id}`, {
         method: "DELETE",
         credentials: "include", 
       });

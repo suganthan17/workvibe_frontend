@@ -3,6 +3,11 @@ import LoginImg from "/src/assets/7.svg";
 import { Blend } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 
+const BASE_URL =
+  window.location.hostname === "localhost"
+    ? "http://localhost:5000"
+    : "https://workvibe-backend.onrender.com"; 
+
 function LoginPage() {
   const [login, setLogin] = useState({ Email: "", Password: "" });
   const navigate = useNavigate();
@@ -18,7 +23,7 @@ function LoginPage() {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      const res = await fetch("http://localhost:5000/login", {
+      const res = await fetch(`${BASE_URL}/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",

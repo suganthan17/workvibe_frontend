@@ -4,6 +4,11 @@ import { Blend, LogOut } from "lucide-react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
+const BASE_URL =
+  window.location.hostname === "localhost"
+    ? "http://localhost:5000"
+    : "https://workvibe-backend.onrender.com"; 
+
 function SidebarSeeker() {
   const navigate = useNavigate();
   const [user, setUser] = useState({ Email: "", name: "" });
@@ -12,7 +17,7 @@ function SidebarSeeker() {
     const fetchUser = async () => {
       try {
         const res = await axios.get(
-          "http://localhost:5000/api/seeker/profile/sidebar",
+          `${BASE_URL}/api/seeker/profile/sidebar`,
           { withCredentials: true }
         );
         setUser({ Email: res.data.email, name: res.data.name });
@@ -26,7 +31,7 @@ function SidebarSeeker() {
   const handleLogout = async () => {
     try {
       await axios.post(
-        "http://localhost:5000/logout",
+        `${BASE_URL}/logout`,
         {},
         { withCredentials: true }
       );

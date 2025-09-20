@@ -3,6 +3,11 @@ import React, { useState } from "react";
 import SidebarRecruiter from "../../components/SidebarRecruiter";
 import { SquarePenIcon, CheckCheck, User } from "lucide-react";
 
+const BASE_URL =
+  window.location.hostname === "localhost"
+    ? "http://localhost:5000"
+    : "https://workvibe-backend.onrender.com"; 
+
 const RecruiterProfile = () => {
   const [profilePic, setProfilePic] = useState(null);
 

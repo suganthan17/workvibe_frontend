@@ -1,6 +1,12 @@
 import React, { useState,useEffect } from "react";
 import SidebarRecruiter from "../../components/SidebarRecruiter";
 
+const BASE_URL =
+  window.location.hostname === "localhost"
+    ? "http://localhost:5000"
+    : "https://workvibe-backend.onrender.com"; 
+
+
 function RecruiterHome() {
   const [jobposted,setJobposted] = useState(0);
   const totalapplicants = 0;
@@ -10,10 +16,10 @@ function RecruiterHome() {
   useEffect(()=>{
     const fetchjobs =async()=>{
       try {
-        const res= await fetch("http://localhost:5000/getjobs",{
+        const res= await fetch(`${BASE_URL}/getjobs`,{
           method:"GET",
           credentials:"include",
-          headers:{"content-Type":"application/json"},
+          headers:{"Content-Type":"application/json"},
         })
         const data =await res.json();
         if (res.ok)
