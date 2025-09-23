@@ -1,74 +1,64 @@
-import React, { useState,useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import SidebarRecruiter from "../../components/SidebarRecruiter";
 
 const BASE_URL =
   window.location.hostname === "localhost"
     ? "http://localhost:5000"
-    : "https://workvibe-backend.onrender.com"; 
-
+    : "https://workvibe-backend.onrender.com";
 
 function RecruiterHome() {
-  const [jobposted,setJobposted] = useState(0);
+  const [jobposted, setJobposted] = useState(0);
   const totalapplicants = 0;
   const totalhired = 0;
 
-
-  useEffect(()=>{
-    const fetchjobs =async()=>{
+  useEffect(() => {
+    const fetchjobs = async () => {
       try {
-        const res= await fetch(`${BASE_URL}/getjobs`,{
-          method:"GET",
-          credentials:"include",
-          headers:{"Content-Type":"application/json"},
-        })
-        const data =await res.json();
-        if (res.ok)
-        {
-          setJobposted(data.jobs.length)
+        const res = await fetch(`${BASE_URL}/getjobs`, {
+          method: "GET",
+          credentials: "include",
+          headers: { "Content-Type": "application/json" },
+        });
+        const data = await res.json();
+        if (res.ok) {
+          setJobposted(data.jobs.length);
         }
-
-        
       } catch (error) {
-        console.log(error)
-        
+        console.log(error);
       }
-    }
+    };
     fetchjobs();
-  },[])
+  }, []);
   return (
     <>
       <div className="flex">
         <SidebarRecruiter />
 
-        <div className="flex-1 bg-gray-50 min-h-screen">
-          <div className="flex items-center justify-between border-b  px-8 shadow-sm">
-            <div className="">
-              <h1 className="text-2xl font-bold">Welcome</h1>
-              <p className="text-gray-800 text-sm">
-                Let’s find the right employee for your company
+        <div className="flex-1 p-5 bg-gray-50 min-h-screen">
+          <div className="flex items-center justify-between border-b border-gray-300 px-8 py-3 shadow-sm bg-gray-50 mb-5 rounded-md">
+            <div>
+              <h1 className="text-2xl font-bold text-black">My Profile</h1>
+              <p className="text-black text-sm">
+                Manage and update your personal details.
               </p>
             </div>
-            <img src="" alt="Profile" className="w-10 h-10 rounded-full" />
           </div>
 
+          {/* Quick Stats (like SeekerDashboard) */}
           <div className="p-8">
             <h2 className="font-semibold text-xl mb-4">Quick Stats</h2>
-            <div className="flex mt-10 gap-10">
-              <div className="border border-gray-300 rounded w-52 h-24 bg-gray-200 shadow-md">
-                <p className="font-medium text-gray-600 p-3">Jobs Posted</p>
-                <span className="p-3 font-bold text-2xl">{jobposted}</span>
+            <div className="flex flex-wrap gap-10">
+              <div className="border border-gray-200 rounded-xl w-52 h-30 bg-white shadow-md flex flex-col justify-center items-center">
+                <p className="font-medium text-gray-600">Jobs Posted</p>
+                <span className="font-bold text-2xl">{jobposted}</span>
               </div>
-              <div className="border border-gray-300 rounded w-52 h-24 bg-gray-200 shadow-md">
-                <p className="font-medium text-gray-600 p-3">Total Applicants</p>
-                <span className="p-3 font-bold text-2xl">
-                  {totalapplicants}
-                </span>
+              <div className="border border-gray-200 rounded-xl w-52 h- bg-white shadow-md flex flex-col justify-center items-center">
+                <p className="font-medium text-gray-600">Total Applicants</p>
+                <span className="font-bold text-2xl">{totalapplicants}</span>
               </div>
-              <div className="border border-gray-300 rounded w-52 h-24 bg-gray-200 shadow-md">
-                <p className="font-medium text-gray-600 p-3">Total Hired</p>
-                <span className="p-3 font-bold text-2xl">
-                  {totalhired}
-                </span>
+              <div className="border border-gray-200 rounded-xl w-52 h-30 bg-white shadow-md flex flex-col justify-center items-center">
+                <p className="font-medium text-gray-600">Total Hired</p>
+                <span className="font-bold text-2xl">{totalhired}</span>
               </div>
             </div>
           </div>

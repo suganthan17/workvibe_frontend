@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import SignupImg from "/src/assets/6.svg";
+import SignupImg from "/src/assets/9.svg";
 import { Blend } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 

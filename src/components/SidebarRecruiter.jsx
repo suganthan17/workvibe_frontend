@@ -7,7 +7,7 @@ import { useNavigate } from "react-router-dom";
 const BASE_URL =
   window.location.hostname === "localhost"
     ? "http://localhost:5000"
-    : "https://workvibe-backend.onrender.com"; 
+    : "https://workvibe-backend.onrender.com";
 
 function SidebarRecruiter() {
   const navigate = useNavigate();
@@ -20,11 +20,7 @@ function SidebarRecruiter() {
 
   const handleLogout = async () => {
     try {
-      await axios.post(
-        `${BASE_URL}/logout`,
-        {},
-        { withCredentials: true }
-      );
+      await axios.post(`${BASE_URL}/logout`, {}, { withCredentials: true });
       localStorage.removeItem("role");
       localStorage.removeItem("token");
       navigate("/");
@@ -36,35 +32,33 @@ function SidebarRecruiter() {
   };
 
   return (
-    <div className="bg-gray-300 flex flex-col border-r w-1/6 h-screen p-4 -2xl font-poppins">
+    <div className="bg-gray-50 flex flex-col w-64 min-h-screen border-r border-gray-200 shadow-lg p-4 font-poppins">
       {/* Logo */}
-      <div className="flex items-center gap-2 mb-6">
-        <Blend size={28} className="text-gray-800" />
-        <span className="text-2xl font-extrabold text-gray-800">
-          ᗯOᖇK<span className="text-gray-700">ᐯIᗷE</span> 
+      <div className="flex items-center gap-2 mb-6 px-2">
+        <Blend size={28} className="text-indigo-600" />
+        <span className="text-2xl font-extrabold text-indigo-700">
+          ᗯOᖇK<span className="text-indigo-500">ᐯIᗷE</span>
         </span>
       </div>
 
       {/* User Info */}
-      <div className="flex flex-col bg-gray-100 rounded-lg p-3 mb-6">
-        <p className="text-md font-bold font-mono">Recruiter</p>
-        <p className="text-xs">{user.Email}</p>
+      <div className="flex flex-col bg-white rounded-xl p-4 mb-6 shadow-md text-center">
+        <div className="w-20 h-20 rounded-full bg-gray-200 mx-auto mb-3 flex items-center justify-center text-xl font-bold text-gray-700">
+          R
+        </div>
+        <p className="text-md font-semibold text-gray-900">Recruiter</p>
+        <p className="text-xs text-gray-500 truncate">{user.Email}</p>
       </div>
 
       {/* Sidebar Items */}
-      <div className="flex flex-col border-t border-b py-4 gap-4 w-full flex-grow">
+      <div className="flex flex-col border-t border-b py-4 gap-2 flex-grow">
         {RecruiterSidebar.map((item) => (
           <button
             key={item.name}
             onClick={() => navigate(item.path)}
-            className="flex items-center gap-3 text-black text-md cursor-pointer font-semibold hover:bg-gray-800 hover:text-white px-3 py-2 rounded text-left transition-colors duration-200"
+            className="flex items-center gap-3 text-gray-700 text-md cursor-pointer font-semibold hover:bg-indigo-600 hover:text-white px-3 py-2 rounded-lg transition-colors duration-200"
           >
-            {item.icon && (
-              <item.icon
-                size={20}
-                className="text-black group-hover:text-white"
-              />
-            )}
+            {item.icon && <item.icon size={20} />}
             {item.name}
           </button>
         ))}
@@ -72,7 +66,7 @@ function SidebarRecruiter() {
         {/* Logout */}
         <button
           onClick={handleLogout}
-          className="flex items-center gap-3 text-red-600 text-md cursor-pointer font-semibold hover:bg-red-600 hover:text-white px-3 py-2 rounded text-left transition-colors duration-200"
+          className="flex items-center gap-3 text-red-600 text-md cursor-pointer font-semibold hover:bg-red-600 hover:text-white px-3 py-2 rounded-lg transition-colors duration-200 mt-2"
         >
           <LogOut size={20} />
           Logout

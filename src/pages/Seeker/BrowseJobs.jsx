@@ -1,102 +1,117 @@
 import React, { useEffect, useState } from "react";
 import SidebarSeeker from "../../components/SidebarSeeker";
-
+import { Bookmark } from "lucide-react";
 
 const BASE_URL =
   window.location.hostname === "localhost"
     ? "http://localhost:5000"
-    : "https://workvibe-backend.onrender.com"; 
+    : "https://workvibe-backend.onrender.com";
 
 function BrowseJobs() {
   const [jobs, setJobs] = useState([]);
+  const [currentUserId, setCurrentUserId] = useState("");
 
   useEffect(() => {
-    const fetchAllJobs = async () => {
+    const fetchJobs = async () => {
       try {
         const res = await fetch(`${BASE_URL}/getalljobs`, {
           method: "GET",
-          headers: { "Content-Type": "application/json" },
+          credentials: "include",
         });
-
         const data = await res.json();
-        if (!res.ok) {
-          throw new Error(data.message || `HTTP error! status: ${res.status}`);
-        }
-
-        // Backend returns { jobs: [...] }
         setJobs(data.jobs || []);
-      } catch (error) {
-        console.error("Error fetching jobs:", error);
-        setJobs([]); // fallback to empty array
+        setCurrentUserId(data.currentUserId || "");
+      } catch (err) {
+        console.error(err);
       }
     };
-
-    fetchAllJobs();
+    fetchJobs();
   }, []);
 
-  const cardTitleClass = "text-lg font-bold text-black";
-  const cardTextClass = "text-black text-sm mt-1";
+  const handleSaveJob = async (jobId) => {
+    try {
+      const res = await fetch(`${BASE_URL}/savejobs/${jobId}`, {
+        method: "POST",
+        credentials: "include",
+      });
+      const data = await res.json();
+      if (data.success) {
+        setJobs((prevJobs) =>
+          prevJobs.map((job) =>
+            job._id === jobId ? { ...job, savedBy: data.savedBy } : job
+          )
+        );
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
   return (
-    <div className="flex bg-gray-100 min-h-screen">
+    <div className="flex bg-gray-50 min-h-screen">
       <SidebarSeeker />
-      <div className="flex-1 bg-gray-100 min-h-screen">
-        <div className="flex items-center justify-between border-b border-gray-300 px-8 py-3 shadow-sm bg-gray-50">
+      <div className="flex-1 p-5">
+        <div className="flex items-center justify-between border-b border-gray-300 px-8 py-3 shadow-sm bg-white mb-5 rounded-lg">
           <div>
-            <h1 className="text-2xl font-bold text-black">Find The Job</h1>
-            <p className="text-black text-sm">
-              View all the available jobs.
-            </p>
+            <h1 className="text-2xl font-bold text-gray-800">Find The Job</h1>
+            <p className="text-gray-600 text-sm">View all available jobs.</p>
           </div>
         </div>
 
-        <div className="max-w-5xl ml-4 p-5 space-y-6">
-          {jobs.length === 0 ? (
-            <p className="text-gray-500">No jobs available yet.</p>
-          ) : (
-            jobs.map((job) => (
-              <div
-                key={job._id}
-                className="border border-gray-300 rounded-xl p-6 bg-gray-200 shadow-sm shadow-black"
-              >
-                {/* Tags */}
-                <div className="flex space-x-2 mb-3">
-                  {job.experienceLevel && (
-                    <span className="bg-gray-800 text-white text-xs px-2 py-1 rounded-full">
-                      {job.experienceLevel}
-                    </span>
-                  )}
-                  <span className="bg-gray-300 text-black text-xs px-2 py-1 rounded-full">
-                    Hiring multiple candidates
+        {jobs.length === 0 ? (
+          <p className="text-gray-500">No jobs available yet.</p>
+        ) : (
+          jobs.map((job) => (
+            <div
+              key={job._id}
+              className="border border-gray-200 rounded-xl p-6 bg-white shadow hover:shadow-md mb-4 transition-shadow"
+            >
+              <div className="flex items-center mb-3">
+                {job.experienceLevel && (
+                  <span className="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full mr-2">
+                    {job.experienceLevel}
                   </span>
-                </div>
+                )}
+                <span className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full">
+                  Hiring multiple candidates
+                </span>
 
-                {/* Job title & company */}
-                <h2 className={cardTitleClass}>{job.jobTitle}</h2>
-                <p className="text-black font-medium">{job.companyName}</p>
-                <p className={cardTextClass}>{job.location}</p>
-
-                {/* Salary & type */}
-                <div className="flex items-center space-x-2 mt-3 text-sm text-gray-700">
-                  <span className="bg-gray-400 text-black font-semibold px-2 py-1 rounded">
-                    ₹{job.salaryMin} - ₹{job.salaryMax} / month
-                  </span>
-                  <span className="bg-gray-800 text-white px-2 py-1 rounded">
-                    {job.employmentType || "Full-time"}
-                  </span>
-                </div>
-
-                {/* Job description */}
-                <p className={cardTextClass + " mt-3"}>{job.jobDescription}</p>
-
-                {/* Apply button */}
-                <button className="mt-4 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg">
-                 View in Detail
-                </button>
+                <span
+                  onClick={() => handleSaveJob(job._id)}
+                  className="ml-auto cursor-pointer"
+                >
+                  <Bookmark
+                    size={24}
+                    className={`${
+                      job.savedBy?.includes(currentUserId)
+                        ? "fill-indigo-600"
+                        : "fill-white stroke-indigo-600"
+                    }`}
+                  />
+                </span>
               </div>
-            ))
-          )}
-        </div>
+
+              <h2 className="text-lg font-bold text-gray-800">{job.jobTitle}</h2>
+              <p className="text-gray-700 font-medium">{job.companyName}</p>
+              <p className="text-gray-500 text-sm mt-1">{job.location}</p>
+
+              <div className="flex items-center space-x-2 mt-3 text-sm">
+                <span className="bg-yellow-100 text-yellow-800 font-semibold px-2 py-1 rounded">
+                  ₹{job.salaryMin} - ₹{job.salaryMax} / month
+                </span>
+                <span className="bg-purple-100 text-purple-800 px-2 py-1 rounded">
+                  {job.employmentType || "Full-time"}
+                </span>
+              </div>
+
+              <p className="text-gray-600 text-sm mt-3">{job.jobDescription}</p>
+
+              <button className="mt-4 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg">
+                View in Detail
+              </button>
+            </div>
+          ))
+        )}
       </div>
     </div>
   );
