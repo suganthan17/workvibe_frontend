@@ -3,7 +3,11 @@ import SignupImg from "/src/assets/9.svg";
 import { Blend } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import toast, { Toaster } from "react-hot-toast";
-import { BASE_URL } from "../../config";
+
+const BASE_URL =
+  window.location.hostname === "localhost"
+    ? "http://localhost:5000"
+    : "https://workvibe-backend.onrender.com";
 
 function Signuppage() {
   const [signup, setSignup] = useState({
