@@ -4,11 +4,10 @@ import { Blend } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import toast, { Toaster } from "react-hot-toast";
 
-// Correct backend URL
-const BASE_URL =
+const BASE_URL = 
   window.location.hostname === "localhost"
     ? "http://localhost:5000"
-    : "https://your-render-backend.onrender.com";
+    : "https://workvibe-backend.onrender.com";
 
 function LoginPage() {
   const [login, setLogin] = useState({ email: "", password: "" });
@@ -19,7 +18,7 @@ function LoginPage() {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setLogin((prev) => ({ ...prev, [name]: value }));
+    setLogin(prev => ({ ...prev, [name]: value }));
   };
 
   const handleLogin = async (e) => {
@@ -28,7 +27,7 @@ function LoginPage() {
       const res = await fetch(`${BASE_URL}/api/auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        credentials: "include", // crucial for cookies
+        credentials: "include",
         body: JSON.stringify(login),
       });
 
@@ -37,8 +36,7 @@ function LoginPage() {
       if (res.ok) {
         localStorage.setItem("user", JSON.stringify(data.user));
         toast.success("Login successful 🎉");
-        if (data.user.role === "seeker") navigate("/seekerhome");
-        else navigate("/recruiterhome");
+        navigate(data.user.role === "seeker" ? "/seekerhome" : "/recruiterhome");
       } else {
         toast.error(data.message || "Login failed ❌");
       }
