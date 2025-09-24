@@ -3,14 +3,10 @@ import LoginImg from "/src/assets/13.svg";
 import { Blend } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import toast, { Toaster } from "react-hot-toast";
-
-const BASE_URL =
-  window.location.hostname === "localhost"
-    ? "http://localhost:5000"
-    : "https://workvibe-backend.onrender.com";
+import { BASE_URL } from "../../config";
 
 function LoginPage() {
-  const [login, setLogin] = useState({ Email: "", Password: "" });
+  const [login, setLogin] = useState({ email: "", password: "" });
   const navigate = useNavigate();
 
   const inputClass =
@@ -24,31 +20,32 @@ function LoginPage() {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      const res = await fetch(`${BASE_URL}/login`, {
+      const res = await fetch(`${BASE_URL}/api/auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
-        body: JSON.stringify({ Email: login.Email, Password: login.Password }),
+        body: JSON.stringify(login),
       });
 
       const data = await res.json();
 
       if (res.ok) {
         localStorage.setItem("user", JSON.stringify(data.user));
-        toast.success("LOGIN SUCCESSFUL");
-        if (data.user.Role === "seeker") navigate("/seekerhome");
+        toast.success("Login successful 🎉");
+        if (data.user.role === "seeker") navigate("/seekerhome");
         else navigate("/recruiterhome");
       } else {
-        alert(data.message);
+        toast.error(data.message || "Login failed ❌");
       }
     } catch (err) {
+      toast.error("Network error. Please try again later.");
       console.error(err);
     }
   };
 
   return (
     <div className="flex h-screen font-poppins bg-gray-900 text-gray-100">
-      {/* Left Form Panel */}
+      <Toaster />
       <div className="w-full md:w-1/2 flex flex-col justify-center px-16">
         <div className="flex items-center mb-6">
           <Blend size={35} className="text-indigo-500 mr-2" />
@@ -64,18 +61,18 @@ function LoginPage() {
           <form className="flex flex-col gap-4" onSubmit={handleLogin}>
             <input
               type="email"
-              name="Email"
+              name="email"
               placeholder="Email Address"
-              value={login.Email}
+              value={login.email}
               onChange={handleChange}
               className={inputClass}
               required
             />
             <input
               type="password"
-              name="Password"
+              name="password"
               placeholder="Password"
-              value={login.Password}
+              value={login.password}
               onChange={handleChange}
               className={inputClass}
               required
@@ -100,7 +97,6 @@ function LoginPage() {
         </div>
       </div>
 
-      {/* Right Image Panel */}
       <div className="hidden md:block w-1/2">
         <img
           src={LoginImg}

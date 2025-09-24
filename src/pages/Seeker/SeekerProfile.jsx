@@ -9,7 +9,7 @@ const BASE_URL =
     : "https://workvibe-backend.onrender.com";
 
 const SeekerProfile = () => {
-  const navigate=useNavigate();
+  const navigate = useNavigate();
   const [profilePic, setProfilePic] = useState(null);
   const [info, setInfo] = useState({
     name: "",
@@ -40,8 +40,10 @@ const SeekerProfile = () => {
     const fetchProfile = async () => {
       try {
         const res = await fetch(`${BASE_URL}/api/seeker/profile`, {
+          method: "GET",
           credentials: "include",
         });
+
         if (res.ok) {
           const data = await res.json();
           setInfo(

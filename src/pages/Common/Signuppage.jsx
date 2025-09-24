@@ -3,18 +3,14 @@ import SignupImg from "/src/assets/9.svg";
 import { Blend } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import toast, { Toaster } from "react-hot-toast";
-
-const BASE_URL =
-  window.location.hostname === "localhost"
-    ? "http://localhost:5000"
-    : "https://workvibe-backend.onrender.com";
+import { BASE_URL } from "../../config";
 
 function Signuppage() {
   const [signup, setSignup] = useState({
-    Username: "",
-    Email: "",
-    Password: "",
-    Role: "seeker",
+    name: "",
+    email: "",
+    password: "",
+    role: "seeker",
   });
 
   const navigate = useNavigate();
@@ -29,16 +25,17 @@ function Signuppage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await fetch(`${BASE_URL}/signup`, {
+      const res = await fetch(`${BASE_URL}/api/auth/signup`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        credentials: "include",
         body: JSON.stringify(signup),
       });
 
       const data = await res.json();
 
       if (res.ok) {
-        toast.success("SIGNUP SUCCESSFUL 🎉");
+        toast.success("Signup successful 🎉");
         setTimeout(() => navigate("/"), 1500);
       } else {
         toast.error(data.message || "Signup failed ❌");
@@ -51,7 +48,7 @@ function Signuppage() {
 
   return (
     <div className="flex h-screen font-poppins bg-gray-900 text-gray-100">
-      {/* Left Image Panel */}
+      <Toaster />
       <div className="hidden md:block w-1/2">
         <img
           src={SignupImg}
@@ -60,7 +57,6 @@ function Signuppage() {
         />
       </div>
 
-      {/* Right Form Panel */}
       <div className="w-full md:w-1/2 flex flex-col justify-center px-16">
         <div className="flex items-center mb-6">
           <Blend size={35} className="text-indigo-500 mr-2" />
@@ -78,18 +74,18 @@ function Signuppage() {
           <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
             <input
               type="text"
-              name="Username"
+              name="name"
               placeholder="Full Name"
-              value={signup.Username}
+              value={signup.name}
               onChange={handleChange}
               className={inputClass}
               required
             />
             <input
               type="email"
-              name="Email"
+              name="email"
               placeholder="Email Address"
-              value={signup.Email}
+              value={signup.email}
               onChange={handleChange}
               className={inputClass}
               required
@@ -97,16 +93,16 @@ function Signuppage() {
             <div className="flex gap-4">
               <input
                 type="password"
-                name="Password"
+                name="password"
                 placeholder="Password"
-                value={signup.Password}
+                value={signup.password}
                 onChange={handleChange}
                 className={`${inputClass} flex-1`}
                 required
               />
               <select
-                name="Role"
-                value={signup.Role}
+                name="role"
+                value={signup.role}
                 onChange={handleChange}
                 className={`${inputClass} flex-1`}
               >
