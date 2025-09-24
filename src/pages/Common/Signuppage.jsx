@@ -11,7 +11,7 @@ const BASE_URL =
 
 function Signuppage() {
   const [signup, setSignup] = useState({
-    username: "", // changed from 'name' to 'username'
+    username: "",
     email: "",
     password: "",
     role: "seeker",
