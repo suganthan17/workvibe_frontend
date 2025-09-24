@@ -12,7 +12,7 @@ const SeekerProfile = () => {
   const navigate = useNavigate();
   const [profilePic, setProfilePic] = useState(null);
   const [info, setInfo] = useState({
-    name: "",
+    username: "",
     email: "",
     phone: "",
     location: "",
@@ -43,11 +43,10 @@ const SeekerProfile = () => {
           method: "GET",
           credentials: "include",
         });
-
         if (res.ok) {
           const data = await res.json();
           setInfo(
-            data.info || { name: "", email: "", phone: "", location: "" }
+            data.info || { username: "", email: "", phone: "", location: "" }
           );
           setEducation(
             data.education || { degree: "", institution: "", cgpa: "" }
@@ -122,7 +121,7 @@ const SeekerProfile = () => {
                     experience,
                     projects,
                     achievements,
-                    summary: "", // optional
+                    summary: "",
                   },
                 },
               })
@@ -161,6 +160,7 @@ const SeekerProfile = () => {
                 />
               </label>
             </div>
+
             <div className="bg-white border border-gray-200 shadow-md rounded-xl p-6">
               <div className="flex justify-between items-center mb-3">
                 <h2 className="text-lg font-bold text-gray-800">
@@ -183,9 +183,11 @@ const SeekerProfile = () => {
               {editInfo ? (
                 <div className="space-y-2">
                   <input
-                    placeholder="Name"
-                    value={info.name}
-                    onChange={(e) => setInfo({ ...info, name: e.target.value })}
+                    placeholder="Username"
+                    value={info.username}
+                    onChange={(e) =>
+                      setInfo({ ...info, username: e.target.value })
+                    }
                     className={inputClass}
                   />
                   <input
@@ -216,7 +218,8 @@ const SeekerProfile = () => {
               ) : (
                 <ul className="space-y-2 text-sm text-gray-700">
                   <li>
-                    <span className="font-semibold">Name:</span> {info.name}
+                    <span className="font-semibold">Username:</span>{" "}
+                    {info.username}
                   </li>
                   <li>
                     <span className="font-semibold">Email:</span> {info.email}
@@ -232,6 +235,7 @@ const SeekerProfile = () => {
               )}
             </div>
           </div>
+
           <div className="col-span-2 space-y-6">
             {[
               {

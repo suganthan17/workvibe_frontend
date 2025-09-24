@@ -9,15 +9,10 @@ const BASE_URL =
     ? "http://localhost:5000"
     : "https://workvibe-backend.onrender.com";
 
-function Signuppage() {
-  const [signup, setSignup] = useState({
-    username: "",
-    email: "",
-    password: "",
-    role: "seeker",
-  });
-
+function SignUpPage() {
+  const [signup, setSignup] = useState({ name: "", email: "", password: "", role: "seeker" });
   const navigate = useNavigate();
+
   const inputClass =
     "p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-gray-800 text-gray-100 border border-gray-700 placeholder-gray-400";
 
@@ -66,9 +61,9 @@ function Signuppage() {
           <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
             <input
               type="text"
-              name="username"
-              placeholder="Username"
-              value={signup.username}
+              name="name"
+              placeholder="Full Name"
+              value={signup.name}
               onChange={handleChange}
               className={inputClass}
               required
@@ -121,4 +116,4 @@ function Signuppage() {
   );
 }
 
-export default Signuppage;
+export default SignUpPage;
