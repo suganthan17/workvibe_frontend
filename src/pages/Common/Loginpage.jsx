@@ -34,7 +34,7 @@ function LoginPage() {
       if (res.ok) {
         localStorage.setItem("user", JSON.stringify(data.user));
         toast.success("Login successful 🎉");
-        navigate(data.user.role === "seeker" ? "/seekerhome" : "/recruiterhome");
+        navigate(data.user.Role === "seeker" ? "/seekerhome" : "/recruiterhome");
       } else {
         toast.error(data.message || "Login failed ❌");
       }
