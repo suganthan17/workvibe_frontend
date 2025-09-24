@@ -11,7 +11,7 @@ const BASE_URL =
 
 function Signuppage() {
   const [signup, setSignup] = useState({
-    name: "",
+    username: "", // changed from 'name' to 'username'
     email: "",
     password: "",
     role: "seeker",
@@ -78,9 +78,9 @@ function Signuppage() {
           <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
             <input
               type="text"
-              name="name"
+              name="username"
               placeholder="Full Name"
-              value={signup.name}
+              value={signup.username}
               onChange={handleChange}
               className={inputClass}
               required

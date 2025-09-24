@@ -4,7 +4,7 @@ import { Blend } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import toast, { Toaster } from "react-hot-toast";
 
-const BASE_URL = 
+const BASE_URL =
   window.location.hostname === "localhost"
     ? "http://localhost:5000"
     : "https://workvibe-backend.onrender.com";
@@ -18,7 +18,7 @@ function LoginPage() {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setLogin(prev => ({ ...prev, [name]: value }));
+    setLogin((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleLogin = async (e) => {
