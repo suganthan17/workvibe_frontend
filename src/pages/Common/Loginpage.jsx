@@ -1,19 +1,20 @@
 import React, { useState } from "react";
-import LoginImg from "/src/assets/7.svg";
+import LoginImg from "/src/assets/13.svg";
 import { Blend } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
+import toast, { Toaster } from "react-hot-toast";
 
 const BASE_URL =
   window.location.hostname === "localhost"
     ? "http://localhost:5000"
-    : "https://workvibe-backend.onrender.com"; 
+    : "https://workvibe-backend.onrender.com";
 
 function LoginPage() {
   const [login, setLogin] = useState({ Email: "", Password: "" });
   const navigate = useNavigate();
 
   const inputClass =
-    "p-3 border font-semibold rounded-md focus:outline-none focus:ring-2 focus:ring-gray-500";
+    "p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-gray-800 text-gray-100 border border-gray-700 placeholder-gray-400";
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -33,12 +34,8 @@ function LoginPage() {
       const data = await res.json();
 
       if (res.ok) {
-        // Save user info to localStorage
         localStorage.setItem("user", JSON.stringify(data.user));
-
-        alert("Login successful");
-
-        // Navigate based on role
+        toast.success("LOGIN SUCCESSFUL");
         if (data.user.Role === "seeker") navigate("/seekerhome");
         else navigate("/recruiterhome");
       } else {
@@ -50,54 +47,66 @@ function LoginPage() {
   };
 
   return (
-    <div className="flex h-screen font-poppins">
-      <div className="w-1/2 flex flex-col justify-center px-16">
-        <div className="flex items-center mb-4">
-          <Blend size={35} className="text-gray-700 mr-2" />
-          <span className="text-4xl font-extrabold text-gray-700">ᗯOᖇKᐯIᗷE</span>
+    <div className="flex h-screen font-poppins bg-gray-900 text-gray-100">
+      {/* Left Form Panel */}
+      <div className="w-full md:w-1/2 flex flex-col justify-center px-16">
+        <div className="flex items-center mb-6">
+          <Blend size={35} className="text-indigo-500 mr-2" />
+          <span className="text-4xl font-extrabold text-white">
+            ᗯOᖇK<span className="text-indigo-500">ᐯIᗷE</span>
+          </span>
         </div>
 
-        <h2 className="text-xl font-semibold mb-2">Welcome Back</h2>
-        <p className="text-gray-600 mb-6">Login to your account</p>
+        <div className="bg-gray-800 shadow-lg rounded-2xl p-10">
+          <h2 className="text-2xl font-bold mb-2 text-white">Welcome Back</h2>
+          <p className="text-gray-400 mb-6">Login to your account</p>
 
-        <form className="flex flex-col gap-4" onSubmit={handleLogin}>
-          <input
-            type="email"
-            name="Email"
-            placeholder="Email Address"
-            value={login.Email}
-            onChange={handleChange}
-            className={inputClass}
-            required
-          />
-          <input
-            type="password"
-            name="Password"
-            placeholder="Password"
-            value={login.Password}
-            onChange={handleChange}
-            className={inputClass}
-            required
-          />
+          <form className="flex flex-col gap-4" onSubmit={handleLogin}>
+            <input
+              type="email"
+              name="Email"
+              placeholder="Email Address"
+              value={login.Email}
+              onChange={handleChange}
+              className={inputClass}
+              required
+            />
+            <input
+              type="password"
+              name="Password"
+              placeholder="Password"
+              value={login.Password}
+              onChange={handleChange}
+              className={inputClass}
+              required
+            />
+            <button
+              type="submit"
+              className="bg-indigo-600 text-white p-3 font-semibold rounded-lg hover:bg-indigo-700 transition"
+            >
+              Login
+            </button>
+          </form>
 
-          <button
-            type="submit"
-            className="bg-gray-700 text-white p-3 font-semibold rounded-md hover:bg-gray-900 transition"
-          >
-            Login
-          </button>
-        </form>
-
-        <p className="mt-4 text-gray-600">
-          Don't have an account?{" "}
-          <Link to="/signup" className="text-gray-600 font-semibold hover:underline">
-            Sign Up
-          </Link>
-        </p>
+          <p className="mt-4 text-gray-400 text-sm text-center">
+            Don't have an account?{" "}
+            <Link
+              to="/signup"
+              className="text-indigo-400 font-semibold hover:underline"
+            >
+              Sign Up
+            </Link>
+          </p>
+        </div>
       </div>
 
-      <div className="w-1/2">
-        <img src={LoginImg} alt="Branding" className="w-full h-full object-cover" />
+      {/* Right Image Panel */}
+      <div className="hidden md:block w-1/2">
+        <img
+          src={LoginImg}
+          alt="Branding"
+          className="w-full h-full object-cover rounded-l-2xl"
+        />
       </div>
     </div>
   );

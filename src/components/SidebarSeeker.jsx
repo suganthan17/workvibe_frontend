@@ -3,6 +3,7 @@ import { SeekerSidebar } from "../data/data";
 import { Blend, LogOut } from "lucide-react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import toast, { Toaster } from "react-hot-toast";
 
 const BASE_URL =
   window.location.hostname === "localhost"
@@ -30,40 +31,41 @@ function SidebarSeeker() {
   const handleLogout = async () => {
     try {
       await axios.post(`${BASE_URL}/logout`, {}, { withCredentials: true });
-      navigate("/");
-      window.alert("Logout successful");
+      toast.success("Logged out successfully!");
+      setTimeout(() => navigate("/"), 1500); // wait for animation then go
     } catch (error) {
-      window.alert("Logout failed");
+      toast.error("Logout failed");
       console.error("Logout failed", error);
     }
   };
 
   return (
-    <div className="bg-gray-50 flex flex-col w-64 min-h-screen border-r border-gray-200 shadow-lg p-4 font-poppins">
+    <div className="bg-slate-900 flex flex-col w-64 min-h-screen border-r border-slate-800 shadow-lg p-4 font-poppins">
+      <Toaster position="top-center" /> {/* ✅ added toaster */}
       {/* Logo */}
       <div className="flex items-center gap-2 mb-6 px-2">
-        <Blend size={28} className="text-indigo-600" />
-        <span className="text-2xl font-extrabold text-indigo-700">
+        <Blend size={28} className="text-indigo-400" />
+        <span className="text-2xl font-extrabold text-white">
           ᗯOᖇK<span className="text-indigo-500">ᐯIᗷE</span>
         </span>
       </div>
-
       {/* User Info */}
-      <div className="flex flex-col bg-white rounded-xl p-4 mb-6 shadow-md text-center">
-        <div className="w-20 h-20 rounded-full bg-gray-200 mx-auto mb-3 flex items-center justify-center text-xl font-bold text-gray-700">
+      <div className="flex flex-col bg-slate-800 rounded-xl p-4 mb-6 shadow-md text-center">
+        <div className="w-20 h-20 rounded-full bg-slate-700 mx-auto mb-3 flex items-center justify-center text-xl font-bold text-gray-200">
           {user.name ? user.name.charAt(0).toUpperCase() : "S"}
         </div>
-        <p className="text-md font-semibold text-gray-900">{user.name || "Job Seeker"}</p>
-        <p className="text-xs text-gray-500 truncate">{user.Email}</p>
+        <p className="text-md font-semibold text-white">
+          {user.name || "Job Seeker"}
+        </p>
+        <p className="text-xs text-gray-400 truncate">{user.Email}</p>
       </div>
-
       {/* Sidebar Items */}
-      <div className="flex flex-col border-t border-b py-4 gap-2 flex-grow">
+      <div className="flex flex-col border-t border-b border-slate-800 py-4 gap-2 flex-grow">
         {SeekerSidebar.map((item) => (
           <button
             key={item.name}
             onClick={() => navigate(item.path)}
-            className="flex items-center gap-3 text-gray-700 text-md cursor-pointer font-semibold hover:bg-indigo-600 hover:text-white px-3 py-2 rounded-lg transition-colors duration-200"
+            className="flex items-center gap-3 text-gray-300 text-md cursor-pointer font-medium hover:bg-indigo-600 hover:text-white px-3 py-2 rounded-lg transition-all duration-200"
           >
             {item.icon && <item.icon size={20} />}
             {item.name}
@@ -73,7 +75,7 @@ function SidebarSeeker() {
         {/* Logout */}
         <button
           onClick={handleLogout}
-          className="flex items-center gap-3 text-red-600 text-md cursor-pointer font-semibold hover:bg-red-600 hover:text-white px-3 py-2 rounded-lg transition-colors duration-200 mt-2"
+          className="flex items-center gap-3 text-red-400 text-md cursor-pointer font-semibold hover:bg-red-600 hover:text-white px-3 py-2 rounded-lg transition-all duration-200 mt-2"
         >
           <LogOut size={20} />
           Logout

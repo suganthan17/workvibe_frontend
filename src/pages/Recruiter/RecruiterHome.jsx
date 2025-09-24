@@ -34,7 +34,7 @@ function RecruiterHome() {
       <div className="flex">
         <SidebarRecruiter />
 
-        <div className="flex-1 p-5 bg-gray-50 min-h-screen">
+        <div className="flex-1 p-5 bg-gray-100 min-h-screen">
           <div className="flex items-center justify-between border-b border-gray-300 px-8 py-3 shadow-sm bg-gray-50 mb-5 rounded-md">
             <div>
               <h1 className="text-2xl font-bold text-black">My Profile</h1>

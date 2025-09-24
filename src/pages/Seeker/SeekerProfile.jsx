@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import SidebarSeeker from "../../components/SidebarSeeker";
 import { SquarePenIcon, CheckCheck, User } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const BASE_URL =
   window.location.hostname === "localhost"
@@ -8,6 +9,7 @@ const BASE_URL =
     : "https://workvibe-backend.onrender.com";
 
 const SeekerProfile = () => {
+  const navigate=useNavigate();
   const [profilePic, setProfilePic] = useState(null);
   const [info, setInfo] = useState({
     name: "",
@@ -106,6 +108,26 @@ const SeekerProfile = () => {
               Manage and update your personal details.
             </p>
           </div>
+          <button
+            className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
+            onClick={() =>
+              navigate("/createresume", {
+                state: {
+                  profile: {
+                    info,
+                    education,
+                    skills,
+                    experience,
+                    projects,
+                    achievements,
+                    summary: "", // optional
+                  },
+                },
+              })
+            }
+          >
+            View Resume
+          </button>
         </div>
 
         <div className="p-6 grid grid-cols-3 gap-6">

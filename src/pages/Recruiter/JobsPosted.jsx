@@ -5,7 +5,7 @@ import { Trash2 } from "lucide-react";
 const BASE_URL =
   window.location.hostname === "localhost"
     ? "http://localhost:5000"
-    : "https://workvibe-backend.onrender.com"; 
+    : "https://workvibe-backend.onrender.com";
 
 function JobsPosted() {
   const [jobcard, setJobcard] = useState([]);
@@ -34,7 +34,7 @@ function JobsPosted() {
     try {
       const res = await fetch(`${BASE_URL}/deletejobs/${id}`, {
         method: "DELETE",
-        credentials: "include", 
+        credentials: "include",
       });
 
       const data = await res.json();
@@ -46,56 +46,58 @@ function JobsPosted() {
   };
 
   return (
-    <div className="flex bg-gray-100 min-h-screen">
+    <div className="flex bg-gray-50 min-h-screen">
       <SidebarRecruiter />
-      <div className="flex-1 bg-gray-100 min-h-screen">
-        <div className="flex items-center justify-between border-b border-gray-300 px-8 py-4 shadow-sm bg-gray-50">
+      <div className="flex-1 bg-gray-100 p-5">
+        {/* Header similar to seeker */}
+        <div className="flex items-center justify-between border-b border-gray-300 px-8 py-3 shadow-sm bg-gray-50 mb-5 rounded-lg">
           <div>
-            <h1 className="text-2xl font-bold text-black">Jobs Posted</h1>
-            <p className="text-black text-sm">
-              View all the jobs you have published.
-            </p>
+            <h1 className="text-2xl font-bold text-gray-800">Jobs Posted</h1>
+            <p className="text-gray-600 text-sm">View all the jobs you have published.</p>
           </div>
         </div>
 
-        <div className="max-w-5xl ml-4 p-5 space-y-6">
+        <div className="max-w-5xl ml-4 space-y-6">
           {jobcard.length === 0 ? (
             <p className="text-gray-500">No jobs posted yet.</p>
           ) : (
             jobcard.map((job) => (
               <div
                 key={job._id}
-                className="border border-gray-300 rounded-xl p-6 bg-gray-200 shadow-sm"
+                className="border border-gray-200 rounded-xl p-6 bg-white shadow hover:shadow-md transition-shadow"
               >
-                <div className="flex space-x-2 mb-3">
+                <div className="flex items-center mb-3">
                   {job.experienceLevel && (
-                    <span className="bg-gray-800 text-white text-xs px-2 py-1 rounded-full">
+                    <span className="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full mr-2">
                       {job.experienceLevel}
                     </span>
                   )}
-                  <span className="bg-gray-300 text-black text-xs px-2 py-1 rounded-full">
+                  <span className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full">
                     Hiring multiple candidates
+                  </span>
+
+                  <span
+                    onClick={() => handleDelete(job._id)}
+                    className="ml-auto cursor-pointer text-red-500 hover:text-red-600"
+                  >
+                    <Trash2 size={22} />
                   </span>
                 </div>
 
-                <h2 className="text-lg font-bold text-black">{job.jobTitle}</h2>
-                <p className="text-black font-medium">{job.companyName}</p>
-                <p className="text-black text-sm mt-1">{job.location}</p>
+                <h2 className="text-lg font-bold text-gray-800">{job.jobTitle}</h2>
+                <p className="text-gray-700 font-medium">{job.companyName}</p>
+                <p className="text-gray-500 text-sm mt-1">{job.location}</p>
 
-                <div className="flex items-center space-x-2 mt-3 text-sm text-gray-700">
-                  <span className="bg-gray-400 text-black font-semibold px-2 py-1 rounded">
+                <div className="flex items-center space-x-2 mt-3 text-sm">
+                  <span className="bg-yellow-100 text-yellow-800 font-semibold px-2 py-1 rounded">
                     ₹{job.salaryMin} - ₹{job.salaryMax} / month
                   </span>
-                  <span className="bg-gray-800 text-white px-2 py-1 rounded">
+                  <span className="bg-purple-100 text-purple-800 px-2 py-1 rounded">
                     {job.employmentType || "Full-time"}
                   </span>
                 </div>
 
-                <p className="text-black text-sm mt-3">{job.jobDescription}</p>
-
-                <p className="mt-5 cursor-pointer">
-                  <Trash2 onClick={() => handleDelete(job._id)} size={23} />
-                </p>
+                <p className="text-gray-600 text-sm mt-3">{job.jobDescription}</p>
               </div>
             ))
           )}

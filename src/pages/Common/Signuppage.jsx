@@ -2,11 +2,12 @@ import React, { useState } from "react";
 import SignupImg from "/src/assets/9.svg";
 import { Blend } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
+import toast, { Toaster } from "react-hot-toast";
 
 const BASE_URL =
   window.location.hostname === "localhost"
     ? "http://localhost:5000"
-    : "https://workvibe-backend.onrender.com"; 
+    : "https://workvibe-backend.onrender.com";
 
 function Signuppage() {
   const [signup, setSignup] = useState({
@@ -18,7 +19,7 @@ function Signuppage() {
 
   const navigate = useNavigate();
   const inputClass =
-    "p-3 border font-semibold rounded-md focus:outline-none focus:ring-2 focus:ring-gray-500";
+    "p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-gray-800 text-gray-100 border border-gray-700 placeholder-gray-400";
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -35,90 +36,103 @@ function Signuppage() {
       });
 
       const data = await res.json();
-      alert(data.message); 
 
-      if (res.ok) navigate("/");
+      if (res.ok) {
+        toast.success("SIGNUP SUCCESSFUL 🎉");
+        setTimeout(() => navigate("/"), 1500);
+      } else {
+        toast.error(data.message || "Signup failed ❌");
+      }
     } catch (err) {
+      toast.error("Network error. Please try again later.");
       console.error(err);
     }
   };
 
   return (
-    <div className="flex h-screen font-poppins">
-      <div className="w-1/2">
+    <div className="flex h-screen font-poppins bg-gray-900 text-gray-100">
+      {/* Left Image Panel */}
+      <div className="hidden md:block w-1/2">
         <img
           src={SignupImg}
           alt="Branding"
-          className="w-full h-full object-cover"
+          className="w-full h-full object-cover rounded-l-2xl"
         />
       </div>
 
-      <div className="w-1/2 flex flex-col justify-center px-16">
-        <div className="flex items-center mb-4">
-          <Blend size={35} className="text-gray-700 mr-2" />
-          <span className="text-4xl font-extrabold text-gray-700">ᗯOᖇKᐯIᗷE</span>
+      {/* Right Form Panel */}
+      <div className="w-full md:w-1/2 flex flex-col justify-center px-16">
+        <div className="flex items-center mb-6">
+          <Blend size={35} className="text-indigo-500 mr-2" />
+          <span className="text-4xl font-extrabold text-white">
+            ᗯOᖇK<span className="text-indigo-500">ᐯIᗷE</span>
+          </span>
         </div>
 
-        <h2 className="text-xl font-semibold mb-2">Welcome To WorkVibe</h2>
-        <p className="text-gray-600 mb-6">Create your account</p>
+        <div className="bg-gray-800 shadow-lg rounded-2xl p-10">
+          <h2 className="text-2xl font-bold mb-2 text-white">
+            Create Your Account
+          </h2>
+          <p className="text-gray-400 mb-6">Join WorkVibe today</p>
 
-        <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
-          <input
-            type="text"
-            name="Username"
-            placeholder="Full Name"
-            value={signup.Username}
-            onChange={handleChange}
-            className={inputClass}
-            required
-          />
-          <input
-            type="email"
-            name="Email"
-            placeholder="Email Address"
-            value={signup.Email}
-            onChange={handleChange}
-            className={inputClass}
-            required
-          />
-          <div className="flex gap-4">
+          <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
             <input
-              type="password"
-              name="Password"
-              placeholder="Password"
-              value={signup.Password}
+              type="text"
+              name="Username"
+              placeholder="Full Name"
+              value={signup.Username}
               onChange={handleChange}
-              className={`${inputClass} flex-1`}
+              className={inputClass}
               required
             />
-            <select
-              name="Role"
-              value={signup.Role}
+            <input
+              type="email"
+              name="Email"
+              placeholder="Email Address"
+              value={signup.Email}
               onChange={handleChange}
-              className={`${inputClass} flex-1`}
+              className={inputClass}
+              required
+            />
+            <div className="flex gap-4">
+              <input
+                type="password"
+                name="Password"
+                placeholder="Password"
+                value={signup.Password}
+                onChange={handleChange}
+                className={`${inputClass} flex-1`}
+                required
+              />
+              <select
+                name="Role"
+                value={signup.Role}
+                onChange={handleChange}
+                className={`${inputClass} flex-1`}
+              >
+                <option value="seeker">Job Seeker</option>
+                <option value="recruiter">Recruiter</option>
+              </select>
+            </div>
+
+            <button
+              type="submit"
+              className="bg-indigo-600 text-white p-3 font-semibold rounded-lg hover:bg-indigo-700 cursor-pointer transition"
             >
-              <option value="seeker">Job Seeker</option>
-              <option value="recruiter">Recruiter</option>
-            </select>
-          </div>
+              Create Account
+            </button>
+          </form>
 
-          <button
-            type="submit"
-            className="bg-gray-700 text-white p-3 font-semibold rounded-md hover:bg-gray-900 cursor-pointer transition"
-          >
-            Create
-          </button>
-        </form>
-
-        <p className="mt-4 text-gray-600">
-          Already have an account?{" "}
-          <Link
-            to="/"
-            className="text-gray-700 cursor-pointer font-semibold hover:underline"
-          >
-            Login
-          </Link>
-        </p>
+          <p className="mt-4 text-gray-400 text-sm text-center">
+            Already have an account?{" "}
+            <Link
+              to="/"
+              className="text-indigo-400 font-semibold hover:underline"
+            >
+              Login
+            </Link>
+          </p>
+        </div>
       </div>
     </div>
   );
