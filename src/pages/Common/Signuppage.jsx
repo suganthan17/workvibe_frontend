@@ -35,9 +35,7 @@ function Signuppage() {
         credentials: "include",
         body: JSON.stringify(signup),
       });
-
       const data = await res.json();
-
       if (res.ok) {
         toast.success("Signup successful 🎉");
         setTimeout(() => navigate("/"), 1500);
@@ -45,8 +43,7 @@ function Signuppage() {
         toast.error(data.message || "Signup failed ❌");
       }
     } catch (err) {
-      toast.error("Network error. Please try again later.");
-      console.error(err);
+      toast.error("Network error. Please try again later.",err);
     }
   };
 
@@ -54,13 +51,8 @@ function Signuppage() {
     <div className="flex h-screen font-poppins bg-gray-900 text-gray-100">
       <Toaster />
       <div className="hidden md:block w-1/2">
-        <img
-          src={SignupImg}
-          alt="Branding"
-          className="w-full h-full object-cover rounded-l-2xl"
-        />
+        <img src={SignupImg} alt="Branding" className="w-full h-full object-cover rounded-l-2xl" />
       </div>
-
       <div className="w-full md:w-1/2 flex flex-col justify-center px-16">
         <div className="flex items-center mb-6">
           <Blend size={35} className="text-indigo-500 mr-2" />
@@ -68,18 +60,14 @@ function Signuppage() {
             ᗯOᖇK<span className="text-indigo-500">ᐯIᗷE</span>
           </span>
         </div>
-
         <div className="bg-gray-800 shadow-lg rounded-2xl p-10">
-          <h2 className="text-2xl font-bold mb-2 text-white">
-            Create Your Account
-          </h2>
+          <h2 className="text-2xl font-bold mb-2 text-white">Create Your Account</h2>
           <p className="text-gray-400 mb-6">Join WorkVibe today</p>
-
           <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
             <input
               type="text"
               name="username"
-              placeholder="Full Name"
+              placeholder="Username"
               value={signup.username}
               onChange={handleChange}
               className={inputClass}
@@ -114,7 +102,6 @@ function Signuppage() {
                 <option value="recruiter">Recruiter</option>
               </select>
             </div>
-
             <button
               type="submit"
               className="bg-indigo-600 text-white p-3 font-semibold rounded-lg hover:bg-indigo-700 cursor-pointer transition"
@@ -122,13 +109,9 @@ function Signuppage() {
               Create Account
             </button>
           </form>
-
           <p className="mt-4 text-gray-400 text-sm text-center">
             Already have an account?{" "}
-            <Link
-              to="/"
-              className="text-indigo-400 font-semibold hover:underline"
-            >
+            <Link to="/" className="text-indigo-400 font-semibold hover:underline">
               Login
             </Link>
           </p>

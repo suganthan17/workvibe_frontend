@@ -30,19 +30,16 @@ function LoginPage() {
         credentials: "include",
         body: JSON.stringify(login),
       });
-
       const data = await res.json();
-
       if (res.ok) {
         localStorage.setItem("user", JSON.stringify(data.user));
         toast.success("Login successful 🎉");
-        navigate(data.user.role === "seeker" ? "/seekerhome" : "/recruiterhome");
+        navigate(data.user.Role === "seeker" ? "/seekerhome" : "/recruiterhome");
       } else {
         toast.error(data.message || "Login failed ❌");
       }
     } catch (err) {
-      toast.error("Network error. Please try again later.");
-      console.error(err);
+      toast.error("Network error. Please try again later.",err);
     }
   };
 
@@ -56,11 +53,9 @@ function LoginPage() {
             ᗯOᖇK<span className="text-indigo-500">ᐯIᗷE</span>
           </span>
         </div>
-
         <div className="bg-gray-800 shadow-lg rounded-2xl p-10">
           <h2 className="text-2xl font-bold mb-2 text-white">Welcome Back</h2>
           <p className="text-gray-400 mb-6">Login to your account</p>
-
           <form className="flex flex-col gap-4" onSubmit={handleLogin}>
             <input
               type="email"
@@ -87,25 +82,16 @@ function LoginPage() {
               Login
             </button>
           </form>
-
           <p className="mt-4 text-gray-400 text-sm text-center">
             Don't have an account?{" "}
-            <Link
-              to="/signup"
-              className="text-indigo-400 font-semibold hover:underline"
-            >
+            <Link to="/signup" className="text-indigo-400 font-semibold hover:underline">
               Sign Up
             </Link>
           </p>
         </div>
       </div>
-
       <div className="hidden md:block w-1/2">
-        <img
-          src={LoginImg}
-          alt="Branding"
-          className="w-full h-full object-cover rounded-l-2xl"
-        />
+        <img src={LoginImg} alt="Branding" className="w-full h-full object-cover rounded-l-2xl" />
       </div>
     </div>
   );
