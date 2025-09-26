@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import SidebarSeeker from "../../components/SidebarSeeker";
 import { Bookmark } from "lucide-react";
+import toast, { Toaster } from "react-hot-toast";
 
 const BASE_URL =
   window.location.hostname === "localhost"
@@ -10,11 +12,12 @@ const BASE_URL =
 function BrowseJobs() {
   const [jobs, setJobs] = useState([]);
   const [currentUserId, setCurrentUserId] = useState("");
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchJobs = async () => {
       try {
-        const res = await fetch(`${BASE_URL}/getalljobs`, {
+        const res = await fetch(`${BASE_URL}/api/jobs/getalljobs`, {
           method: "GET",
           credentials: "include",
         });
@@ -30,27 +33,46 @@ function BrowseJobs() {
 
   const handleSaveJob = async (jobId) => {
     try {
-      const res = await fetch(`${BASE_URL}/savejobs/${jobId}`, {
+      const res = await fetch(`${BASE_URL}/api/jobs/savejobs/${jobId}`, {
         method: "POST",
         credentials: "include",
       });
       const data = await res.json();
+
       if (data.success) {
+        const updatedSavedBy = data.savedBy;
+
         setJobs((prevJobs) =>
           prevJobs.map((job) =>
-            job._id === jobId ? { ...job, savedBy: data.savedBy } : job
+            job._id === jobId ? { ...job, savedBy: updatedSavedBy } : job
           )
         );
+
+        if (updatedSavedBy.includes(currentUserId)) {
+          toast.success("Saved!", { duration: 2000 });
+        } else {
+          toast("Removed from saved!", { icon: "ℹ️", duration: 2000 });
+        }
+      } else {
+        toast.error(data.message || "Could not update saved jobs", {
+          duration: 2000,
+        });
       }
     } catch (err) {
       console.error(err);
+      toast.error("Something went wrong", { duration: 2000 });
     }
+  };
+
+  const handleViewDetails = (jobId) => {
+    navigate(`/jobdetails/${jobId}`);
   };
 
   return (
     <div className="flex bg-gray-50 min-h-screen">
       <SidebarSeeker />
       <div className="flex-1 p-5">
+        <Toaster position="top-right" />
         <div className="flex items-center justify-between border-b border-gray-300 px-8 py-3 shadow-sm bg-white mb-5 rounded-lg">
           <div>
             <h1 className="text-2xl font-bold text-gray-800">Find The Job</h1>
@@ -84,14 +106,16 @@ function BrowseJobs() {
                     size={24}
                     className={`${
                       job.savedBy?.includes(currentUserId)
-                        ? "fill-indigo-600"
+                        ? "fill-indigo-600 stroke-indigo-600"
                         : "fill-white stroke-indigo-600"
                     }`}
                   />
                 </span>
               </div>
 
-              <h2 className="text-lg font-bold text-gray-800">{job.jobTitle}</h2>
+              <h2 className="text-lg font-bold text-gray-800">
+                {job.jobTitle}
+              </h2>
               <p className="text-gray-700 font-medium">{job.companyName}</p>
               <p className="text-gray-500 text-sm mt-1">{job.location}</p>
 
@@ -104,9 +128,10 @@ function BrowseJobs() {
                 </span>
               </div>
 
-              <p className="text-gray-600 text-sm mt-3">{job.jobDescription}</p>
-
-              <button className="mt-4 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg">
+              <button
+                onClick={() => handleViewDetails(job._id)}
+                className="mt-4 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg"
+              >
                 View in Detail
               </button>
             </div>

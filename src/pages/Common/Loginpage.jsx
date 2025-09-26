@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import LoginImg from "/src/assets/13.svg";
 import { Blend } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
-import toast, { Toaster } from "react-hot-toast";
+import toast from "react-hot-toast";
 
 const BASE_URL =
   window.location.hostname === "localhost"
@@ -10,7 +10,7 @@ const BASE_URL =
     : "https://workvibe-backend.onrender.com";
 
 function LoginPage() {
-  const [login, setLogin] = useState({ email: "", password: "" });
+  const [login, setLogin] = useState({ Email: "", Password: "" });
   const navigate = useNavigate();
 
   const inputClass =
@@ -23,29 +23,45 @@ function LoginPage() {
 
   const handleLogin = async (e) => {
     e.preventDefault();
+
+    // Dismiss all previous toasts
+    toast.dismiss();
+
     try {
-      const res = await fetch(`${BASE_URL}/api/auth/login`, {
+      const res = await fetch(`${BASE_URL}/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
-        body: JSON.stringify(login),
+        body: JSON.stringify({
+          Email: login.Email,
+          Password: login.Password,
+        }),
       });
+
       const data = await res.json();
-      if (res.ok) {
+
+      if (res.ok && data.user) {
         localStorage.setItem("user", JSON.stringify(data.user));
-        toast.success("Login successful 🎉");
-        navigate(data.user.Role === "seeker" ? "/seekerhome" : "/recruiterhome");
+        const role = data.user.Role?.toLowerCase();
+
+        // Show toast
+        toast.success("Login successful");
+
+        // Delay navigation slightly so toast is visible
+        setTimeout(() => {
+          navigate(role === "seeker" ? "/seekerhome" : "/recruiterhome");
+        }, 1200);
       } else {
-        toast.error(data.message || "Login failed ❌");
+        toast.error(data.message || "Invalid credentials");
       }
     } catch (err) {
-      toast.error("Network error. Please try again later.",err);
+      console.error(err);
+      toast.error("Something went wrong. Please try again.");
     }
   };
 
   return (
     <div className="flex h-screen font-poppins bg-gray-900 text-gray-100">
-      <Toaster />
       <div className="w-full md:w-1/2 flex flex-col justify-center px-16">
         <div className="flex items-center mb-6">
           <Blend size={35} className="text-indigo-500 mr-2" />
@@ -53,24 +69,26 @@ function LoginPage() {
             ᗯOᖇK<span className="text-indigo-500">ᐯIᗷE</span>
           </span>
         </div>
+
         <div className="bg-gray-800 shadow-lg rounded-2xl p-10">
           <h2 className="text-2xl font-bold mb-2 text-white">Welcome Back</h2>
           <p className="text-gray-400 mb-6">Login to your account</p>
+
           <form className="flex flex-col gap-4" onSubmit={handleLogin}>
             <input
               type="email"
-              name="email"
+              name="Email"
               placeholder="Email Address"
-              value={login.email}
+              value={login.Email}
               onChange={handleChange}
               className={inputClass}
               required
             />
             <input
               type="password"
-              name="password"
+              name="Password"
               placeholder="Password"
-              value={login.password}
+              value={login.Password}
               onChange={handleChange}
               className={inputClass}
               required
@@ -82,16 +100,25 @@ function LoginPage() {
               Login
             </button>
           </form>
+
           <p className="mt-4 text-gray-400 text-sm text-center">
             Don't have an account?{" "}
-            <Link to="/signup" className="text-indigo-400 font-semibold hover:underline">
+            <Link
+              to="/signup"
+              className="text-indigo-400 font-semibold hover:underline"
+            >
               Sign Up
             </Link>
           </p>
         </div>
       </div>
+
       <div className="hidden md:block w-1/2">
-        <img src={LoginImg} alt="Branding" className="w-full h-full object-cover rounded-l-2xl" />
+        <img
+          src={LoginImg}
+          alt="Branding"
+          className="w-full h-full object-cover rounded-l-2xl"
+        />
       </div>
     </div>
   );

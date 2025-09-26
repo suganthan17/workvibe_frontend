@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import SidebarRecruiter from "../../components/SidebarRecruiter";
 import { Trash2 } from "lucide-react";
+import toast, { Toaster } from "react-hot-toast";
 
 const BASE_URL =
   window.location.hostname === "localhost"
@@ -13,7 +14,7 @@ function JobsPosted() {
   useEffect(() => {
     const fetchJobs = async () => {
       try {
-        const res = await fetch(`${BASE_URL}/getjobs`, {
+        const res = await fetch(`${BASE_URL}/api/jobs/getjobs`, {
           method: "GET",
           credentials: "include",
           headers: { "Content-Type": "application/json" },
@@ -21,9 +22,11 @@ function JobsPosted() {
 
         const data = await res.json();
         if (!res.ok) throw new Error(data.message || "Failed to fetch jobs");
+
         setJobcard(data.jobs);
       } catch (error) {
         console.error("Error fetching jobs:", error);
+        toast.error(error.message || "Error fetching jobs");
       }
     };
 
@@ -32,24 +35,27 @@ function JobsPosted() {
 
   const handleDelete = async (id) => {
     try {
-      const res = await fetch(`${BASE_URL}/deletejobs/${id}`, {
+      const res = await fetch(`${BASE_URL}/api/jobs/deletejobs/${id}`, {
         method: "DELETE",
         credentials: "include",
       });
 
       const data = await res.json();
-      alert(data.message);
+      if (!res.ok) throw new Error(data.message || "Failed to delete job");
+
+      toast.success(data.message || "Job deleted successfully");
       setJobcard((prev) => prev.filter((job) => job._id !== id));
     } catch (error) {
       console.error(error);
+      toast.error(error.message || "Failed to delete job");
     }
   };
 
   return (
     <div className="flex bg-gray-50 min-h-screen">
+      <Toaster position="top-right" reverseOrder={false} />
       <SidebarRecruiter />
       <div className="flex-1 bg-gray-100 p-5">
-        {/* Header similar to seeker */}
         <div className="flex items-center justify-between border-b border-gray-300 px-8 py-3 shadow-sm bg-gray-50 mb-5 rounded-lg">
           <div>
             <h1 className="text-2xl font-bold text-gray-800">Jobs Posted</h1>

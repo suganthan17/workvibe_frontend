@@ -12,7 +12,7 @@ const SeekerProfile = () => {
   const navigate = useNavigate();
   const [profilePic, setProfilePic] = useState(null);
   const [info, setInfo] = useState({
-    username: "",
+    name: "",
     email: "",
     phone: "",
     location: "",
@@ -34,19 +34,18 @@ const SeekerProfile = () => {
   const [editAchievements, setEditAchievements] = useState(false);
 
   const inputClass =
-    "border border-gray-300 p-2 rounded-md w-full focus:ring-1 focus:ring-indigo-400 focus:outline-none text-sm bg-white";
+    "border border-gray-300 p-2 rounded-md w-full focus:ring-2 focus:ring-indigo-500 focus:outline-none text-sm bg-white";
 
   useEffect(() => {
     const fetchProfile = async () => {
       try {
         const res = await fetch(`${BASE_URL}/api/seeker/profile`, {
-          method: "GET",
           credentials: "include",
         });
         if (res.ok) {
           const data = await res.json();
           setInfo(
-            data.info || { username: "", email: "", phone: "", location: "" }
+            data.info || { name: "", email: "", phone: "", location: "" }
           );
           setEducation(
             data.education || { degree: "", institution: "", cgpa: "" }
@@ -95,22 +94,25 @@ const SeekerProfile = () => {
 
   const buttonClass = (isEditing) =>
     isEditing
-      ? "flex items-center gap-2 px-3 py-1 bg-green-600 text-white rounded-md hover:bg-green-700 text-sm"
-      : "flex items-center gap-2 px-3 py-1 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 text-sm";
+      ? "flex items-center gap-2 px-3 py-1 bg-green-600 text-white cursor-pointer rounded-md hover:bg-green-700 text-sm"
+      : "flex items-center gap-2 px-5 py-1 rounded-md cursor-pointer text-sm";
 
   return (
-    <div className="flex bg-gray-50 min-h-screen">
+    <div className="flex bg-gray-100 min-h-screen">
       <SidebarSeeker />
-      <div className="flex-1 p-5 bg-gray-100">
-        <div className="flex items-center justify-between border-b border-gray-300 px-8 py-3 shadow-sm bg-gray-50 mb-5 rounded-md">
+
+      {/* Main Content */}
+      <div className="flex-1 p-6">
+        {/* Header */}
+        <div className="flex items-center justify-between bg-white px-8 py-4 rounded-lg shadow mb-6">
           <div>
-            <h1 className="text-2xl font-bold text-black">My Profile</h1>
-            <p className="text-black text-sm">
-              Manage and update your personal details.
+            <h1 className="text-2xl font-bold text-gray-900">My Profile</h1>
+            <p className="text-sm text-gray-600">
+              Manage and update your professional information.
             </p>
           </div>
           <button
-            className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
+            className="px-5 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition"
             onClick={() =>
               navigate("/createresume", {
                 state: {
@@ -121,7 +123,6 @@ const SeekerProfile = () => {
                     experience,
                     projects,
                     achievements,
-                    summary: "",
                   },
                 },
               })
@@ -131,12 +132,12 @@ const SeekerProfile = () => {
           </button>
         </div>
 
-        <div className="p-6 grid grid-cols-3 gap-6">
-          <div className="col-span-1 space-y-6">
-            <div className="bg-white border border-gray-200 shadow-md rounded-xl p-6 text-center">
-              <h2 className="text-lg font-bold text-gray-800 mb-3">
-                Profile Picture
-              </h2>
+        {/* Profile Layout */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Left Column */}
+          <div className="space-y-6">
+            {/* Profile Picture */}
+            <div className="bg-white shadow rounded-xl p-6 text-center">
               <div className="relative w-28 h-28 mx-auto mb-4">
                 {profilePic ? (
                   <img
@@ -151,7 +152,7 @@ const SeekerProfile = () => {
                 )}
               </div>
               <label className="px-4 py-2 bg-indigo-600 text-white text-sm rounded-lg cursor-pointer hover:bg-indigo-700">
-                Upload New
+                Upload Photo
                 <input
                   type="file"
                   accept="image/*"
@@ -161,9 +162,10 @@ const SeekerProfile = () => {
               </label>
             </div>
 
-            <div className="bg-white border border-gray-200 shadow-md rounded-xl p-6">
-              <div className="flex justify-between items-center mb-3">
-                <h2 className="text-lg font-bold text-gray-800">
+            {/* Personal Info */}
+            <div className="bg-white shadow rounded-xl p-6">
+              <div className="flex justify-between items-center mb-4">
+                <h2 className="text-lg font-semibold text-gray-800">
                   Personal Information
                 </h2>
                 <button
@@ -175,19 +177,17 @@ const SeekerProfile = () => {
                   {editInfo ? (
                     <CheckCheck size={16} />
                   ) : (
-                    <SquarePenIcon size={16} />
+                    <SquarePenIcon size={20} />
                   )}
-                  {editInfo ? "Save" : "Edit"}
+                  {editInfo ? "Save" : ""}
                 </button>
               </div>
               {editInfo ? (
                 <div className="space-y-2">
                   <input
-                    placeholder="Username"
-                    value={info.username}
-                    onChange={(e) =>
-                      setInfo({ ...info, username: e.target.value })
-                    }
+                    placeholder="Name"
+                    value={info.name}
+                    onChange={(e) => setInfo({ ...info, name: e.target.value })}
                     className={inputClass}
                   />
                   <input
@@ -218,8 +218,7 @@ const SeekerProfile = () => {
               ) : (
                 <ul className="space-y-2 text-sm text-gray-700">
                   <li>
-                    <span className="font-semibold">Username:</span>{" "}
-                    {info.username}
+                    <span className="font-semibold">Name:</span> {info.name}
                   </li>
                   <li>
                     <span className="font-semibold">Email:</span> {info.email}
@@ -236,7 +235,8 @@ const SeekerProfile = () => {
             </div>
           </div>
 
-          <div className="col-span-2 space-y-6">
+          {/* Right Column */}
+          <div className="lg:col-span-2 space-y-6">
             {[
               {
                 title: "Education",
@@ -278,12 +278,9 @@ const SeekerProfile = () => {
                 textarea: true,
               },
             ].map((section, idx) => (
-              <div
-                key={idx}
-                className="bg-white border border-gray-200 shadow-md rounded-xl p-6"
-              >
+              <div key={idx} className="bg-white shadow rounded-xl p-6">
                 <div className="flex justify-between items-center mb-3">
-                  <h2 className="text-lg font-bold text-gray-800">
+                  <h2 className="text-lg font-semibold text-gray-800">
                     {section.title}
                   </h2>
                   <button
@@ -297,9 +294,9 @@ const SeekerProfile = () => {
                     {section.edit ? (
                       <CheckCheck size={16} />
                     ) : (
-                      <SquarePenIcon size={16} />
+                      <SquarePenIcon size={20} />
                     )}
-                    {section.edit ? "Save" : "Edit"}
+                    {section.edit ? "Save" : ""}
                   </button>
                 </div>
                 {section.edit ? (

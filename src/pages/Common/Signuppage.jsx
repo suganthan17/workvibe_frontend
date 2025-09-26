@@ -2,19 +2,18 @@ import React, { useState } from "react";
 import SignupImg from "/src/assets/9.svg";
 import { Blend } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
-import toast, { Toaster } from "react-hot-toast";
 
 const BASE_URL =
   window.location.hostname === "localhost"
     ? "http://localhost:5000"
-    : "https://workvibe-backend.onrender.com";
+    : "https://workvibe-backend.onrender.com"; 
 
 function Signuppage() {
   const [signup, setSignup] = useState({
-    username: "",
-    email: "",
-    password: "",
-    role: "seeker",
+    Username: "",
+    Email: "",
+    Password: "",
+    Role: "seeker",
   });
 
   const navigate = useNavigate();
@@ -29,30 +28,33 @@ function Signuppage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await fetch(`${BASE_URL}/api/auth/signup`, {
+      const res = await fetch(`${BASE_URL}/signup`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        credentials: "include",
         body: JSON.stringify(signup),
       });
+
       const data = await res.json();
-      if (res.ok) {
-        toast.success("Signup successful 🎉");
-        setTimeout(() => navigate("/"), 1500);
-      } else {
-        toast.error(data.message || "Signup failed ❌");
-      }
+      alert(data.message); 
+
+      if (res.ok) navigate("/");
     } catch (err) {
-      toast.error("Network error. Please try again later.",err);
+      console.error(err);
     }
   };
 
   return (
     <div className="flex h-screen font-poppins bg-gray-900 text-gray-100">
-      <Toaster />
+      {/* Left Image Panel */}
       <div className="hidden md:block w-1/2">
-        <img src={SignupImg} alt="Branding" className="w-full h-full object-cover rounded-l-2xl" />
+        <img
+          src={SignupImg}
+          alt="Branding"
+          className="w-full h-full object-cover rounded-l-2xl"
+        />
       </div>
+
+      {/* Right Form Panel */}
       <div className="w-full md:w-1/2 flex flex-col justify-center px-16">
         <div className="flex items-center mb-6">
           <Blend size={35} className="text-indigo-500 mr-2" />
@@ -60,24 +62,26 @@ function Signuppage() {
             ᗯOᖇK<span className="text-indigo-500">ᐯIᗷE</span>
           </span>
         </div>
+
         <div className="bg-gray-800 shadow-lg rounded-2xl p-10">
           <h2 className="text-2xl font-bold mb-2 text-white">Create Your Account</h2>
           <p className="text-gray-400 mb-6">Join WorkVibe today</p>
+
           <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
             <input
               type="text"
-              name="username"
-              placeholder="Username"
-              value={signup.username}
+              name="Username"
+              placeholder="Full Name"
+              value={signup.Username}
               onChange={handleChange}
               className={inputClass}
               required
             />
             <input
               type="email"
-              name="email"
+              name="Email"
               placeholder="Email Address"
-              value={signup.email}
+              value={signup.Email}
               onChange={handleChange}
               className={inputClass}
               required
@@ -85,16 +89,16 @@ function Signuppage() {
             <div className="flex gap-4">
               <input
                 type="password"
-                name="password"
+                name="Password"
                 placeholder="Password"
-                value={signup.password}
+                value={signup.Password}
                 onChange={handleChange}
                 className={`${inputClass} flex-1`}
                 required
               />
               <select
-                name="role"
-                value={signup.role}
+                name="Role"
+                value={signup.Role}
                 onChange={handleChange}
                 className={`${inputClass} flex-1`}
               >
@@ -102,6 +106,7 @@ function Signuppage() {
                 <option value="recruiter">Recruiter</option>
               </select>
             </div>
+
             <button
               type="submit"
               className="bg-indigo-600 text-white p-3 font-semibold rounded-lg hover:bg-indigo-700 cursor-pointer transition"
@@ -109,9 +114,13 @@ function Signuppage() {
               Create Account
             </button>
           </form>
+
           <p className="mt-4 text-gray-400 text-sm text-center">
             Already have an account?{" "}
-            <Link to="/" className="text-indigo-400 font-semibold hover:underline">
+            <Link
+              to="/"
+              className="text-indigo-400 font-semibold hover:underline"
+            >
               Login
             </Link>
           </p>

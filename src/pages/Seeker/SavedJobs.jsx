@@ -1,6 +1,8 @@
+// src/pages/SavedJobs.jsx
 import React, { useEffect, useState } from "react";
 import SidebarSeeker from "../../components/SidebarSeeker";
 import { Bookmark } from "lucide-react";
+import toast, { Toaster } from "react-hot-toast";
 
 const BASE_URL =
   window.location.hostname === "localhost"
@@ -14,32 +16,43 @@ function SavedJobs() {
   useEffect(() => {
     const fetchSavedJobs = async () => {
       try {
-        const res = await fetch(`${BASE_URL}/savedjobs`, {
+        const res = await fetch(`${BASE_URL}/api/jobs/savedjobs`, {
           method: "GET",
           credentials: "include",
         });
+
+        if (!res.ok) throw new Error("Failed to fetch saved jobs");
+
         const data = await res.json();
         setSavedJobs(data.jobs || []);
         setCurrentUserId(data.currentUserId || "");
       } catch (err) {
         console.error(err);
+        toast.error("Failed to load saved jobs");
       }
     };
+
     fetchSavedJobs();
   }, []);
 
   const handleUnsaveJob = async (jobId) => {
     try {
-      const res = await fetch(`${BASE_URL}/savejobs/${jobId}`, {
+      const res = await fetch(`${BASE_URL}/api/jobs/savejobs/${jobId}`, {
         method: "POST",
         credentials: "include",
       });
+
       const data = await res.json();
+
       if (data.success) {
         setSavedJobs((prevJobs) => prevJobs.filter((job) => job._id !== jobId));
+        toast.success("Job unsaved successfully!");
+      } else {
+        toast.error(data.message || "Failed to unsave job");
       }
     } catch (err) {
       console.error(err);
+      toast.error("Something went wrong");
     }
   };
 
@@ -47,6 +60,8 @@ function SavedJobs() {
     <div className="flex bg-gray-50 min-h-screen">
       <SidebarSeeker />
       <div className="flex-1 p-6">
+        <Toaster position="top-right" />
+
         <div className="flex items-center justify-between border-b border-gray-300 px-6 py-3 mb-6 bg-white rounded-lg shadow">
           <div>
             <h1 className="text-2xl font-bold text-gray-800">Saved Jobs</h1>
@@ -96,7 +111,7 @@ function SavedJobs() {
 
                 <div className="text-sm text-gray-700 mb-3">
                   <p>Salary: ₹{job.salaryMin} - ₹{job.salaryMax} / month</p>
-                  <p className="mt-1">{job.jobDescription}</p>
+                  
                 </div>
 
                 <a

@@ -1,6 +1,6 @@
-// src/pages/PostJob.jsx
 import React, { useState } from "react";
 import SidebarRecruiter from "../../components/SidebarRecruiter";
+import toast, { Toaster } from "react-hot-toast";
 
 const BASE_URL =
   window.location.hostname === "localhost"
@@ -32,7 +32,7 @@ const PostJob = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await fetch(`${BASE_URL}/postjob`, {
+      const res = await fetch(`${BASE_URL}/api/jobs/postjob`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
@@ -42,8 +42,9 @@ const PostJob = () => {
       const data = await res.json();
       if (!res.ok) throw new Error(data.message || "Failed to post job");
 
-      alert("Job posted successfully ✅");
+      toast.success("Job posted successfully ✅");
 
+      // Reset form
       setFormData({
         jobTitle: "",
         companyName: "",
@@ -61,7 +62,7 @@ const PostJob = () => {
       });
     } catch (err) {
       console.error(err);
-      alert(err.message);
+      toast.error(err.message || "Failed to post job");
     }
   };
 
@@ -71,6 +72,8 @@ const PostJob = () => {
 
   return (
     <div className="flex bg-gray-50 min-h-screen">
+      <Toaster position="top-right" reverseOrder={false} />
+
       <SidebarRecruiter />
       <div className="flex-1 p-5 bg-gray-100">
         {/* Header - same as SeekerProfile style */}
@@ -84,7 +87,10 @@ const PostJob = () => {
         </div>
 
         {/* Form */}
-        <form onSubmit={handleSubmit} className="max-w-5xl mx-auto p-8 space-y-10">
+        <form
+          onSubmit={handleSubmit}
+          className="max-w-5xl mx-auto p-8 space-y-10"
+        >
           {/* Job Details */}
           <div className="bg-white border border-gray-200 shadow-sm rounded-xl p-6 space-y-6 hover:shadow-md transition-shadow">
             <h2 className="text-lg font-bold text-gray-800">Job Details</h2>
@@ -244,7 +250,9 @@ const PostJob = () => {
 
           {/* Application Info */}
           <div className="bg-white border border-gray-200 shadow-sm rounded-xl p-6 space-y-6 hover:shadow-md transition-shadow">
-            <h2 className="text-lg font-bold text-gray-800">Application Info</h2>
+            <h2 className="text-lg font-bold text-gray-800">
+              Application Info
+            </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <label className={labelClass}>Application Deadline</label>

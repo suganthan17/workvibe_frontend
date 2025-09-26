@@ -1,71 +1,105 @@
+// src/pages/Seeker/SeekerHome.jsx
 import React, { useState, useEffect } from "react";
 import SidebarSeeker from "../../components/SidebarSeeker";
+import { BookCheck, Bookmark } from "lucide-react";
+
 
 const BASE_URL =
   window.location.hostname === "localhost"
     ? "http://localhost:5000"
     : "https://workvibe-backend.onrender.com";
 
-function SeekerHome() {
-  const jobsapplied = 0;
-  const [jobssaved, setJobssaved] = useState(0);
 
+const SeekerHome = () => {
+  const [jobssaved, setJobssaved] = useState(0);
+  const [jobsapplied, setJobsapplied] = useState(0);
+
+  // Fetch Saved Jobs Count
   useEffect(() => {
-    const countsavedjobs = async () => {
+    const fetchSavedJobs = async () => {
       try {
-        const res = await fetch(`${BASE_URL}/savedjobs`, {
+        const res = await fetch(`${BASE_URL}/api/jobs/savedjobs`, {
           method: "GET",
           credentials: "include",
-          headers:{"Content-Type":"application/json"}
+          headers: { "Content-Type": "application/json" },
         });
+
         const data = await res.json();
-        if (res.ok) {
+        if (res.ok && data.jobs) {
           setJobssaved(data.jobs.length);
         }
       } catch (error) {
-        console.log(error);
+        console.error("Error fetching saved jobs:", error);
       }
     };
-    countsavedjobs();
+
+    fetchSavedJobs();
+  }, []);
+
+  // Fetch Applied Jobs Count
+  useEffect(() => {
+    const fetchAppliedJobs = async () => {
+      try {
+        const res = await fetch(`${BASE_URL}/api/jobs/applied`, {
+          method: "GET",
+          credentials: "include",
+          headers: { "Content-Type": "application/json" },
+        });
+
+        const data = await res.json();
+        if (res.ok && data.jobs) {
+          setJobsapplied(data.jobs.length);
+        }
+      } catch (error) {
+        console.error("Error fetching applied jobs:", error);
+      }
+    };
+
+    fetchAppliedJobs();
   }, []);
 
   return (
-    <div className="flex bg-gray-50 min-h-screen">
+    <div className="flex min-h-screen bg-gray-100">
+      {/* Sidebar */}
       <SidebarSeeker />
 
-      <div className="flex-1 bg-gray-100 p-5">
-        <div className="flex items-center justify-between border-b border-gray-300 px-8 py-3 shadow-sm bg-gray-50 mb-5 rounded-md">
-          <div>
-            <h1 className="text-2xl font-bold text-black">HOME</h1>
-            <p className="text-black text-sm">
-              Welcome back! Here’s a quick overview of your activity.
-            </p>
-          </div>
+      {/* Main Content */}
+      <div className="flex-1 p-6">
+        {/* Header */}
+        <div className="border-b border-gray-300 px-6 py-4 bg-white rounded-md shadow-sm mb-6">
+          <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
+          <p className="text-sm text-gray-600">
+            Overview of your applications and saved jobs.
+          </p>
         </div>
 
         {/* Quick Stats */}
-        <div className="p-8">
-          <h2 className="font-semibold text-xl mb-6 text-gray-800">
-            Quick Stats
-          </h2>
-          <div className="flex flex-wrap gap-6">
-            <div className="border border-gray-300 rounded-xl w-56 h-28 bg-white shadow-md flex flex-col justify-center items-center hover:shadow-lg transition-shadow duration-200">
-              <p className="font-medium text-gray-600">Jobs Applied</p>
-              <span className="font-bold text-2xl text-gray-900">
-                {jobsapplied}
-              </span>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Jobs Applied */}
+          <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200 flex items-center justify-between">
+            <div>
+              <p className="text-sm text-gray-500">Jobs Applied</p>
+              <h2 className="text-3xl font-bold text-gray-900">{jobsapplied}</h2>
             </div>
-            <div className="border border-gray-300 rounded-xl w-56 h-28 bg-white shadow-md flex flex-col justify-center items-center hover:shadow-lg transition-shadow duration-200">
-              <p className="font-medium text-gray-600">Jobs Saved</p>
-              <span className="font-bold text-2xl text-gray-900">
-                {jobssaved}
-              </span>
+            <div className="p-4 bg-blue-100 rounded-full">
+              <BookCheck className="text-blue-600" size={28} />
+            </div>
+          </div>
+
+          {/* Jobs Saved */}
+          <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200 flex items-center justify-between">
+            <div>
+              <p className="text-sm text-gray-500">Jobs Saved</p>
+              <h2 className="text-3xl font-bold text-gray-900">{jobssaved}</h2>
+            </div>
+            <div className="p-4 bg-green-100 rounded-full">
+              <Bookmark className="text-green-600" size={28} />
             </div>
           </div>
         </div>
       </div>
     </div>
   );
-}
+};
 
 export default SeekerHome;
