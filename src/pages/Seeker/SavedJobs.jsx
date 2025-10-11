@@ -1,4 +1,3 @@
-// src/pages/SavedJobs.jsx
 import React, { useEffect, useState } from "react";
 import SidebarSeeker from "../../components/SidebarSeeker";
 import { Bookmark } from "lucide-react";
@@ -20,9 +19,7 @@ function SavedJobs() {
           method: "GET",
           credentials: "include",
         });
-
         if (!res.ok) throw new Error("Failed to fetch saved jobs");
-
         const data = await res.json();
         setSavedJobs(data.jobs || []);
         setCurrentUserId(data.currentUserId || "");
@@ -31,7 +28,6 @@ function SavedJobs() {
         toast.error("Failed to load saved jobs");
       }
     };
-
     fetchSavedJobs();
   }, []);
 
@@ -41,9 +37,7 @@ function SavedJobs() {
         method: "POST",
         credentials: "include",
       });
-
       const data = await res.json();
-
       if (data.success) {
         setSavedJobs((prevJobs) => prevJobs.filter((job) => job._id !== jobId));
         toast.success("Job unsaved successfully!");
@@ -61,11 +55,12 @@ function SavedJobs() {
       <SidebarSeeker />
       <div className="flex-1 p-6">
         <Toaster position="top-right" />
-
         <div className="flex items-center justify-between border-b border-gray-300 px-6 py-3 mb-6 bg-white rounded-lg shadow">
           <div>
             <h1 className="text-2xl font-bold text-gray-800">Saved Jobs</h1>
-            <p className="text-gray-600 text-sm">All the jobs you have saved.</p>
+            <p className="text-gray-600 text-sm">
+              All the jobs you have saved.
+            </p>
           </div>
         </div>
 
@@ -76,25 +71,28 @@ function SavedJobs() {
             {savedJobs.map((job) => (
               <div
                 key={job._id}
-                className="bg-white border border-gray-200 rounded-xl p-5 shadow hover:shadow-md transition-shadow"
+                className="bg-white border border-gray-200 rounded-xl p-5 shadow hover:shadow-md transition"
               >
                 <div className="flex justify-between items-start mb-3">
                   <div>
-                    <h2 className="text-lg font-bold text-gray-800">{job.jobTitle}</h2>
-                    <p className="text-gray-700 font-medium">{job.companyName}</p>
+                    <h2 className="text-lg font-bold text-gray-800">
+                      {job.jobTitle}
+                    </h2>
+                    <p className="text-gray-700 font-medium">
+                      {job.companyName}
+                    </p>
                     <p className="text-gray-500 text-sm">{job.location}</p>
                   </div>
                   <Bookmark
                     size={24}
                     className={`cursor-pointer ${
                       job.savedBy?.includes(currentUserId)
-                        ? "fill-black"
-                        : "fill-white stroke-black"
+                        ? "fill-indigo-600 stroke-indigo-600"
+                        : "fill-white stroke-indigo-600"
                     }`}
                     onClick={() => handleUnsaveJob(job._id)}
                   />
                 </div>
-
                 <div className="flex flex-wrap gap-2 mb-3">
                   {job.experienceLevel && (
                     <span className="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full">
@@ -108,12 +106,11 @@ function SavedJobs() {
                     {job.employmentType || "Full-time"}
                   </span>
                 </div>
-
                 <div className="text-sm text-gray-700 mb-3">
-                  <p>Salary: ₹{job.salaryMin} - ₹{job.salaryMax} / month</p>
-                  
+                  <p>
+                    Salary: ₹{job.salaryMin} - ₹{job.salaryMax} / month
+                  </p>
                 </div>
-
                 <a
                   href={job.applicationLink}
                   target="_blank"

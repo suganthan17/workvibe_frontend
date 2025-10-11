@@ -32,13 +32,16 @@ function SidebarRecruiter() {
 
   const handleLogout = async () => {
     try {
-      await axios.post(`${BASE_URL}/logout`, {}, { withCredentials: true });
+      await fetch(`${BASE_URL}/api/users/logout`, {
+        method: "POST",
+        credentials: "include",
+      });
       localStorage.clear();
-      toast.success("Logged out successfully!", { duration: 2000 });
-      setTimeout(() => navigate("/"), 500);
-    } catch (error) {
-      toast.error("Logout failed", { duration: 3000 });
-      console.error(error);
+      toast.success("Logged out successfully");
+      navigate("/");
+    } catch (err) {
+      console.error(err);
+      toast.error("Logout failed");
     }
   };
 
@@ -56,7 +59,9 @@ function SidebarRecruiter() {
           {user.name ? user.name.charAt(0).toUpperCase() : "R"}
         </div>
         <p className="text-md font-semibold">{user.name || "Recruiter"}</p>
-        <p className="text-xs text-gray-400 truncate">{user.email || "email@example.com"}</p>
+        <p className="text-xs text-gray-400 truncate">
+          {user.email || "email@example.com"}
+        </p>
       </div>
 
       <div className="flex flex-col border-t border-b border-gray-700 py-4 gap-2 flex-grow">

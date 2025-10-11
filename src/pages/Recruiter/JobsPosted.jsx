@@ -9,7 +9,7 @@ const BASE_URL =
     : "https://workvibe-backend.onrender.com";
 
 function JobsPosted() {
-  const [jobcard, setJobcard] = useState([]);
+  const [jobs, setJobs] = useState([]);
 
   useEffect(() => {
     const fetchJobs = async () => {
@@ -19,32 +19,28 @@ function JobsPosted() {
           credentials: "include",
           headers: { "Content-Type": "application/json" },
         });
-
         const data = await res.json();
         if (!res.ok) throw new Error(data.message || "Failed to fetch jobs");
-
-        setJobcard(data.jobs);
+        setJobs(data.jobs);
       } catch (error) {
         console.error("Error fetching jobs:", error);
         toast.error(error.message || "Error fetching jobs");
       }
     };
-
     fetchJobs();
   }, []);
 
-  const handleDelete = async (id) => {
+  const handleDelete = async (jobId) => {
     try {
-      const res = await fetch(`${BASE_URL}/api/jobs/deletejobs/${id}`, {
+      const res = await fetch(`${BASE_URL}/api/jobs/deletejobs/${jobId}`, {
         method: "DELETE",
         credentials: "include",
       });
-
       const data = await res.json();
       if (!res.ok) throw new Error(data.message || "Failed to delete job");
 
       toast.success(data.message || "Job deleted successfully");
-      setJobcard((prev) => prev.filter((job) => job._id !== id));
+      setJobs((prev) => prev.filter((job) => job._id !== jobId));
     } catch (error) {
       console.error(error);
       toast.error(error.message || "Failed to delete job");
@@ -56,18 +52,21 @@ function JobsPosted() {
       <Toaster position="top-right" reverseOrder={false} />
       <SidebarRecruiter />
       <div className="flex-1 bg-gray-100 p-5">
+        {/* Header */}
         <div className="flex items-center justify-between border-b border-gray-300 px-8 py-3 shadow-sm bg-gray-50 mb-5 rounded-lg">
           <div>
             <h1 className="text-2xl font-bold text-gray-800">Jobs Posted</h1>
-            <p className="text-gray-600 text-sm">View all the jobs you have published.</p>
+            <p className="text-gray-600 text-sm">
+              View all the jobs you have published.
+            </p>
           </div>
         </div>
 
         <div className="max-w-5xl ml-4 space-y-6">
-          {jobcard.length === 0 ? (
+          {jobs.length === 0 ? (
             <p className="text-gray-500">No jobs posted yet.</p>
           ) : (
-            jobcard.map((job) => (
+            jobs.map((job) => (
               <div
                 key={job._id}
                 className="border border-gray-200 rounded-xl p-6 bg-white shadow hover:shadow-md transition-shadow"
@@ -81,7 +80,6 @@ function JobsPosted() {
                   <span className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full">
                     Hiring multiple candidates
                   </span>
-
                   <span
                     onClick={() => handleDelete(job._id)}
                     className="ml-auto cursor-pointer text-red-500 hover:text-red-600"
@@ -89,8 +87,9 @@ function JobsPosted() {
                     <Trash2 size={22} />
                   </span>
                 </div>
-
-                <h2 className="text-lg font-bold text-gray-800">{job.jobTitle}</h2>
+                <h2 className="text-lg font-bold text-gray-800">
+                  {job.jobTitle}
+                </h2>
                 <p className="text-gray-700 font-medium">{job.companyName}</p>
                 <p className="text-gray-500 text-sm mt-1">{job.location}</p>
 
@@ -102,7 +101,6 @@ function JobsPosted() {
                     {job.employmentType || "Full-time"}
                   </span>
                 </div>
-
                 <p className="text-gray-600 text-sm mt-3">{job.jobDescription}</p>
               </div>
             ))

@@ -26,6 +26,7 @@ function BrowseJobs() {
         setCurrentUserId(data.currentUserId || "");
       } catch (err) {
         console.error(err);
+        toast.error("Failed to fetch jobs");
       }
     };
     fetchJobs();
@@ -38,29 +39,24 @@ function BrowseJobs() {
         credentials: "include",
       });
       const data = await res.json();
-
       if (data.success) {
         const updatedSavedBy = data.savedBy;
-
         setJobs((prevJobs) =>
           prevJobs.map((job) =>
             job._id === jobId ? { ...job, savedBy: updatedSavedBy } : job
           )
         );
-
         if (updatedSavedBy.includes(currentUserId)) {
           toast.success("Saved!", { duration: 2000 });
         } else {
           toast("Removed from saved!", { icon: "ℹ️", duration: 2000 });
         }
       } else {
-        toast.error(data.message || "Could not update saved jobs", {
-          duration: 2000,
-        });
+        toast.error(data.message || "Could not update saved jobs");
       }
     } catch (err) {
       console.error(err);
-      toast.error("Something went wrong", { duration: 2000 });
+      toast.error("Something went wrong");
     }
   };
 
@@ -97,7 +93,6 @@ function BrowseJobs() {
                 <span className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full">
                   Hiring multiple candidates
                 </span>
-
                 <span
                   onClick={() => handleSaveJob(job._id)}
                   className="ml-auto cursor-pointer"

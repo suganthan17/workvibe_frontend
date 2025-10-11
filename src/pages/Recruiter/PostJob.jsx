@@ -38,13 +38,9 @@ const PostJob = () => {
         credentials: "include",
         body: JSON.stringify(formData),
       });
-
       const data = await res.json();
       if (!res.ok) throw new Error(data.message || "Failed to post job");
-
       toast.success("Job posted successfully ✅");
-
-      // Reset form
       setFormData({
         jobTitle: "",
         companyName: "",
@@ -73,11 +69,9 @@ const PostJob = () => {
   return (
     <div className="flex bg-gray-50 min-h-screen">
       <Toaster position="top-right" reverseOrder={false} />
-
       <SidebarRecruiter />
       <div className="flex-1 p-5 bg-gray-100">
-        {/* Header - same as SeekerProfile style */}
-        <div className="flex items-center bg-gray-50 justify-between rounded-md border-gray-200 px-8 py-3 shadow-sm ">
+        <div className="flex items-center bg-gray-50 justify-between rounded-md border-gray-200 px-8 py-3 shadow-sm mb-5">
           <div>
             <h1 className="text-2xl font-bold text-gray-900">Post a Job</h1>
             <p className="text-gray-600 text-sm">
@@ -86,7 +80,6 @@ const PostJob = () => {
           </div>
         </div>
 
-        {/* Form */}
         <form
           onSubmit={handleSubmit}
           className="max-w-5xl mx-auto p-8 space-y-10"
@@ -180,8 +173,6 @@ const PostJob = () => {
                   <option>Finance</option>
                 </select>
               </div>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <label className={labelClass}>Salary Min</label>
                 <input
