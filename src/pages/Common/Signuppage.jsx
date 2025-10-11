@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { User as UserIcon, Mail, Lock, Blend } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
-import Illustration from "/src/assets/n3.svg"; // ✅ Import your illustration here
+import Illustration from "/src/assets/n3.svg"; 
 
 const BASE_URL =
   window.location.hostname === "localhost"

@@ -25,16 +25,54 @@ import Applicants from "./pages/Recruiter/Applicants";
 function App() {
   return (
     <Router>
-      <Toaster
-        position="top-center"
-        reverseOrder={false}
-        toastOptions={{
-          duration: 2000,
-          style: { background: "#333", color: "#fff", fontSize: "15px" },
-          success: { style: { background: "#16a34a", color: "#fff" } },
-          error: { style: { background: "#dc2626", color: "#fff" } },
-        }}
-      />
+     <Toaster
+  position="top-center"
+  reverseOrder={false}
+  toastOptions={{
+    duration: 2200,
+    style: {
+      background: "#ffffff",
+      color: "#0f172a",
+      borderRadius: "10px",
+      padding: "10px 16px",
+      fontSize: "14px",
+      fontWeight: 500,
+      border: "1px solid #e2e8f0",
+      boxShadow: "0 4px 20px rgba(30,64,175,0.15)",
+      transformOrigin: "center",
+      animation:
+        "toastPopIn 0.28s cubic-bezier(0.34, 1.56, 0.64, 1), toastPopOut 0.25s ease 1.9s forwards",
+      display: "flex",
+      alignItems: "center",
+      gap: "8px",
+    },
+    success: {
+      iconTheme: { primary: "#2563eb", secondary: "#ffffff" },
+      style: {
+        background: "#f0f7ff",
+        color: "#1e40af",
+        borderLeft: "4px solid #2563eb",
+      },
+    },
+    error: {
+      iconTheme: { primary: "#1e3a8a", secondary: "#ffffff" },
+      style: {
+        background: "#f5f3ff",
+        color: "#312e81",
+        borderLeft: "4px solid #1e3a8a",
+      },
+    },
+    loading: {
+      iconTheme: { primary: "#0ea5e9", secondary: "#ffffff" },
+      style: {
+        background: "#f0f9ff",
+        color: "#075985",
+        borderLeft: "4px solid #0ea5e9",
+      },
+    },
+  }}
+/>
+
 
       <Routes>
         {/* Auth Pages */}
