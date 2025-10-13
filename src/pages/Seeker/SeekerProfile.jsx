@@ -1,6 +1,7 @@
+// src/pages/seeker/SeekerProfile.jsx
 import React, { useState, useEffect } from "react";
 import SidebarSeeker from "../../components/SidebarSeeker";
-import { SquarePenIcon, CheckCheck, User, FileText } from "lucide-react";
+import { SquarePenIcon, CheckCheck, User, Upload } from "lucide-react";
 import toast from "react-hot-toast";
 
 const BASE_URL =
@@ -10,55 +11,32 @@ const BASE_URL =
 
 const SeekerProfile = () => {
   const [profilePic, setProfilePic] = useState(null);
-  const [workvibeResume, setWorkvibeResume] = useState(null);
-  const [existingResume, setExistingResume] = useState("");
 
-  const [info, setInfo] = useState({
-    name: "",
+  const [basicInfo, setBasicInfo] = useState({
+    fullName: "",
     email: "",
     phone: "",
-    location: "",
-    linkedin: "",
-    github: "",
-    other_links: "",
+    dob: "",
   });
-  const [bio, setBio] = useState("");
-  const [education, setEducation] = useState({
-    degree: "",
-    institution: "",
-    yearofgraduation: "",
-    cgpa: "",
+
+  const [locationInfo, setLocationInfo] = useState({
+    address: "",
+    city: "",
+    state: "",
+    country: "",
   });
-  const [technicalskills, setTechnicalSkills] = useState("");
-  const [softskills, setSoftSkills] = useState("");
-  const [experience, setExperience] = useState({
-    companyname: "",
-    timeperiod: "",
-    position: "",
-  });
-  const [projects, setProjects] = useState("");
-  const [achievements, setAchievements] = useState("");
-  const [additionaldetails, setAdditionalDetails] = useState({
-    languagesknown: "",
-    interests: "",
-  });
+
+  const [linkedin, setLinkedin] = useState("");
 
   const [editFlags, setEditFlags] = useState({
-    info: false,
-    bio: false,
-    education: false,
-    technicalskills: false,
-    softskills: false,
-    experience: false,
-    projects: false,
-    achievements: false,
-    additionaldetails: false,
+    basicInfo: false,
+    locationInfo: false,
+    linkedin: false,
+    profilePic: false,
   });
 
-  const commonInputClass =
-    "border border-gray-300 p-2 rounded-md w-full focus:ring-1 focus:ring-indigo-400 focus:outline-none text-sm bg-white";
-  const commonButtonClass =
-    "flex items-center gap-2 px-3 py-1 rounded-md text-white text-sm";
+  const commonInput =
+    "border border-gray-200 p-3 rounded-xl w-full focus:ring-2 focus:ring-indigo-400 focus:outline-none text-sm bg-white transition-all duration-200 shadow-sm hover:border-indigo-200 placeholder-gray-400";
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -68,17 +46,10 @@ const SeekerProfile = () => {
         });
         if (res.ok) {
           const data = await res.json();
-          setInfo(data.info || info);
-          setBio(data.bio || "");
-          setEducation(data.education || education);
-          setTechnicalSkills(data.technicalskills || "");
-          setSoftSkills(data.softskills || "");
-          setExperience(data.experience || experience);
-          setProjects(data.projects || "");
-          setAchievements(data.achievements || "");
-          setAdditionalDetails(data.additionaldetails || additionaldetails);
+          setBasicInfo(data.basicInfo || basicInfo);
+          setLocationInfo(data.locationInfo || locationInfo);
+          setLinkedin(data.linkedin || "");
           setProfilePic(data.profilePic || null);
-          setExistingResume(data.resume || "");
         }
       } catch (err) {
         console.error(err);
@@ -88,23 +59,16 @@ const SeekerProfile = () => {
     fetchProfile();
   }, []);
 
-  const toggleEdit = (section) => {
-    setEditFlags({ ...editFlags, [section]: !editFlags[section] });
-  };
-
-  const saveProfile = async () => {
+  const saveSection = async (section) => {
     try {
       const formData = new FormData();
-      formData.append("info", JSON.stringify(info));
-      formData.append("bio", bio);
-      formData.append("education", JSON.stringify(education));
-      formData.append("technicalskills", technicalskills);
-      formData.append("softskills", softskills);
-      formData.append("experience", JSON.stringify(experience));
-      formData.append("projects", projects);
-      formData.append("achievements", achievements);
-      formData.append("additionaldetails", JSON.stringify(additionaldetails));
-      if (profilePic instanceof File) formData.append("profilePic", profilePic);
+      if (section === "profilePic" && profilePic instanceof File)
+        formData.append("profilePic", profilePic);
+      if (section === "basicInfo")
+        formData.append("basicInfo", JSON.stringify(basicInfo));
+      if (section === "locationInfo")
+        formData.append("locationInfo", JSON.stringify(locationInfo));
+      if (section === "linkedin") formData.append("linkedin", linkedin);
 
       const res = await fetch(`${BASE_URL}/api/seeker/profile`, {
         method: "PUT",
@@ -113,12 +77,8 @@ const SeekerProfile = () => {
       });
 
       if (res.ok) {
-        const data = await res.json();
         toast.success("Profile updated successfully!");
-        setProfilePic(data.profilePic || profilePic);
-        setEditFlags(
-          Object.fromEntries(Object.keys(editFlags).map((k) => [k, false]))
-        );
+        setEditFlags((prev) => ({ ...prev, [section]: false }));
       } else {
         toast.error("Failed to update profile");
       }
@@ -128,277 +88,270 @@ const SeekerProfile = () => {
     }
   };
 
-  const uploadWorkVibeResume = async () => {
-    if (!workvibeResume) return toast.error("Please select a resume first");
-
-    try {
-      const formData = new FormData();
-      formData.append("workvibeResume", workvibeResume);
-
-      const res = await fetch(`${BASE_URL}/api/seeker/profile/workvibe`, {
-        method: "PUT",
-        credentials: "include",
-        body: formData,
-      });
-
-      if (res.ok) {
-        toast.success("Resume uploaded successfully!");
-        setExistingResume(workvibeResume.name);
-        setWorkvibeResume(null);
-      } else {
-        toast.error("Failed to upload resume");
-      }
-    } catch (err) {
-      console.error(err);
-      toast.error("Error uploading resume");
-    }
-  };
-
-  const useWorkVibeResume = () => {
-    if (!existingResume) return toast.error("No WorkVibe resume uploaded yet");
-    toast.success("Using WorkVibe Resume!");
-  };
-
-  const renderInput = (section) => {
-    if (editFlags[section.key]) {
-      if (section.textarea) {
-        return (
-          <textarea
-            className={commonInputClass + " h-20"}
-            value={section.data}
-            onChange={(e) => section.setter(e.target.value)}
-          />
-        );
-      } else if (typeof section.data === "object") {
-        return Object.keys(section.data).map((key) => (
-          <input
-            key={key}
-            placeholder={key.charAt(0).toUpperCase() + key.slice(1)}
-            value={section.data[key]}
-            onChange={(e) =>
-              section.setter({ ...section.data, [key]: e.target.value })
-            }
-            className={commonInputClass}
-          />
-        ));
-      } else {
-        return (
-          <input
-            value={section.data}
-            onChange={(e) => section.setter(e.target.value)}
-            className={commonInputClass}
-          />
-        );
-      }
-    } else {
-      if (typeof section.data === "object") {
-        return (
-          <ul className="space-y-1 text-sm text-gray-700">
-            {Object.keys(section.data).map((key) => (
-              <li key={key}>
-                <span className="font-semibold">
-                  {key.charAt(0).toUpperCase() + key.slice(1)}:
-                </span>{" "}
-                {section.data[key]}
-              </li>
-            ))}
-          </ul>
-        );
-      } else {
-        return <p className="text-sm text-gray-700">{section.data}</p>;
-      }
-    }
-  };
-
-  const buttonClass = (isEditing) =>
-    isEditing
-      ? commonButtonClass + " bg-green-600 hover:bg-green-700"
-      : commonButtonClass + " bg-indigo-600 hover:bg-indigo-700";
-
   return (
-    <div className="flex bg-gray-50 min-h-screen">
+    <div className="flex min-h-screen bg-gradient-to-br from-indigo-50 via-white to-sky-100">
       <SidebarSeeker />
-      <div className="flex-1 p-5 bg-gray-100">
-        <div className="flex items-center justify-between border-b border-gray-300 px-8 py-3 shadow-sm bg-gray-50 mb-5 rounded-md">
-          <div>
-            <h1 className="text-2xl font-bold text-black">My Profile</h1>
-            <p className="text-black text-sm">
-              Manage and update your personal details.
-            </p>
-          </div>
-        </div>
+      <div className="flex-1 p-10">
+        <h1 className="text-3xl font-bold mb-8 text-gray-800 tracking-tight border-b border-gray-200 pb-2">
+          My Profile
+        </h1>
 
-        <div className="p-6 grid grid-cols-3 gap-6">
-          <div className="col-span-1 space-y-6">
-            <div className="bg-white border border-gray-200 shadow-md rounded-xl p-6 text-center">
-              <h2 className="text-lg font-bold text-gray-800 mb-3">Profile</h2>
-              <div className="relative w-28 h-28 mx-auto mb-4">
+        {/* Profile Banner Section */}
+        <div className="relative rounded-3xl shadow-md overflow-hidden mb-10">
+          <div className="relative h-40 w-full bg-gradient-to-r from-sky-200 via-blue-300 to-indigo-300 overflow-hidden">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 1440 320"
+              className="absolute bottom-0 left-0 w-full opacity-40"
+            >
+              <path
+                fill="#38BDF8" // 
+                fillOpacity="0.75"
+                d="M0,96L48,128C96,160,192,224,288,229.3C384,235,480,181,576,160C672,139,768,149,864,176C960,203,1056,245,1152,256C1248,267,1344,245,1392,234.7L1440,224L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"
+              />
+            </svg>
+          </div>
+
+          <div className="flex items-center justify-between px-8 pb-6 pt-2 bg-white/80 backdrop-blur-md">
+            <div className="flex items-center gap-6 -mt-12">
+              {/* Profile Picture */}
+              <div className="relative w-26 h-26 rounded-full overflow-hidden ring-4 ring-white shadow-md bg-gray-100">
                 {profilePic ? (
                   typeof profilePic === "string" ? (
                     <img
                       src={`${BASE_URL}/${profilePic}`}
                       alt="Profile"
-                      className="w-28 h-28 rounded-full object-cover border-4 border-white shadow"
+                      className="w-full h-full object-cover"
                     />
                   ) : (
                     <img
                       src={URL.createObjectURL(profilePic)}
                       alt="Profile"
-                      className="w-28 h-28 rounded-full object-cover border-4 border-white shadow"
+                      className="w-full h-full object-cover"
                     />
                   )
                 ) : (
-                  <div className="w-28 h-28 rounded-full bg-indigo-200 flex items-center justify-center text-indigo-800 text-2xl border-4 border-white shadow">
-                    <User size={30} />
+                  <div className="w-full h-full flex items-center justify-center text-gray-400">
+                    <User size={48} strokeWidth={1.5} />
                   </div>
                 )}
               </div>
-              <label className="px-4 py-2 bg-indigo-600 text-white text-sm rounded-lg cursor-pointer hover:bg-indigo-700 mb-3 block">
-                Choose Profile Picture
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={(e) => setProfilePic(e.target.files[0])}
-                  className="hidden"
-                />
-              </label>
-              <button
-                onClick={saveProfile}
-                className="mt-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 text-sm flex items-center justify-center gap-2 mx-auto"
-              >
-                <CheckCheck size={16} /> Save Profile
-              </button>
-            </div>
 
-            <div className="bg-white border border-gray-200 shadow-md rounded-xl p-6 text-center">
-              <h2 className="text-lg font-bold text-gray-800 mb-2 flex items-center justify-center gap-2">
-                <FileText size={20} /> WorkVibe Resume
-              </h2>
-              {existingResume ? (
-                <p className="text-sm text-gray-700 mb-2">
-                  Uploaded Resume: {existingResume}
+              {/* Basic Details */}
+              <div>
+                <h2 className="text-xl font-bold mb-1 font-mono text-gray-800">
+                  {basicInfo.fullName || "Your Full Name"}
+                </h2>
+                <p className="text-sm text-gray-800">
+                  {basicInfo.email || "Enter your email address"}
                 </p>
-              ) : (
-                <p className="text-sm text-gray-500 mb-2">
-                  No resume uploaded yet
+                <p className="text-xs text-gray-700 mt-1">
+                  {basicInfo.phone || "Enter your phone number"}
                 </p>
-              )}
-              <label className="px-4 py-2 mt-2 bg-indigo-600 text-white text-sm rounded-lg cursor-pointer hover:bg-indigo-700 block">
-                Choose Resume
-                <input
-                  type="file"
-                  accept=".pdf,.doc,.docx"
-                  onChange={(e) => setWorkvibeResume(e.target.files[0])}
-                  className="hidden"
-                />
-              </label>
-              <div className="flex justify-center gap-3 mt-3">
-                <button
-                  onClick={uploadWorkVibeResume}
-                  className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 flex items-center gap-2"
-                >
-                  <CheckCheck size={16} /> Upload
-                </button>
-                <button
-                  onClick={useWorkVibeResume}
-                  className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 flex items-center gap-2"
-                >
-                  Use WorkVibe Resume
-                </button>
               </div>
             </div>
-          </div>
 
-          <div className="col-span-2 space-y-6">
-            {[
-              {
-                title: "Personal Info",
-                data: info,
-                key: "info",
-                setter: setInfo,
-              },
-              {
-                title: "Bio",
-                data: bio,
-                key: "bio",
-                setter: setBio,
-                textarea: true,
-              },
-              {
-                title: "Education",
-                data: education,
-                key: "education",
-                setter: setEducation,
-              },
-              {
-                title: "Technical Skills",
-                data: technicalskills,
-                key: "technicalskills",
-                setter: setTechnicalSkills,
-                textarea: true,
-              },
-              {
-                title: "Soft Skills",
-                data: softskills,
-                key: "softskills",
-                setter: setSoftSkills,
-                textarea: true,
-              },
-              {
-                title: "Experience",
-                data: experience,
-                key: "experience",
-                setter: setExperience,
-              },
-              {
-                title: "Projects",
-                data: projects,
-                key: "projects",
-                setter: setProjects,
-                textarea: true,
-              },
-              {
-                title: "Achievements",
-                data: achievements,
-                key: "achievements",
-                setter: setAchievements,
-                textarea: true,
-              },
-              {
-                title: "Additional Details",
-                data: additionaldetails,
-                key: "additionaldetails",
-                setter: setAdditionalDetails,
-              },
-            ].map((section, idx) => (
-              <div
-                key={idx}
-                className="bg-white border border-gray-200 shadow-md rounded-xl p-6"
-              >
-                <div className="flex justify-between items-center mb-3">
-                  <h2 className="text-lg font-bold text-gray-800">
-                    {section.title}
-                  </h2>
+            {/* Edit / Save buttons */}
+            <div className="flex items-center gap-3">
+              {editFlags.profilePic ? (
+                <>
+                  <label className="px-4 py-2 bg-indigo-300 text-indigo-900 rounded-lg cursor-pointer hover:bg-indigo-200 transition-all text-sm shadow-sm flex items-center gap-2">
+                    <Upload size={18} />
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) => setProfilePic(e.target.files[0])}
+                      className="hidden"
+                    />
+                  </label>
                   <button
-                    onClick={() =>
-                      editFlags[section.key]
-                        ? saveProfile()
-                        : toggleEdit(section.key)
-                    }
-                    className={buttonClass(editFlags[section.key])}
+                    onClick={() => saveSection("profilePic")}
+                    className="p-2 text-green-600 hover:text-green-800 cursor-pointer transition-all"
                   >
-                    {editFlags[section.key] ? (
-                      <CheckCheck size={16} />
-                    ) : (
-                      <SquarePenIcon size={16} />
-                    )}
-                    {editFlags[section.key] ? "Save" : "Edit"}
+                    <CheckCheck size={25} />
                   </button>
-                </div>
-                {renderInput(section)}
-              </div>
-            ))}
+                </>
+              ) : (
+                <button
+                  onClick={() =>
+                    setEditFlags({ ...editFlags, profilePic: true })
+                  }
+                  className="p-2 text-black hover:text-white cursor-pointer transition-all"
+                >
+                  <SquarePenIcon size={18} />
+                </button>
+              )}
+            </div>
           </div>
+        </div>
+
+        {/* Basic Information */}
+        <div className="bg-white/90 rounded-3xl shadow-sm border border-indigo-100 p-8 mb-8 transition-all hover:shadow-md">
+          <div className="flex justify-between items-center mb-6">
+            <h2 className="text-lg font-bold text-gray-800">
+              Personal Information
+            </h2>
+            <button
+              onClick={() =>
+                editFlags.basicInfo
+                  ? saveSection("basicInfo")
+                  : setEditFlags({ ...editFlags, basicInfo: true })
+              }
+              className="p-4 text-indigo-700 rounded-lg cursor-pointer"
+            >
+              {editFlags.basicInfo ? (
+                <CheckCheck size={25} color="green" />
+              ) : (
+                <SquarePenIcon size={18} />
+              )}
+            </button>
+          </div>
+
+          {editFlags.basicInfo ? (
+            <div className="flex flex-wrap gap-4">
+              <input
+                placeholder="Enter your full name"
+                value={basicInfo.fullName}
+                onChange={(e) =>
+                  setBasicInfo({ ...basicInfo, fullName: e.target.value })
+                }
+                className={`${commonInput} flex-1 min-w-[45%]`}
+              />
+              <input
+                placeholder="Enter your email address"
+                value={basicInfo.email}
+                onChange={(e) =>
+                  setBasicInfo({ ...basicInfo, email: e.target.value })
+                }
+                className={`${commonInput} flex-1 min-w-[45%]`}
+              />
+              <input
+                placeholder="Enter your phone number"
+                value={basicInfo.phone}
+                onChange={(e) =>
+                  setBasicInfo({ ...basicInfo, phone: e.target.value })
+                }
+                className={`${commonInput} flex-1 min-w-[45%]`}
+              />
+              <input
+                placeholder="Select your date of birth"
+                type="date"
+                value={basicInfo.dob}
+                onChange={(e) =>
+                  setBasicInfo({ ...basicInfo, dob: e.target.value })
+                }
+                className={`${commonInput} flex-1 min-w-[45%]`}
+              />
+            </div>
+          ) : (
+            <div className="flex flex-wrap gap-6 text-sm text-gray-700">
+              {[
+                ["Full Name", basicInfo.fullName],
+                ["Email", basicInfo.email],
+                ["Phone", basicInfo.phone],
+                ["Date of Birth", basicInfo.dob],
+              ].map(([label, value]) => (
+                <div key={label} className="flex-1 min-w-[22%]">
+                  <p className="text-xs text-gray-400">{label}</p>
+                  <p className="mt-1 font-medium text-gray-800">
+                    {value || `Enter your ${label.toLowerCase()}`}
+                  </p>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Location Info */}
+        <div className="bg-white/90 rounded-3xl shadow-sm border border-indigo-100 p-8 mb-8 transition-all hover:shadow-md">
+          <div className="flex justify-between items-center mb-6">
+            <h2 className="text-lg font-bold text-gray-800">
+              Location Details
+            </h2>
+            <button
+              onClick={() =>
+                editFlags.locationInfo
+                  ? saveSection("locationInfo")
+                  : setEditFlags({ ...editFlags, locationInfo: true })
+              }
+              className="p-4 text-indigo-700 rounded-lg cursor-pointer"
+            >
+              {editFlags.locationInfo ? (
+                <CheckCheck size={25} color="green" />
+              ) : (
+                <SquarePenIcon size={18} />
+              )}
+            </button>
+          </div>
+
+          {editFlags.locationInfo ? (
+            <div className="flex flex-wrap gap-4">
+              {["address", "city", "state", "country"].map((field) => (
+                <input
+                  key={field}
+                  placeholder={`Enter your ${field}`}
+                  value={locationInfo[field]}
+                  onChange={(e) =>
+                    setLocationInfo({
+                      ...locationInfo,
+                      [field]: e.target.value,
+                    })
+                  }
+                  className={`${commonInput} flex-1 min-w-[45%]`}
+                />
+              ))}
+            </div>
+          ) : (
+            <div className="flex flex-wrap gap-6 text-sm text-gray-700">
+              {[
+                ["Address", locationInfo.address],
+                ["City / Location", locationInfo.city],
+                ["State", locationInfo.state],
+                ["Country", locationInfo.country],
+              ].map(([label, value]) => (
+                <div key={label} className="flex-1 min-w-[22%]">
+                  <p className="text-xs text-gray-400">{label}</p>
+                  <p className="mt-1 font-medium text-gray-800">
+                    {value || `Enter your ${label.toLowerCase()}`}
+                  </p>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* LinkedIn */}
+        <div className="bg-white/90 rounded-3xl shadow-sm border border-indigo-100 p-8 transition-all hover:shadow-md">
+          <div className="flex justify-between items-center mb-6">
+            <h2 className="text-lg font-bold text-gray-800">LinkedIn</h2>
+            <button
+              onClick={() =>
+                editFlags.linkedin
+                  ? saveSection("linkedin")
+                  : setEditFlags({ ...editFlags, linkedin: true })
+              }
+              className="p-4 text-indigo-700 rounded-lg cursor-pointer"
+            >
+              {editFlags.linkedin ? (
+                <CheckCheck size={25} color="green" />
+              ) : (
+                <SquarePenIcon size={18} />
+              )}
+            </button>
+          </div>
+
+          {editFlags.linkedin ? (
+            <input
+              placeholder="Paste your LinkedIn URL (optional)"
+              value={linkedin}
+              onChange={(e) => setLinkedin(e.target.value)}
+              className={commonInput}
+            />
+          ) : (
+            <p className="text-gray-700 text-sm font-medium">
+              {linkedin || "Paste your LinkedIn URL (optional)"}
+            </p>
+          )}
         </div>
       </div>
     </div>

@@ -5,7 +5,7 @@ import { Instagram, Mail, Phone, MessageCircle, Facebook } from "lucide-react";
 function Footer() {
   return (
     <div className="bg-gray-900 text-gray-100 p-12 mt-20">
-      <h1 className="font-bold text-2xl mb-4 text-green-500">About WorkVibe</h1>
+      <h1 className="font-bold text-2xl mb-4 text-cyan-400">About WorkVibe</h1>
       <div className="flex flex-col gap-5 font-mono">
         <p>
           WorkVibe is a professional job portal connecting job seekers with
@@ -24,7 +24,7 @@ function Footer() {
           talent in a secure and user-friendly environment. 🚀
         </p>
 
-        <h1 className="mt-10 text-2xl font-bold text-green-500">Contact Us</h1>
+        <h1 className="mt-10 text-2xl font-bold text-cyan-400">Contact Us</h1>
         <div className="flex gap-8 mt-4">
           <a
             target="_blank"

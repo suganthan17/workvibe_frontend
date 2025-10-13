@@ -1,9 +1,10 @@
+// src/components/SidebarRecruiter.jsx
 import React, { useEffect, useState } from "react";
-import { RecruiterSidebar } from "../data/data";
 import { Blend, LogOut } from "lucide-react";
-import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
+import { RecruiterSidebar } from "../data/data";
 import toast from "react-hot-toast";
+import axios from "axios";
 
 const BASE_URL =
   window.location.hostname === "localhost"
@@ -12,21 +13,33 @@ const BASE_URL =
 
 function SidebarRecruiter() {
   const navigate = useNavigate();
-  const [user, setUser] = useState({ email: "", name: "" });
-
-  const fetchUser = async () => {
-    try {
-      const res = await axios.get(`${BASE_URL}/api/recruiter/profile/sidebar`, {
-        withCredentials: true,
-      });
-      setUser(res.data);
-      localStorage.setItem("user", JSON.stringify(res.data));
-    } catch (err) {
-      console.error(err);
-    }
-  };
+  const location = useLocation();
+  const [user, setUser] = useState({
+    name: "",
+    email: "",
+    profilePic: null,
+  });
 
   useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        // Using axios to read sidebar profile endpoint (keeps your existing backend call)
+        const res = await axios.get(
+          `${BASE_URL}/api/recruiter/profile/sidebar`,
+          { withCredentials: true }
+        );
+        const data = res.data || {};
+        setUser({
+          name: data.basicInfo?.fullName || data.name || "Recruiter",
+          email: data.basicInfo?.email || data.email || "email@example.com",
+          profilePic: data.profilePic || null,
+        });
+        // keep localStorage behavior if you want it
+        localStorage.setItem("user", JSON.stringify(res.data || {}));
+      } catch (err) {
+        console.error("Failed to fetch recruiter sidebar profile:", err);
+      }
+    };
     fetchUser();
   }, []);
 
@@ -46,45 +59,103 @@ function SidebarRecruiter() {
   };
 
   return (
-    <div className="bg-gray-900 flex flex-col w-64 min-h-screen border-r border-gray-700 shadow-lg p-4 font-poppins text-gray-100">
-      <div className="flex items-center gap-2 mb-6 px-2">
-        <Blend size={28} className="text-indigo-400" />
-        <span className="text-2xl font-extrabold text-white">
-          ᗯOᖇK<span className="text-indigo-500">ᐯIᗷE</span>
-        </span>
-      </div>
-
-      <div className="flex flex-col bg-gray-800 rounded-xl p-4 mb-6 shadow-md text-center">
-        <div className="w-20 h-20 rounded-full bg-gray-600 mx-auto mb-3 flex items-center justify-center text-xl font-bold text-white">
-          {user.name ? user.name.charAt(0).toUpperCase() : "R"}
+    <aside className="w-72 min-h-screen p-6 bg-white border-r border-gray-100 shadow-sm">
+      {/* Brand */}
+      <div className="flex items-center gap-3 mb-6">
+        <div className="p-2 rounded-lg bg-gradient-to-br from-indigo-50 to-sky-50">
+          <Blend size={28} className="text-indigo-500" />
         </div>
-        <p className="text-md font-semibold">{user.name || "Recruiter"}</p>
-        <p className="text-xs text-gray-400 truncate">
-          {user.email || "email@example.com"}
-        </p>
+        <div>
+          <h1 className="text-lg font-extrabold text-gray-800 leading-tight">
+            ᗯOᖇK<span className="text-indigo-500">ᐯIᗷE</span>
+          </h1>
+          <p className="text-xs text-gray-400">Recruiter</p>
+        </div>
       </div>
 
-      <div className="flex flex-col border-t border-b border-gray-700 py-4 gap-2 flex-grow">
-        {RecruiterSidebar.map((item) => (
-          <button
-            key={item.name}
-            onClick={() => navigate(item.path)}
-            className="flex items-center gap-3 text-gray-200 text-md cursor-pointer font-semibold hover:bg-indigo-600 hover:text-white px-3 py-2 rounded-lg transition-colors duration-200"
-          >
-            {item.icon && <item.icon size={20} />}
-            {item.name}
-          </button>
-        ))}
+      {/* Profile Card */}
+      <div className="bg-gradient-to-br from-white to-slate-50 p-4 rounded-2xl mb-6 border border-gray-100 shadow-sm">
+        <div className="flex items-center gap-4">
+          {/* Profile Photo or Initial */}
+          <div className="w-14 h-14 rounded-full overflow-hidden ring-2 ring-white shadow-md bg-gray-100 flex items-center justify-center">
+            {user.profilePic ? (
+              <img
+                src={`${BASE_URL}/${user.profilePic}`}
+                alt="Profile"
+                className="w-full h-full object-cover"
+              />
+            ) : (
+              <div
+                className="w-full h-full flex items-center justify-center text-white font-bold text-lg"
+                style={{
+                  background:
+                    "linear-gradient(135deg, rgba(96,165,250,0.95), rgba(124,58,237,0.95))",
+                }}
+              >
+                {user.name ? user.name.charAt(0).toUpperCase() : "R"}
+              </div>
+            )}
+          </div>
 
+          {/* Name & Email */}
+          <div className="flex-1">
+            <p className="text-sm font-semibold text-gray-800">
+              {user.name || "Recruiter"}
+            </p>
+            <p className="text-xs text-gray-500 truncate">
+              {user.email || "email@example.com"}
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* Navigation */}
+      <nav className="flex-1">
+        <ul className="space-y-2">
+          {RecruiterSidebar.map((item) => {
+            const active = location.pathname === item.path;
+            return (
+              <li key={item.name}>
+                <button
+                  onClick={() => navigate(item.path)}
+                  className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-left transition ${
+                    active
+                      ? "bg-indigo-50 ring-1 ring-indigo-100 text-indigo-700"
+                      : "hover:bg-gray-50"
+                  }`}
+                >
+                  <span
+                    className={`${
+                      active ? "text-indigo-600" : "text-gray-500"
+                    }`}
+                  >
+                    {item.icon && <item.icon size={18} />}
+                  </span>
+                  <span
+                    className={`text-sm ${
+                      active ? "font-medium" : "font-normal"
+                    } text-gray-700`}
+                  >
+                    {item.name}
+                  </span>
+                </button>
+              </li>
+            );
+          })}
+        </ul>
+      </nav>
+
+      {/* Logout */}
+      <div className="mt-6">
         <button
           onClick={handleLogout}
-          className="flex items-center gap-3 text-red-400 text-md cursor-pointer font-semibold hover:bg-red-600 hover:text-white px-3 py-2 rounded-lg transition-colors duration-200 mt-2"
+          className="w-full flex items-center gap-3 px-3 py-2 rounded-lg border border-transparent bg-red-50 text-red-600 hover:bg-red-100 transition"
         >
-          <LogOut size={20} />
-          Logout
+          <LogOut size={18} />
+          <span className="text-sm font-medium">Logout</span>
         </button>
       </div>
-    </div>
+    </aside>
   );
 }
 

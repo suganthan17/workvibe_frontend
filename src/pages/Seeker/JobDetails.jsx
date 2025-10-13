@@ -30,128 +30,167 @@ function JobDetails() {
 
   if (!job) {
     return (
-      <div className="flex justify-center items-center h-screen text-gray-500 text-lg">
+      <div className="flex justify-center items-center h-screen text-gray-500 text-lg bg-gradient-to-b from-gray-50 to-white">
         Loading job details...
       </div>
     );
   }
 
   return (
-    <div className="max-w-5xl mx-auto p-6">
+    <div className="max-w-6xl mx-auto px-6 py-8">
       <Toaster position="top-right" />
+
       {/* Back Button */}
       <div className="mb-6">
         <button
           onClick={() => navigate(-1)}
-          className="flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg transition font-medium"
+          className="inline-flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 hover:shadow-sm rounded-lg text-sm text-gray-700 transition"
         >
           ← Back to Jobs
         </button>
       </div>
 
       {/* Job Header */}
-      <div className="bg-white shadow-lg rounded-xl p-8 mb-6 border border-gray-200">
-        <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-4 md:gap-0">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">
-              {job.jobTitle}
-            </h1>
-            <p className="text-gray-700 text-sm md:text-base">
-              <Briefcase className="inline-block mr-1" size={16} />{" "}
-              {job.experienceLevel} |{" "}
-              <Building2 className="inline-block mr-1" size={16} />{" "}
-              {job.companyName}
-            </p>
+      <div className="bg-gradient-to-r from-white via-indigo-50 to-white border border-gray-100 rounded-2xl p-6 shadow-sm mb-8">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+          {/* Left Side */}
+          <div className="flex items-start gap-4">
+            <div className="w-16 h-16 rounded-xl bg-white shadow-inner flex items-center justify-center text-indigo-600 text-2xl font-bold">
+              {job.companyName?.charAt(0) || "C"}
+            </div>
+            <div>
+              <h1 className="text-2xl md:text-3xl font-extrabold text-gray-900 leading-tight">
+                {job.jobTitle}
+              </h1>
+              <p className="mt-1 text-sm text-gray-600 flex items-center gap-3 flex-wrap">
+                <span className="inline-flex items-center gap-1">
+                  <Briefcase size={16} className="opacity-80" />{" "}
+                  {job.experienceLevel}
+                </span>
+                <span className="inline-flex items-center gap-1">
+                  <Building2 size={16} className="opacity-80" />{" "}
+                  {job.companyName}
+                </span>
+              </p>
+            </div>
           </div>
-          <span className="text-sm bg-green-100 text-green-800 px-3 py-1 rounded-full font-semibold">
-            {job.employmentType}
-          </span>
+
+          {/* Right Side */}
+          <div className="flex flex-col items-start md:items-end">
+            <div className="text-right">
+              <div className="text-sm text-gray-500">Salary</div>
+              <div className="font-semibold text-gray-900">
+                ₹{job.salaryMin} - ₹{job.salaryMax}
+                <span className="text-gray-400 text-sm"> / month</span>
+              </div>
+            </div>
+            <span className="mt-2 inline-flex items-center text-sm font-semibold bg-gradient-to-br from-indigo-600 to-indigo-500 text-white px-3 py-1.5 rounded-full shadow">
+              {job.employmentType}
+            </span>
+          </div>
         </div>
-        <div className="flex flex-wrap gap-4 mt-4 text-gray-600">
-          <span className="flex items-center gap-1">
-            <MapPin size={16} /> {job.location}
+
+        {/* Job Info */}
+        <div className="mt-5 flex flex-wrap items-center gap-4 text-sm text-gray-600">
+          <span className="flex items-center gap-2 bg-white/70 px-3 py-1 rounded-md border border-gray-100 shadow-sm">
+            <MapPin size={14} /> {job.location}
           </span>
-          <span className="flex items-center gap-1">
-            <Tag size={16} /> {job.jobCategory}
+          <span className="flex items-center gap-2 bg-white/70 px-3 py-1 rounded-md border border-gray-100 shadow-sm">
+            <Tag size={14} /> {job.jobCategory}
           </span>
-          <span className="flex items-center gap-1">
-            <Clock size={16} /> Apply by:{" "}
-            {new Date(job.applicationDeadline).toLocaleDateString()}
-          </span>
-          <span className="flex items-center gap-1">
-            <strong>Salary:</strong> ₹{job.salaryMin} - ₹{job.salaryMax} / month
+          <span className="flex items-center gap-2 bg-white/70 px-3 py-1 rounded-md border border-gray-100 shadow-sm">
+            <Clock size={14} /> Apply by:{" "}
+            <strong className="ml-1 text-gray-800">
+              {job.applicationDeadline
+                ? new Date(job.applicationDeadline).toLocaleDateString()
+                : "N/A"}
+            </strong>
           </span>
         </div>
       </div>
 
-      {/* Job Details + Sidebar */}
-      <div className="flex flex-col md:flex-row gap-6 mb-6">
+      {/* Main Content (Flex layout) */}
+      <div className="flex flex-col md:flex-row gap-6">
         {/* Left Column */}
         <div className="flex-1 space-y-6">
-          <section className="bg-white rounded-xl shadow-md p-6 border border-gray-200">
-            <h2 className="text-xl font-semibold text-gray-800 mb-2">
+          <section className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+            <h2 className="text-lg font-semibold text-gray-800 mb-3">
               Job Description
             </h2>
-            <p className="text-gray-600">{job.jobDescription}</p>
+            <p className="text-gray-700 leading-relaxed whitespace-pre-line">
+              {job.jobDescription || "No description provided."}
+            </p>
           </section>
-          <section className="bg-white rounded-xl shadow-md p-6 border border-gray-200">
-            <h2 className="text-xl font-semibold text-gray-800 mb-2">
+
+          <section className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+            <h2 className="text-lg font-semibold text-gray-800 mb-3">
               Responsibilities
             </h2>
-            <p className="text-gray-600">{job.responsibilities}</p>
+            <p className="text-gray-700 leading-relaxed whitespace-pre-line">
+              {job.responsibilities || "No responsibilities listed."}
+            </p>
           </section>
-          <section className="bg-white rounded-xl shadow-md p-6 border border-gray-200">
-            <h2 className="text-xl font-semibold text-gray-800 mb-2">
+
+          <section className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+            <h2 className="text-lg font-semibold text-gray-800 mb-3">
               Requirements
             </h2>
-            <p className="text-gray-600">{job.requirements}</p>
+            <p className="text-gray-700 leading-relaxed whitespace-pre-line">
+              {job.requirements || "No requirements provided."}
+            </p>
           </section>
         </div>
 
         {/* Right Column */}
         <div className="flex-1 flex flex-col gap-6">
-          {/* Quick Info */}
-          <div className="bg-indigo-50 p-6 rounded-xl shadow-md border border-indigo-100 text-gray-800">
-            <h3 className="text-lg font-bold mb-3">Quick Info</h3>
-            <ul className="space-y-2 text-sm">
-              <li>
-                <strong>Company:</strong> {job.companyName}
+          <div className="bg-gradient-to-br from-white to-indigo-50 rounded-2xl p-5 border border-indigo-100 shadow-sm">
+            <h3 className="text-md font-bold text-gray-800 mb-3">Quick Info</h3>
+            <ul className="text-sm text-gray-700 space-y-2">
+              <li className="flex justify-between">
+                <span className="text-gray-600">Company</span>
+                <span className="font-medium">{job.companyName}</span>
               </li>
-              <li>
-                <strong>Location:</strong> {job.location}
+              <li className="flex justify-between">
+                <span className="text-gray-600">Location</span>
+                <span className="font-medium">{job.location}</span>
               </li>
-              <li>
-                <strong>Experience:</strong> {job.experienceLevel}
+              <li className="flex justify-between">
+                <span className="text-gray-600">Experience</span>
+                <span className="font-medium">{job.experienceLevel}</span>
               </li>
-              <li>
-                <strong>Category:</strong> {job.jobCategory}
+              <li className="flex justify-between">
+                <span className="text-gray-600">Category</span>
+                <span className="font-medium">{job.jobCategory}</span>
               </li>
-              <li>
-                <strong>Salary:</strong> ₹{job.salaryMin} - ₹{job.salaryMax}
+              <li className="flex justify-between">
+                <span className="text-gray-600">Salary</span>
+                <span className="font-medium">
+                  ₹{job.salaryMin} - ₹{job.salaryMax}
+                </span>
               </li>
             </ul>
           </div>
 
-          {/* Recruiter Info */}
-          <div className="bg-indigo-50 p-6 rounded-xl shadow-md border border-indigo-100 text-gray-800">
-            <h3 className="text-lg font-bold mb-3">Recruiter Info</h3>
-            <p className="text-gray-700">
-              <strong>Name:</strong> John Doe
-            </p>
-            <p className="text-gray-700">
-              <strong>Role:</strong> HR Manager
-            </p>
-            <p className="text-gray-700">
-              <strong>Email:</strong> john.doe@company.com
-            </p>
-            <p className="text-gray-700">
-              <strong>Phone:</strong> +91 9876543210
-            </p>
+          <div className="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm">
+            <h3 className="text-md font-bold text-gray-800 mb-3">Recruiter</h3>
+            <div className="flex items-start gap-3">
+              <div className="w-12 h-12 rounded-lg bg-indigo-50 flex items-center justify-center text-indigo-600 font-semibold text-lg">
+                HR
+              </div>
+              <div className="text-sm text-gray-700">
+                <div className="font-medium">John Doe</div>
+                <div className="mt-1 text-xs text-gray-500">HR Manager</div>
+                <div className="mt-2 text-xs text-gray-600">
+                  john.doe@company.com
+                </div>
+                <div className="text-xs text-gray-600">+91 9876543210</div>
+              </div>
+            </div>
           </div>
 
           <button
             onClick={() => toast.success("Application Submitted!")}
-            className="w-full px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-lg transition shadow-lg"
+            className="w-full inline-flex items-center justify-center gap-2 px-5 py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg font-semibold shadow-lg transition transform hover:-translate-y-0.5"
           >
             Apply Now
           </button>
