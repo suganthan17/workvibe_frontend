@@ -1,7 +1,15 @@
+// src/pages/Seeker/SavedJobs.jsx
 import React, { useEffect, useState } from "react";
 import SidebarSeeker from "../../components/SidebarSeeker";
-import { Bookmark } from "lucide-react";
-import toast, { Toaster } from "react-hot-toast";
+import {
+  Bookmark,
+  MapPin,
+  IndianRupee,
+  Clock3,
+  ArrowRight,
+} from "lucide-react";
+import toast from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
 
 const BASE_URL =
   window.location.hostname === "localhost"
@@ -11,7 +19,9 @@ const BASE_URL =
 function SavedJobs() {
   const [savedJobs, setSavedJobs] = useState([]);
   const [currentUserId, setCurrentUserId] = useState("");
+  const navigate = useNavigate();
 
+  // Fetch Saved Jobs
   useEffect(() => {
     const fetchSavedJobs = async () => {
       try {
@@ -31,6 +41,7 @@ function SavedJobs() {
     fetchSavedJobs();
   }, []);
 
+  // Handle Unsave Job
   const handleUnsaveJob = async (jobId) => {
     try {
       const res = await fetch(`${BASE_URL}/api/jobs/savejobs/${jobId}`, {
@@ -50,75 +61,110 @@ function SavedJobs() {
     }
   };
 
+  // View Job Details
+  const handleViewDetails = (jobId) => {
+    navigate(`/jobdetails/${jobId}`);
+  };
+
   return (
-    <div className="flex bg-gray-50 min-h-screen">
+    <div className="flex min-h-screen bg-gradient-to-br from-indigo-50 via-white to-sky-100">
       <SidebarSeeker />
-      <div className="flex-1 p-6">
-        <Toaster position="top-right" />
-        <div className="flex items-center justify-between border-b border-gray-300 px-6 py-3 mb-6 bg-white rounded-lg shadow">
-          <div>
-            <h1 className="text-2xl font-bold text-gray-800">Saved Jobs</h1>
-            <p className="text-gray-600 text-sm">
-              All the jobs you have saved.
-            </p>
-          </div>
+      <div className="flex-1 p-10">
+        <div className="flex flex-col mb-5 border-b border-gray-200">
+          <h1 className="text-3xl font-bold text-gray-800 pb-2">Saved Jobs</h1>
+          <p className="text-sm text-gray-600 mb-5">
+            View and apply the jobs you’ve saved and are interested in.
+          </p>
         </div>
 
+        {/* Saved Jobs Section */}
         {savedJobs.length === 0 ? (
-          <p className="text-gray-500">No saved jobs yet.</p>
+          <p className="text-gray-500 text-center mt-20">
+            No saved jobs yet. Start exploring and save jobs you like!
+          </p>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className=" space-y-5 min-w-full gap-6">
             {savedJobs.map((job) => (
               <div
                 key={job._id}
-                className="bg-white border border-gray-200 rounded-xl p-5 shadow hover:shadow-md transition"
+                className="bg-white border border-gray-200 rounded-4xl p-6 shadow-sm hover:shadow-md transition-all duration-300"
               >
+                {/* Header Section */}
                 <div className="flex justify-between items-start mb-3">
                   <div>
-                    <h2 className="text-lg font-bold text-gray-800">
+                    <h2 className="text-xl font-bold text-gray-900 mt-2">
                       {job.jobTitle}
                     </h2>
-                    <p className="text-gray-700 font-medium">
+                    <p className="text-gray-600 text-sm mt-1">
                       {job.companyName}
                     </p>
-                    <p className="text-gray-500 text-sm">{job.location}</p>
                   </div>
-                  <Bookmark
-                    size={24}
-                    className={`cursor-pointer ${
-                      job.savedBy?.includes(currentUserId)
-                        ? "fill-indigo-600 stroke-indigo-600"
-                        : "fill-white stroke-indigo-600"
-                    }`}
+
+                  {/* Bookmark + Save/Saved label */}
+                  <button
                     onClick={() => handleUnsaveJob(job._id)}
-                  />
-                </div>
-                <div className="flex flex-wrap gap-2 mb-3">
-                  {job.experienceLevel && (
-                    <span className="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full">
-                      {job.experienceLevel}
+                    className="flex items-center gap-2 bg-transparent border-0 p-0"
+                    aria-pressed={job.savedBy?.includes(currentUserId)}
+                    type="button"
+                  >
+                    <Bookmark
+                      size={22}
+                      className={`cursor-pointer ${
+                        job.savedBy?.includes(currentUserId)
+                          ? "fill-red-400 stroke-gray-800"
+                          : "fill-white stroke-while"
+                      }`}
+                    />
+                    <span
+                      className={`text-sm font-semibold select-none ${
+                        job.savedBy?.includes(currentUserId)
+                          ? "text--600"
+                          : "text-gray-600"
+                      }`}
+                    >
+                      {job.savedBy?.includes(currentUserId) ? "Saved" : "Save"}
                     </span>
-                  )}
-                  <span className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full">
-                    Hiring multiple candidates
-                  </span>
-                  <span className="bg-gray-100 text-gray-800 text-xs px-2 py-1 rounded-full">
-                    {job.employmentType || "Full-time"}
-                  </span>
+                  </button>
                 </div>
-                <div className="text-sm text-gray-700 mb-3">
-                  <p>
-                    Salary: ₹{job.salaryMin} - ₹{job.salaryMax} / month
-                  </p>
+
+                <div>
+                  <p className="text-gray-500 text-sm">{job.jobDescription}</p>
                 </div>
-                <a
-                  href={job.applicationLink}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-block mt-3 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700"
-                >
-                  View & Apply
-                </a>
+
+                {/* Footer Row */}
+                <div className="flex items-center justify-between mt-3">
+                  {/* Job info icons */}
+                  <div className="flex items-center gap-6 text-gray-700 text-sm">
+                    <div className="flex items-center gap-2">
+                      <Clock3 className="text-gray-500 w-4 h-4" />
+                      <span className="text-black font-semibold">
+                        {job.employmentType || "Full-time"}
+                      </span>
+                    </div>
+
+                    <div className="flex items-center gap-2">
+                      <MapPin className="text-gray-500 w-4 h-4" />
+                      <span className="text-black font-semibold">
+                        {job.location || "Remote"}
+                      </span>
+                    </div>
+
+                    <div className="flex items-center gap-2">
+                      <IndianRupee className="text-gray-500 w-4 h-4" />
+                      <span className="text-black font-semibold">
+                        ₹{job.salaryMin}–₹{job.salaryMax} / month
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* View Job Button */}
+                  <button
+                    onClick={() => handleViewDetails(job._id)}
+                    className="flex items-center cursor-pointer gap-2 text-indigo-700 font-semibold hover:underline"
+                  >
+                    View Job <ArrowRight className="w-4 h-4" />
+                  </button>
+                </div>
               </div>
             ))}
           </div>

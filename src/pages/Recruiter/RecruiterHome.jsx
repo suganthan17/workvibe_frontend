@@ -1,71 +1,81 @@
 import React, { useState, useEffect } from "react";
 import SidebarRecruiter from "../../components/SidebarRecruiter";
+import { MoveUpRight } from "lucide-react";
+import { Link } from "react-router-dom";
 
-const BASE_URL =
-  window.location.hostname === "localhost"
-    ? "http://localhost:5000"
-    : "https://workvibe-backend.onrender.com";
-
-function RecruiterHome() {
-  const [jobposted, setJobposted] = useState(0);
-  const totalapplicants = 0;
-  const totalhired = 0;
-
+const RecruiterHome = () => {
+  const [jobsPostedCount, setJobsPostedCount] = useState(0);
+  const totalApplicants = 0;
+  const totalHired = 0;
   useEffect(() => {
-    const fetchjobs = async () => {
-      try {
-        const res = await fetch(`${BASE_URL}/getjobs`, {
-          method: "GET",
-          credentials: "include",
-          headers: { "Content-Type": "application/json" },
-        });
-        const data = await res.json();
-        if (res.ok) {
-          setJobposted(data.jobs.length);
-        }
-      } catch (error) {
-        console.log(error);
-      }
-    };
-    fetchjobs();
+    const storedCount = localStorage.getItem("jobsCount");
+    if (storedCount) {
+      setJobsPostedCount(parseInt(storedCount, 10));
+    }
   }, []);
-  return (
-    <>
-      <div className="flex">
-        <SidebarRecruiter />
 
-        <div className="flex-1 p-5 bg-gray-100 min-h-screen">
-          <div className="flex items-center justify-between border-b border-gray-300 px-8 py-3 shadow-sm bg-gray-50 mb-5 rounded-md">
-            <div>
-              <h1 className="text-2xl font-bold text-black">My Profile</h1>
-              <p className="text-black text-sm">
-                Manage and update your personal details.
-              </p>
+  const cardClass =
+    "p-6 rounded-2xl shadow-md flex flex-col justify-between w-64";
+  const iconContainerClass =
+    "p-2 rounded-full flex items-center justify-center";
+
+  return (
+    <div className="flex min-h-screen bg-gradient-to-br from-indigo-50 via-white to-sky-100">
+      <SidebarRecruiter />
+      <div className="flex-1 p-10">
+        <div className="flex flex-col mb-5 border-b border-gray-200">
+          <h1 className="text-3xl font-bold text-gray-800 pb-2">Dashboard</h1>
+          <p className="text-sm text-gray-600 mb-5">
+            Overview of your job postings and applicants.
+          </p>
+        </div>
+
+        <div className="flex space-x-6 w-full h-auto">
+          <div
+            className={`${cardClass} bg-gradient-to-br from-blue-600 to-violet-400 text-white`}
+          >
+            <div className="flex items-start justify-between">
+              <h2 className="text-sm font-medium">Jobs Posted</h2>
+              <Link to="/jobs-posted">
+                <div className={`${iconContainerClass} bg-white/20`}>
+                  <MoveUpRight className="w-4 h-4 text-white cursor-pointer" />
+                </div>
+              </Link>
             </div>
+            <p className="text-5xl font-bold mt-3">{jobsPostedCount}</p>
           </div>
 
-          {/* Quick Stats (like SeekerDashboard) */}
-          <div className="p-8">
-            <h2 className="font-semibold text-xl mb-4">Quick Stats</h2>
-            <div className="flex flex-wrap gap-10">
-              <div className="border border-gray-200 rounded-xl w-52 h-30 bg-white shadow-md flex flex-col justify-center items-center">
-                <p className="font-medium text-gray-600">Jobs Posted</p>
-                <span className="font-bold text-2xl">{jobposted}</span>
-              </div>
-              <div className="border border-gray-200 rounded-xl w-52 h- bg-white shadow-md flex flex-col justify-center items-center">
-                <p className="font-medium text-gray-600">Total Applicants</p>
-                <span className="font-bold text-2xl">{totalapplicants}</span>
-              </div>
-              <div className="border border-gray-200 rounded-xl w-52 h-30 bg-white shadow-md flex flex-col justify-center items-center">
-                <p className="font-medium text-gray-600">Total Hired</p>
-                <span className="font-bold text-2xl">{totalhired}</span>
-              </div>
+          <div
+            className={`${cardClass} bg-white text-black border border-gray-200`}
+          >
+            <div className="flex items-start justify-between">
+              <h2 className="text-sm font-medium">Total Applicants</h2>
+              <Link to="/applicants">
+                <div className={`${iconContainerClass} bg-black`}>
+                  <MoveUpRight className="w-4 h-4 text-white cursor-pointer" />
+                </div>
+              </Link>
             </div>
+            <p className="text-5xl font-bold mt-3">{totalApplicants}</p>
+          </div>
+
+          <div
+            className={`${cardClass} bg-gradient-to-br from-green-500 to-emerald-400 text-white`}
+          >
+            <div className="flex items-start justify-between">
+              <h2 className="text-sm font-medium">Total Hired</h2>
+              <Link to="/applicants">
+                <div className={`${iconContainerClass} bg-white/20`}>
+                  <MoveUpRight className="w-4 h-4 text-white cursor-pointer" />
+                </div>
+              </Link>
+            </div>
+            <p className="text-5xl font-bold mt-3">{totalHired}</p>
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
-}
+};
 
 export default RecruiterHome;

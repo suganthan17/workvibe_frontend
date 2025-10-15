@@ -22,6 +22,7 @@ function JobsPosted() {
         const data = await res.json();
         if (!res.ok) throw new Error(data.message || "Failed to fetch jobs");
         setJobs(data.jobs);
+        localStorage.setItem("jobsCount", data.jobs.length); // store count
       } catch (error) {
         console.error("Error fetching jobs:", error);
         toast.error(error.message || "Error fetching jobs");
@@ -40,7 +41,11 @@ function JobsPosted() {
       if (!res.ok) throw new Error(data.message || "Failed to delete job");
 
       toast.success(data.message || "Job deleted successfully");
-      setJobs((prev) => prev.filter((job) => job._id !== jobId));
+
+      const updatedJobs = jobs.filter((job) => job._id !== jobId);
+      setJobs(updatedJobs);
+      localStorage.setItem("jobsCount", updatedJobs.length); 
+      
     } catch (error) {
       console.error(error);
       toast.error(error.message || "Failed to delete job");
@@ -52,7 +57,6 @@ function JobsPosted() {
       <Toaster position="top-right" reverseOrder={false} />
       <SidebarRecruiter />
       <div className="flex-1 bg-gray-100 p-5">
-        {/* Header */}
         <div className="flex items-center justify-between border-b border-gray-300 px-8 py-3 shadow-sm bg-gray-50 mb-5 rounded-lg">
           <div>
             <h1 className="text-2xl font-bold text-gray-800">Jobs Posted</h1>
@@ -101,7 +105,9 @@ function JobsPosted() {
                     {job.employmentType || "Full-time"}
                   </span>
                 </div>
-                <p className="text-gray-600 text-sm mt-3">{job.jobDescription}</p>
+                <p className="text-gray-600 text-sm mt-3">
+                  {job.jobDescription}
+                </p>
               </div>
             ))
           )}

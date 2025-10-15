@@ -37,164 +37,188 @@ function JobDetails() {
   }
 
   return (
-    <div className="max-w-6xl mx-auto px-6 py-8">
+    <div className="max-w-7xl mx-auto px-6 py-8">
       <Toaster position="top-right" />
 
       {/* Back Button */}
       <div className="mb-6">
         <button
           onClick={() => navigate(-1)}
-          className="inline-flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 hover:shadow-sm rounded-lg text-sm text-gray-700 transition"
+          className="inline-flex cursor-pointer items-center gap-2 px-4 py-2 bg-white border border-gray-200 hover:shadow-sm rounded-lg text-sm text-black font-semibold transition"
         >
           ← Back to Jobs
         </button>
       </div>
 
-      {/* Job Header */}
-      <div className="bg-gradient-to-r from-white via-indigo-50 to-white border border-gray-100 rounded-2xl p-6 shadow-sm mb-8">
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
-          {/* Left Side */}
-          <div className="flex items-start gap-4">
-            <div className="w-16 h-16 rounded-xl bg-white shadow-inner flex items-center justify-center text-indigo-600 text-2xl font-bold">
-              {job.companyName?.charAt(0) || "C"}
-            </div>
-            <div>
-              <h1 className="text-2xl md:text-3xl font-extrabold text-gray-900 leading-tight">
-                {job.jobTitle}
-              </h1>
-              <p className="mt-1 text-sm text-gray-600 flex items-center gap-3 flex-wrap">
-                <span className="inline-flex items-center gap-1">
-                  <Briefcase size={16} className="opacity-80" />{" "}
-                  {job.experienceLevel}
-                </span>
-                <span className="inline-flex items-center gap-1">
-                  <Building2 size={16} className="opacity-80" />{" "}
-                  {job.companyName}
-                </span>
-              </p>
-            </div>
-          </div>
-
-          {/* Right Side */}
-          <div className="flex flex-col items-start md:items-end">
-            <div className="text-right">
-              <div className="text-sm text-gray-500">Salary</div>
-              <div className="font-semibold text-gray-900">
-                ₹{job.salaryMin} - ₹{job.salaryMax}
-                <span className="text-gray-400 text-sm"> / month</span>
+      {/* Banner */}
+      <div className="rounded-2xl overflow-hidden shadow-md mb-6">
+        <div
+          className="h-36 w-full"
+          style={{
+            background:
+              "linear-gradient(90deg, #ffd89b 0%, #19547b 50%, #ff7e5f 100%)",
+          }}
+        />
+        <div className="bg-white p-6 -mt-10 rounded-b-2xl border border-gray-100">
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+            {/* Left */}
+            <div className="flex items-start gap-4">
+              <div className="w-16 h-16 rounded-lg bg-white shadow-inner flex items-center justify-center text-2xl font-bold text-gray-800">
+                {job.companyName?.charAt(0) || "C"}
+              </div>
+              <div>
+                <h1 className="text-2xl md:text-3xl font-extrabold text-gray-900">
+                  {job.jobTitle}
+                </h1>
+                <div className="mt-1 text-sm text-gray-500 flex flex-wrap gap-3">
+                  <span className="inline-flex items-center gap-2">
+                    <Briefcase size={16} /> {job.employmentType || "Full Time"}
+                  </span>
+                  <span className="inline-flex items-center gap-2">
+                    <MapPin size={16} /> {job.location || "Remote"}
+                  </span>
+                  <span className="inline-flex items-center gap-2">
+                    <Tag size={16} /> {job.jobCategory || "General"}
+                  </span>
+                </div>
               </div>
             </div>
-            <span className="mt-2 inline-flex items-center text-sm font-semibold bg-gradient-to-br from-indigo-600 to-indigo-500 text-white px-3 py-1.5 rounded-full shadow">
-              {job.employmentType}
-            </span>
-          </div>
-        </div>
 
-        {/* Job Info */}
-        <div className="mt-5 flex flex-wrap items-center gap-4 text-sm text-gray-600">
-          <span className="flex items-center gap-2 bg-white/70 px-3 py-1 rounded-md border border-gray-100 shadow-sm">
-            <MapPin size={14} /> {job.location}
-          </span>
-          <span className="flex items-center gap-2 bg-white/70 px-3 py-1 rounded-md border border-gray-100 shadow-sm">
-            <Tag size={14} /> {job.jobCategory}
-          </span>
-          <span className="flex items-center gap-2 bg-white/70 px-3 py-1 rounded-md border border-gray-100 shadow-sm">
-            <Clock size={14} /> Apply by:{" "}
-            <strong className="ml-1 text-gray-800">
-              {job.applicationDeadline
-                ? new Date(job.applicationDeadline).toLocaleDateString()
-                : "N/A"}
-            </strong>
-          </span>
+            {/* Right - Apply Button */}
+            <div className="flex items-center gap-4">
+              <button
+                onClick={() => toast.success("Application Submitted!")}
+                className="px-5 py-2 rounded-full bg-gradient-to-r from-green-700 to-green-500  cursor-pointer text-white font-semibold shadow"
+              >
+                Apply
+              </button>
+            </div>
+          </div>
+
+          {/* Sub Info Row */}
+          <div className="mt-4 flex flex-wrap items-center gap-6 text-sm text-gray-600">
+            <div className="flex items-center gap-2">
+              <Clock size={16} className="text-gray-400" />
+              <span>
+                {job.createdAt ? new Date(job.createdAt).toLocaleString() : ""}
+              </span>
+            </div>
+            <div className="flex items-center gap-2">
+              <Building2 size={16} className="text-gray-400" />
+              <span>{job.companyName}</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <MapPin size={16} className="text-gray-400" />
+              <span>{job.location}</span>
+            </div>
+          </div>
         </div>
       </div>
 
-      {/* Main Content (Flex layout) */}
-      <div className="flex flex-col md:flex-row gap-6">
-        {/* Left Column */}
+      {/* Main Content */}
+      <div className="flex flex-col lg:flex-row gap-6">
+        {/* Left column */}
         <div className="flex-1 space-y-6">
-          <section className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+          {/* About the job */}
+          <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
             <h2 className="text-lg font-semibold text-gray-800 mb-3">
-              Job Description
+              About the job
             </h2>
-            <p className="text-gray-700 leading-relaxed whitespace-pre-line">
-              {job.jobDescription || "No description provided."}
+            <p className="text-sm text-gray-700 leading-relaxed whitespace-pre-line">
+              {job.jobDescription ||
+                "No description provided. This section explains the role, responsibilities, and what the candidate will do."}
             </p>
-          </section>
+          </div>
 
-          <section className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
-            <h2 className="text-lg font-semibold text-gray-800 mb-3">
+          {/* Responsibilities */}
+          <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+            <h3 className="text-lg font-semibold text-gray-800 mb-3">
               Responsibilities
-            </h2>
-            <p className="text-gray-700 leading-relaxed whitespace-pre-line">
-              {job.responsibilities || "No responsibilities listed."}
-            </p>
-          </section>
+            </h3>
+            <ul className="list-disc list-inside text-sm text-gray-700 space-y-2">
+              {(
+                job.responsibilities &&
+                job.responsibilities.split("\n").filter(Boolean)
+              )?.map((r, i) => <li key={i}>{r}</li>) || (
+                <>
+                  <li>Deliver the project as per the baseline scope.</li>
+                  <li>Maintain quality delivery within the given timeline.</li>
+                  <li>Ensure smooth communication with stakeholders.</li>
+                </>
+              )}
+            </ul>
+          </div>
 
-          <section className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
-            <h2 className="text-lg font-semibold text-gray-800 mb-3">
+          {/* Requirements */}
+          <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+            <h3 className="text-lg font-semibold text-gray-800 mb-3">
               Requirements
-            </h2>
-            <p className="text-gray-700 leading-relaxed whitespace-pre-line">
-              {job.requirements || "No requirements provided."}
+            </h3>
+            <p className="text-sm text-gray-700 leading-relaxed whitespace-pre-line">
+              {job.requirements ||
+                "No requirements listed. This section usually includes skills, education, and experience needed for the role."}
             </p>
-          </section>
+          </div>
         </div>
 
-        {/* Right Column */}
-        <div className="flex-1 flex flex-col gap-6">
-          <div className="bg-gradient-to-br from-white to-indigo-50 rounded-2xl p-5 border border-indigo-100 shadow-sm">
-            <h3 className="text-md font-bold text-gray-800 mb-3">Quick Info</h3>
+        {/* Right column - Sidebar */}
+        <aside className="w-full lg:w-96 flex-shrink-0 space-y-6">
+          {/* Salary / Quick Info */}
+          <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+            <div>
+              <div className="text-xs text-gray-500">Avg. salary</div>
+              <div className="text-xl font-semibold text-gray-900 mt-1">
+                ₹{job.salaryMin} - ₹{job.salaryMax}
+              </div>
+              <div className="text-sm text-gray-600 mt-1">
+                {job.employmentType} • {job.location}
+              </div>
+            </div>
+
+            <hr className="my-4 border-gray-100" />
+
             <ul className="text-sm text-gray-700 space-y-2">
-              <li className="flex justify-between">
-                <span className="text-gray-600">Company</span>
-                <span className="font-medium">{job.companyName}</span>
+              <li>
+                <span className="font-medium">Industry:</span>{" "}
+                {job.industry || "Software and hardware"}
               </li>
-              <li className="flex justify-between">
-                <span className="text-gray-600">Location</span>
-                <span className="font-medium">{job.location}</span>
+              <li>
+                <span className="font-medium">Employment:</span>{" "}
+                {job.employmentType || "Full-time"}
               </li>
-              <li className="flex justify-between">
-                <span className="text-gray-600">Experience</span>
-                <span className="font-medium">{job.experienceLevel}</span>
+              <li>
+                <span className="font-medium">Category:</span>{" "}
+                {job.jobCategory || "Engineering"}
               </li>
-              <li className="flex justify-between">
-                <span className="text-gray-600">Category</span>
-                <span className="font-medium">{job.jobCategory}</span>
-              </li>
-              <li className="flex justify-between">
-                <span className="text-gray-600">Salary</span>
-                <span className="font-medium">
-                  ₹{job.salaryMin} - ₹{job.salaryMax}
-                </span>
+              <li>
+                <span className="font-medium">Contact:</span>{" "}
+                {job.contactEmail || "jobs@company.com"}
               </li>
             </ul>
           </div>
 
-          <div className="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm">
-            <h3 className="text-md font-bold text-gray-800 mb-3">Recruiter</h3>
-            <div className="flex items-start gap-3">
-              <div className="w-12 h-12 rounded-lg bg-indigo-50 flex items-center justify-center text-indigo-600 font-semibold text-lg">
-                HR
+          {/* About Company */}
+          <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+            <h4 className="text-md font-semibold text-gray-800 mb-3">
+              About company
+            </h4>
+            <div className="flex items-center gap-3 mb-3">
+              <div className="w-10 h-10 rounded bg-gray-50 flex items-center justify-center text-gray-800 font-semibold">
+                {job.companyName?.charAt(0)}
               </div>
-              <div className="text-sm text-gray-700">
-                <div className="font-medium">John Doe</div>
-                <div className="mt-1 text-xs text-gray-500">HR Manager</div>
-                <div className="mt-2 text-xs text-gray-600">
-                  john.doe@company.com
+              <div>
+                <div className="text-sm font-medium">{job.companyName}</div>
+                <div className="text-xs text-gray-500">
+                  {job.companySize || ""}
                 </div>
-                <div className="text-xs text-gray-600">+91 9876543210</div>
               </div>
             </div>
+            <p className="text-sm text-gray-600">
+              {job.companyDescription ||
+                "Company overview not available at this time."}
+            </p>
           </div>
-
-          <button
-            onClick={() => toast.success("Application Submitted!")}
-            className="w-full inline-flex items-center justify-center gap-2 px-5 py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg font-semibold shadow-lg transition transform hover:-translate-y-0.5"
-          >
-            Apply Now
-          </button>
-        </div>
+        </aside>
       </div>
     </div>
   );
