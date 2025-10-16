@@ -7,7 +7,7 @@ import toast from "react-hot-toast";
 const BASE_URL =
   window.location.hostname === "localhost"
     ? "http://localhost:5000"
-    : "https://mentornet-backend-1.onrender.com";
+    : "https://workvibe-backend.onrender.com";
 
 const SeekerProfile = () => {
   const [profilePic, setProfilePic] = useState(null);
