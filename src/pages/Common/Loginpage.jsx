@@ -3,14 +3,10 @@ import { Mail, Lock, Blend } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import Illustration from "/src/assets/n1.svg";
-import axios from "axios";
-
-const BASE_URL =
-  import.meta.env.VITE_BACKEND_URL || "https://workvibe-backend.onrender.com";
+import api from "../../utils/api"; // ✅ use central axios instance
 
 export default function LoginPage() {
   const [showPwd, setShowPwd] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
   const [login, setLogin] = useState({ Email: "", Password: "" });
   const navigate = useNavigate();
 
@@ -21,40 +17,22 @@ export default function LoginPage() {
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    console.log("✅ Login clicked"); // Debug log
     toast.dismiss();
-    setIsLoading(true);
 
     try {
-      const res = await axios.post(
-        `${BASE_URL}/api/users/login`,
-        login,
-        {
-          withCredentials: true, // 🔥 Important for cross-domain cookies
-          headers: { "Content-Type": "application/json" },
-        }
-      );
+      const { data } = await api.post("/api/users/login", login);
 
-      console.log("Response:", res.data);
-
-      if (res.data.user) {
-        localStorage.setItem("user", JSON.stringify(res.data.user));
+      if (data.user) {
+        localStorage.setItem("user", JSON.stringify(data.user));
         toast.success("Login successful");
-
-        const role = res.data.user.Role?.toLowerCase();
+        const role = data.user.Role?.toLowerCase();
         navigate(role === "seeker" ? "/seekerhome" : "/recruiterhome");
       } else {
-        toast.error(res.data.message || "Invalid credentials");
+        toast.error(data.message || "Invalid credentials");
       }
     } catch (err) {
-      console.error("Login error:", err.response || err.message);
-      if (err.response?.status === 401) {
-        toast.error("Unauthorized: Invalid credentials");
-      } else {
-        toast.error("Unable to reach server");
-      }
-    } finally {
-      setIsLoading(false);
+      console.error("Login error:", err);
+      toast.error("Unable to connect to backend. Please try again.");
     }
   };
 
@@ -62,7 +40,7 @@ export default function LoginPage() {
     <div className="min-h-screen flex items-center justify-center bg-gray-100 p-2">
       <div className="w-full max-w-7xl rounded-3xl border border-gray-200 shadow-2xl shadow-black overflow-hidden bg-white">
         <div className="grid grid-cols-1 md:grid-cols-2">
-          {/* Left: Login Form */}
+          {/* Left - Login Form */}
           <div className="p-8 md:p-12 flex flex-col justify-center">
             <div className="flex items-center gap-2 mb-20">
               <Blend size={28} className="text-[#0e5ed3]" />
@@ -112,17 +90,11 @@ export default function LoginPage() {
                 </button>
               </div>
 
-              {/* Submit */}
               <button
                 type="submit"
-                disabled={isLoading}
-                className={`w-full py-3 rounded-xl font-semibold text-white transition ${
-                  isLoading
-                    ? "bg-gray-400 cursor-not-allowed"
-                    : "bg-[#0e5ed3] hover:bg-[#0b4aa7] shadow-lg shadow-[#0e5ed3]/40"
-                }`}
+                className="w-full py-3 rounded-xl bg-[#0e5ed3] hover:bg-[#0b4aa7] text-white font-semibold shadow-lg shadow-[#0e5ed3]/40 transition"
               >
-                {isLoading ? "Logging in..." : "Log In"}
+                Log In
               </button>
             </form>
 
@@ -137,7 +109,7 @@ export default function LoginPage() {
             </p>
           </div>
 
-          {/* Right: Illustration */}
+          {/* Right - Illustration */}
           <div className="relative p-8 md:p-12 bg-gradient-to-br from-[#1771e6] to-[#0b4aa7] text-white flex flex-col justify-center items-center">
             <img
               src={Illustration}

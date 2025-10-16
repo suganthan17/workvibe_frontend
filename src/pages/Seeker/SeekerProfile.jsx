@@ -3,12 +3,7 @@ import React, { useState, useEffect } from "react";
 import SidebarSeeker from "../../components/SidebarSeeker";
 import { SquarePenIcon, CheckCheck, User, Upload } from "lucide-react";
 import toast from "react-hot-toast";
-import api from "../../utils/api";
-
-const BASE_URL =
-  window.location.hostname === "localhost"
-    ? "http://localhost:5000"
-    : "https://workvibe-backend.onrender.com";
+import api from "../../utils/api"; // ✅ centralized axios instance
 
 const SeekerProfile = () => {
   const [profilePic, setProfilePic] = useState(null);
@@ -39,12 +34,13 @@ const SeekerProfile = () => {
   const commonInput =
     "border border-gray-200 p-3 rounded-xl w-full focus:ring-2 focus:ring-indigo-400 focus:outline-none text-sm bg-white transition-all duration-200 shadow-sm hover:border-indigo-200 placeholder-gray-400";
 
+  // ✅ Fetch user profile on mount
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const { data } = await api.get("/api/seeker/profile"); 
-        setBasicInfo(data.basicInfo || basicInfo);
-        setLocationInfo(data.locationInfo || locationInfo);
+        const { data } = await api.get("/api/seeker/profile");
+        setBasicInfo(data.basicInfo || {});
+        setLocationInfo(data.locationInfo || {});
         setLinkedin(data.linkedin || "");
         setProfilePic(data.profilePic || null);
       } catch (err) {
@@ -55,9 +51,11 @@ const SeekerProfile = () => {
     fetchProfile();
   }, []);
 
+  // ✅ Update user profile
   const saveSection = async (section) => {
     try {
       const formData = new FormData();
+
       if (section === "profilePic" && profilePic instanceof File)
         formData.append("profilePic", profilePic);
       if (section === "basicInfo")
@@ -66,7 +64,7 @@ const SeekerProfile = () => {
         formData.append("locationInfo", JSON.stringify(locationInfo));
       if (section === "linkedin") formData.append("linkedin", linkedin);
 
-      await api.put("/api/seeker/profile", formData); // ✅ same thing
+      await api.put("/api/seeker/profile", formData);
       toast.success("Profile updated successfully!");
       setEditFlags((prev) => ({ ...prev, [section]: false }));
     } catch (err) {
@@ -92,7 +90,7 @@ const SeekerProfile = () => {
               className="absolute bottom-0 left-0 w-full opacity-40"
             >
               <path
-                fill="#38BDF8" //
+                fill="#38BDF8"
                 fillOpacity="0.75"
                 d="M0,96L48,128C96,160,192,224,288,229.3C384,235,480,181,576,160C672,139,768,149,864,176C960,203,1056,245,1152,256C1248,267,1344,245,1392,234.7L1440,224L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"
               />
@@ -106,7 +104,7 @@ const SeekerProfile = () => {
                 {profilePic ? (
                   typeof profilePic === "string" ? (
                     <img
-                      src={`${BASE_URL}/${profilePic}`}
+                      src={`${import.meta.env.VITE_API_URL}/${profilePic}`}
                       alt="Profile"
                       className="w-full h-full object-cover"
                     />
@@ -172,7 +170,7 @@ const SeekerProfile = () => {
           </div>
         </div>
 
-        {/* Basic Information */}
+        {/* Basic Information Section */}
         <div className="bg-white/90 rounded-3xl shadow-sm border border-indigo-100 p-8 mb-8 transition-all hover:shadow-md">
           <div className="flex justify-between items-center mb-6">
             <h2 className="text-lg font-bold text-gray-800">
@@ -232,12 +230,7 @@ const SeekerProfile = () => {
             </div>
           ) : (
             <div className="flex flex-wrap gap-6 text-sm text-gray-700">
-              {[
-                ["Full Name", basicInfo.fullName],
-                ["Email", basicInfo.email],
-                ["Phone", basicInfo.phone],
-                ["Date of Birth", basicInfo.dob],
-              ].map(([label, value]) => (
+              {[["Full Name", basicInfo.fullName], ["Email", basicInfo.email], ["Phone", basicInfo.phone], ["Date of Birth", basicInfo.dob]].map(([label, value]) => (
                 <div key={label} className="flex-1 min-w-[22%]">
                   <p className="text-xs text-gray-400">{label}</p>
                   <p className="mt-1 font-medium text-gray-800">
@@ -249,7 +242,7 @@ const SeekerProfile = () => {
           )}
         </div>
 
-        {/* Location Info */}
+        {/* Location Info Section */}
         <div className="bg-white/90 rounded-3xl shadow-sm border border-indigo-100 p-8 mb-8 transition-all hover:shadow-md">
           <div className="flex justify-between items-center mb-6">
             <h2 className="text-lg font-bold text-gray-800">
@@ -290,24 +283,21 @@ const SeekerProfile = () => {
             </div>
           ) : (
             <div className="flex flex-wrap gap-6 text-sm text-gray-700">
-              {[
-                ["Address", locationInfo.address],
-                ["City / Location", locationInfo.city],
-                ["State", locationInfo.state],
-                ["Country", locationInfo.country],
-              ].map(([label, value]) => (
-                <div key={label} className="flex-1 min-w-[22%]">
-                  <p className="text-xs text-gray-400">{label}</p>
-                  <p className="mt-1 font-medium text-gray-800">
-                    {value || `Enter your ${label.toLowerCase()}`}
-                  </p>
-                </div>
-              ))}
+              {[["Address", locationInfo.address], ["City / Location", locationInfo.city], ["State", locationInfo.state], ["Country", locationInfo.country]].map(
+                ([label, value]) => (
+                  <div key={label} className="flex-1 min-w-[22%]">
+                    <p className="text-xs text-gray-400">{label}</p>
+                    <p className="mt-1 font-medium text-gray-800">
+                      {value || `Enter your ${label.toLowerCase()}`}
+                    </p>
+                  </div>
+                )
+              )}
             </div>
           )}
         </div>
 
-        {/* LinkedIn */}
+        {/* LinkedIn Section */}
         <div className="bg-white/90 rounded-3xl shadow-sm border border-indigo-100 p-8 transition-all hover:shadow-md">
           <div className="flex justify-between items-center mb-6">
             <h2 className="text-lg font-bold text-gray-800">LinkedIn</h2>
