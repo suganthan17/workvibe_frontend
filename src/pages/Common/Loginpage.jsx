@@ -3,11 +3,19 @@ import { Mail, Lock, Blend } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import Illustration from "/src/assets/n1.svg";
-import api from "../../utils/api"; // ✅ use central axios instance
+
+const BASE_URL =
+  window.location.hostname === "localhost"
+    ? "http://localhost:5000"
+    : "https://workvibe-backend.onrender.com";
 
 export default function LoginPage() {
   const [showPwd, setShowPwd] = useState(false);
-  const [login, setLogin] = useState({ Email: "", Password: "" });
+  const [login, setLogin] = useState({
+    Email: "",
+    Password: "",
+  });
+
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -20,28 +28,34 @@ export default function LoginPage() {
     toast.dismiss();
 
     try {
-      const { data } = await api.post("/api/users/login", login);
+      const res = await fetch(`${BASE_URL}/api/users/login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify(login),
+      });
 
-      if (data.user) {
+      const data = await res.json();
+      if (res.ok && data.user) {
         localStorage.setItem("user", JSON.stringify(data.user));
         toast.success("Login successful");
         const role = data.user.Role?.toLowerCase();
         navigate(role === "seeker" ? "/seekerhome" : "/recruiterhome");
-      } else {
-        toast.error(data.message || "Invalid credentials");
-      }
+      } else toast.error(data.message || "Invalid credentials");
     } catch (err) {
-      console.error("Login error:", err);
-      toast.error("Unable to connect to backend. Please try again.");
+      toast.error("Something went wrong");
+      console.log(err);
     }
   };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 p-2">
+      {/* Card */}
       <div className="w-full max-w-7xl rounded-3xl border border-gray-200 shadow-2xl shadow-black overflow-hidden bg-white">
         <div className="grid grid-cols-1 md:grid-cols-2">
-          {/* Left - Login Form */}
+          {/* Left: Login Form */}
           <div className="p-8 md:p-12 flex flex-col justify-center">
+            {/* Logo */}
             <div className="flex items-center gap-2 mb-20">
               <Blend size={28} className="text-[#0e5ed3]" />
               <span className="text-4xl font-extrabold text-gray-900">
@@ -69,7 +83,7 @@ export default function LoginPage() {
                 />
               </div>
 
-              {/* Password */}
+              {/* Password with SHOW/HIDE */}
               <div className="flex items-center gap-3 p-3 rounded-xl border border-gray-300 bg-gray-50 focus-within:ring-2 focus-within:ring-[#0e5ed3]">
                 <Lock size={18} className="text-gray-500" />
                 <input
@@ -90,6 +104,7 @@ export default function LoginPage() {
                 </button>
               </div>
 
+              {/* CTA */}
               <button
                 type="submit"
                 className="w-full py-3 rounded-xl bg-[#0e5ed3] hover:bg-[#0b4aa7] text-white font-semibold shadow-lg shadow-[#0e5ed3]/40 transition"
@@ -109,19 +124,27 @@ export default function LoginPage() {
             </p>
           </div>
 
-          {/* Right - Illustration */}
+          {/* Right: Illustration */}
           <div className="relative p-8 md:p-12 bg-gradient-to-br from-[#1771e6] to-[#0b4aa7] text-white flex flex-col justify-center items-center">
+            <div className="absolute -left-10 -top-10 w-48 h-48 rounded-full bg-white/10 blur-sm" />
+            <div className="absolute -right-16 bottom-6 w-40 h-40 rounded-full bg-white/10 blur-sm" />
+
             <img
               src={Illustration}
-              alt="Login"
+              alt="Login illustration"
               className="w-100 h-auto mb-6 z-10 drop-shadow-lg"
             />
-            <div className="text-center">
+
+            <div className="relative z-10 text-center">
               <h2 className="text-3xl md:text-4xl font-extrabold tracking-wide">
                 WELCOME BACK
               </h2>
               <p className="uppercase tracking-widest text-white/80 text-xs mt-1">
                 to WorkVibe
+              </p>
+              <p className="mt-6 text-sm md:text-[15px] text-white/90 max-w-md leading-relaxed">
+                Access your account and continue exploring opportunities,
+                connecting with recruiters, and building your career.
               </p>
             </div>
           </div>
