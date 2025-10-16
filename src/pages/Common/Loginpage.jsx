@@ -3,10 +3,14 @@ import { Mail, Lock, Blend } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import Illustration from "/src/assets/n1.svg";
-import api from "../../utils/api"; // ✅ import the axios instance
+import axios from "axios";
+
+const BASE_URL =
+  import.meta.env.VITE_BACKEND_URL || "https://workvibe-backend.onrender.com";
 
 export default function LoginPage() {
   const [showPwd, setShowPwd] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [login, setLogin] = useState({ Email: "", Password: "" });
   const navigate = useNavigate();
 
@@ -17,29 +21,45 @@ export default function LoginPage() {
 
   const handleLogin = async (e) => {
     e.preventDefault();
+    console.log("✅ Login clicked"); // Debug log
     toast.dismiss();
+    setIsLoading(true);
 
     try {
-      const { data } = await api.post("/api/users/login", login); // ✅ axios handles JSON & credentials
+      const res = await axios.post(
+        `${BASE_URL}/api/users/login`,
+        login,
+        {
+          withCredentials: true, // 🔥 Important for cross-domain cookies
+          headers: { "Content-Type": "application/json" },
+        }
+      );
 
-      if (data.user) {
-        localStorage.setItem("user", JSON.stringify(data.user));
+      console.log("Response:", res.data);
+
+      if (res.data.user) {
+        localStorage.setItem("user", JSON.stringify(res.data.user));
         toast.success("Login successful");
 
-        const role = data.user.Role?.toLowerCase();
+        const role = res.data.user.Role?.toLowerCase();
         navigate(role === "seeker" ? "/seekerhome" : "/recruiterhome");
       } else {
-        toast.error(data.message || "Invalid credentials");
+        toast.error(res.data.message || "Invalid credentials");
       }
     } catch (err) {
-      console.error(err);
-      toast.error("Something went wrong");
+      console.error("Login error:", err.response || err.message);
+      if (err.response?.status === 401) {
+        toast.error("Unauthorized: Invalid credentials");
+      } else {
+        toast.error("Unable to reach server");
+      }
+    } finally {
+      setIsLoading(false);
     }
   };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 p-2">
-      {/* Card */}
       <div className="w-full max-w-7xl rounded-3xl border border-gray-200 shadow-2xl shadow-black overflow-hidden bg-white">
         <div className="grid grid-cols-1 md:grid-cols-2">
           {/* Left: Login Form */}
@@ -57,6 +77,7 @@ export default function LoginPage() {
             </p>
 
             <form onSubmit={handleLogin} className="space-y-5">
+              {/* Email */}
               <div className="flex items-center gap-3 p-3 rounded-xl border border-gray-300 bg-gray-50 focus-within:ring-2 focus-within:ring-[#0e5ed3]">
                 <Mail size={18} className="text-gray-500" />
                 <input
@@ -70,6 +91,7 @@ export default function LoginPage() {
                 />
               </div>
 
+              {/* Password */}
               <div className="flex items-center gap-3 p-3 rounded-xl border border-gray-300 bg-gray-50 focus-within:ring-2 focus-within:ring-[#0e5ed3]">
                 <Lock size={18} className="text-gray-500" />
                 <input
@@ -90,17 +112,26 @@ export default function LoginPage() {
                 </button>
               </div>
 
+              {/* Submit */}
               <button
                 type="submit"
-                className="w-full py-3 rounded-xl bg-[#0e5ed3] hover:bg-[#0b4aa7] text-white font-semibold shadow-lg shadow-[#0e5ed3]/40 transition"
+                disabled={isLoading}
+                className={`w-full py-3 rounded-xl font-semibold text-white transition ${
+                  isLoading
+                    ? "bg-gray-400 cursor-not-allowed"
+                    : "bg-[#0e5ed3] hover:bg-[#0b4aa7] shadow-lg shadow-[#0e5ed3]/40"
+                }`}
               >
-                Log In
+                {isLoading ? "Logging in..." : "Log In"}
               </button>
             </form>
 
             <p className="mt-6 text-center text-sm text-gray-600">
               Don’t have an account?{" "}
-              <Link to="/signup" className="text-[#0e5ed3] font-semibold hover:underline">
+              <Link
+                to="/signup"
+                className="text-[#0e5ed3] font-semibold hover:underline"
+              >
                 Sign up
               </Link>
             </p>
@@ -108,9 +139,15 @@ export default function LoginPage() {
 
           {/* Right: Illustration */}
           <div className="relative p-8 md:p-12 bg-gradient-to-br from-[#1771e6] to-[#0b4aa7] text-white flex flex-col justify-center items-center">
-            <img src={Illustration} alt="Login" className="w-100 h-auto mb-6 z-10 drop-shadow-lg" />
+            <img
+              src={Illustration}
+              alt="Login"
+              className="w-100 h-auto mb-6 z-10 drop-shadow-lg"
+            />
             <div className="text-center">
-              <h2 className="text-3xl md:text-4xl font-extrabold tracking-wide">WELCOME BACK</h2>
+              <h2 className="text-3xl md:text-4xl font-extrabold tracking-wide">
+                WELCOME BACK
+              </h2>
               <p className="uppercase tracking-widest text-white/80 text-xs mt-1">
                 to WorkVibe
               </p>
