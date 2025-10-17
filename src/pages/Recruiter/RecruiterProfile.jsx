@@ -1,230 +1,327 @@
-import React, { useState } from "react";
+// src/pages/recruiter/RecruiterProfile.jsx
+import React, { useState, useEffect } from "react";
 import SidebarRecruiter from "../../components/SidebarRecruiter";
-import { SquarePenIcon, CheckCheck, User } from "lucide-react";
+import { SquarePenIcon, CheckCheck, User, Upload } from "lucide-react";
+import toast from "react-hot-toast";
+
+const BASE_URL =
+  window.location.hostname === "localhost"
+    ? "http://localhost:5000"
+    : "https://workvibe-backend.onrender.com";
 
 const RecruiterProfile = () => {
-  const [profilePic, setProfilePic] = useState(null);
+  const [logo, setLogo] = useState(null);
 
-  // Company Info
-  const [company, setCompany] = useState({
-    name: "",
-    industry: "",
-    size: "",
-    location: "",
-  });
-  const [editCompany, setEditCompany] = useState(false);
-
-  // Contact Info
-  const [contact, setContact] = useState({
+  const [basicInfo, setBasicInfo] = useState({
     name: "",
     email: "",
-    phone: "",
+    position: "",
   });
-  const [editContact, setEditContact] = useState(false);
 
-  // About Company
-  const [about, setAbout] = useState("");
-  const [editAbout, setEditAbout] = useState(false);
+  const [companyInfo, setCompanyInfo] = useState({
+    name: "",
+    location: "",
+    website: "",
+  });
 
-  // Jobs Posted
-  const [jobs, setJobs] = useState("");
-  const [editJobs, setEditJobs] = useState(false);
+  const [editFlags, setEditFlags] = useState({
+    basicInfo: false,
+    companyInfo: false,
+    logo: false,
+  });
 
-  const inputClass =
-    "border border-gray-300 p-2 rounded-md w-full focus:ring-1 focus:ring-indigo-400 focus:outline-none text-sm bg-white";
+  const commonInput =
+    "border border-gray-200 p-3 rounded-xl w-full focus:ring-2 focus:ring-indigo-400 focus:outline-none text-sm bg-white transition-all duration-200 shadow-sm hover:border-indigo-200 placeholder-gray-400";
 
-  const handlePicChange = (e) => {
-    if (e.target.files && e.target.files[0]) {
-      setProfilePic(URL.createObjectURL(e.target.files[0]));
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const res = await fetch(`${BASE_URL}/api/recruiter/profile/get`, {
+          credentials: "include",
+        });
+        if (res.ok) {
+          const data = await res.json();
+          // Backend uses nested fields; use optional chaining and sensible fallbacks
+          setBasicInfo({
+            name: data.basicInfo?.name || "",
+            email: data.basicInfo?.email || "",
+            position: data.basicInfo?.position || "",
+          });
+          setCompanyInfo({
+            name: data.companyInfo?.name || "",
+            location: data.companyInfo?.location || "",
+            website: data.companyInfo?.website || "",
+          });
+          setLogo(data.companyInfo?.logo || null); // logo is nested in companyInfo
+        } else {
+          toast.error("Failed to fetch profile");
+        }
+      } catch (err) {
+        console.error(err);
+        toast.error("Error fetching profile");
+      }
+    };
+    fetchProfile();
+  }, []);
+
+  const saveSection = async (section) => {
+    try {
+      const formData = new FormData();
+      if (section === "logo" && logo instanceof File)
+        formData.append("logo", logo);
+      if (section === "basicInfo")
+        formData.append("basicInfo", JSON.stringify(basicInfo));
+      if (section === "companyInfo")
+        formData.append("companyInfo", JSON.stringify(companyInfo));
+
+      const res = await fetch(`${BASE_URL}/api/recruiter/profile/update`, {
+        method: "PUT",
+        credentials: "include",
+        body: formData,
+      });
+
+      if (res.ok) {
+        const updated = await res.json();
+        toast.success("Profile updated successfully!");
+        // Update local state from returned profile (keeps UI consistent)
+        setBasicInfo({
+          name: updated.basicInfo?.name || basicInfo.name,
+          email: updated.basicInfo?.email || basicInfo.email,
+          position: updated.basicInfo?.position || basicInfo.position,
+        });
+        setCompanyInfo({
+          name: updated.companyInfo?.name || companyInfo.name,
+          location: updated.companyInfo?.location || companyInfo.location,
+          website: updated.companyInfo?.website || companyInfo.website,
+        });
+        setLogo(updated.companyInfo?.logo || logo);
+        setEditFlags((prev) => ({ ...prev, [section]: false }));
+      } else {
+        toast.error("Failed to update profile");
+      }
+    } catch (err) {
+      console.error(err);
+      toast.error("Error updating profile");
     }
   };
 
-  const saveSection = (setter) => {
-    setter(false);
-    alert("Profile updated successfully!");
-  };
-
-  const buttonClass = (isEditing) =>
-    isEditing
-      ? "flex items-center gap-2 px-3 py-1 bg-green-600 text-white rounded-md hover:bg-green-700 text-sm"
-      : "flex items-center gap-2 px-3 py-1 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 text-sm";
-
   return (
-    <div className="flex bg-gray-50 min-h-screen">
+    <div className="flex min-h-screen bg-gradient-to-br from-indigo-50 via-white to-sky-100">
       <SidebarRecruiter />
-      <div className="flex-1 p-5 bg-gray-100">
-        {/* Header */}
-        <div className="flex items-center justify-between border-b border-gray-300 px-8 py-3 shadow-sm bg-gray-50 mb-5 rounded-md">
-          <div>
-            <h1 className="text-2xl font-bold text-black">My Profile</h1>
-            <p className="text-black text-sm">
-              Manage and update your recruiter profile details.
-            </p>
-          </div>
-        </div>
+      <div className="flex-1 p-10">
+        <h1 className="text-3xl font-bold mb-8 text-gray-800 tracking-tight border-b border-gray-200 pb-2">
+          My Profile
+        </h1>
 
-        <div className="p-6 grid grid-cols-3 gap-6">
-          {/* Left Column */}
-          <div className="col-span-1 space-y-6">
-            {/* Profile Picture */}
-            <div className="bg-white border border-gray-200 shadow-md rounded-xl p-6 text-center">
-              <h2 className="text-lg font-bold text-gray-800 mb-3">
-                Profile Picture
-              </h2>
-              <div className="relative w-28 h-28 mx-auto mb-4">
-                {profilePic ? (
-                  <img
-                    src={profilePic}
-                    alt="Profile"
-                    className="w-28 h-28 rounded-full object-cover border-4 border-white shadow"
-                  />
+        {/* Company Banner */}
+        <div className="relative rounded-3xl shadow-md overflow-hidden mb-10">
+          <div className="relative h-40 w-full bg-gradient-to-r from-sky-200 via-blue-300 to-indigo-300 overflow-hidden">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 1440 320"
+              className="absolute bottom-0 left-0 w-full opacity-40"
+            >
+              <path
+                fill="#38BDF8"
+                fillOpacity="0.75"
+                d="M0,96L48,128C96,160,192,224,288,229.3C384,235,480,181,576,160C672,139,768,149,864,176C960,203,1056,245,1152,256C1248,267,1344,245,1392,234.7L1440,224L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"
+              />
+            </svg>
+          </div>
+
+          <div className="flex items-center justify-between px-8 pb-6 pt-2 bg-white/80 backdrop-blur-md">
+            <div className="flex items-center gap-6 -mt-12">
+              <div
+                className="relative w-26 h-26 rounded-full overflow-hidden ring-4 ring-white shadow-md bg-gray-100"
+                style={{ width: 96, height: 96 }}
+              >
+                {logo ? (
+                  typeof logo === "string" ? (
+                    // logo from server (path like uploads/...)
+                    <img
+                      src={`${BASE_URL}/${logo}`}
+                      alt="Company Logo"
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    // local File object
+                    <img
+                      src={URL.createObjectURL(logo)}
+                      alt="Company Logo"
+                      className="w-full h-full object-cover"
+                    />
+                  )
                 ) : (
-                  <div className="w-28 h-28 rounded-full bg-indigo-200 flex items-center justify-center text-indigo-800 text-2xl border-4 border-white shadow">
-                    <User size={30} />
+                  <div className="w-full h-full flex items-center justify-center text-gray-400">
+                    <User size={48} strokeWidth={1.5} />
                   </div>
                 )}
               </div>
-              <label className="px-4 py-2 bg-indigo-600 text-white text-sm rounded-lg cursor-pointer hover:bg-indigo-700">
-                Upload New
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={handlePicChange}
-                  className="hidden"
-                />
-              </label>
+
+              <div>
+                <h2 className="text-xl font-bold mb-1 font-mono text-gray-800">
+                  {companyInfo.name || "Your Company Name"}
+                </h2>
+                <p className="text-sm text-gray-800">
+                  {basicInfo.name || "Recruiter Name"}
+                </p>
+                <p className="text-xs text-gray-700 mt-1">
+                  {basicInfo.position || "Position / Role"}
+                </p>
+              </div>
             </div>
 
-            {/* Company Info */}
-            <div className="bg-white border border-gray-200 shadow-md rounded-xl p-6">
-              <div className="flex justify-between items-center mb-3">
-                <h2 className="text-lg font-bold text-gray-800">
-                  Company Information
-                </h2>
-                <button
-                  onClick={() =>
-                    editCompany ? saveSection(setEditCompany) : setEditCompany(true)
-                  }
-                  className={buttonClass(editCompany)}
-                >
-                  {editCompany ? <CheckCheck size={16} /> : <SquarePenIcon size={16} />}
-                  {editCompany ? "Save" : "Edit"}
-                </button>
-              </div>
-              {editCompany ? (
-                <div className="space-y-2">
-                  {Object.keys(company).map((key) => (
+            <div className="flex items-center gap-3">
+              {editFlags.logo ? (
+                <>
+                  <label className="px-4 py-2 bg-indigo-300 text-indigo-900 rounded-lg cursor-pointer hover:bg-indigo-200 transition-all text-sm shadow-sm flex items-center gap-2">
+                    <Upload size={18} />
                     <input
-                      key={key}
-                      placeholder={key.charAt(0).toUpperCase() + key.slice(1)}
-                      value={company[key]}
-                      onChange={(e) =>
-                        setCompany({ ...company, [key]: e.target.value })
-                      }
-                      className={inputClass}
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) => setLogo(e.target.files[0])}
+                      className="hidden"
                     />
-                  ))}
-                </div>
+                  </label>
+                  <button
+                    onClick={() => saveSection("logo")}
+                    className="p-2 text-green-600 hover:text-green-800 cursor-pointer transition-all"
+                    title="Save logo"
+                  >
+                    <CheckCheck size={25} />
+                  </button>
+                </>
               ) : (
-                <ul className="space-y-2 text-sm text-gray-700">
-                  {Object.keys(company).map((key) => (
-                    <li key={key}>
-                      <span className="font-semibold">
-                        {key.charAt(0).toUpperCase() + key.slice(1)}:
-                      </span>{" "}
-                      {company[key]}
-                    </li>
-                  ))}
-                </ul>
+                <button
+                  onClick={() => setEditFlags((p) => ({ ...p, logo: true }))}
+                  className="p-2 text-black hover:text-white cursor-pointer transition-all"
+                >
+                  <SquarePenIcon size={18} />
+                </button>
               )}
             </div>
           </div>
+        </div>
 
-          {/* Right Column */}
-          <div className="col-span-2 space-y-6">
-            {[
-              {
-                title: "Contact Information",
-                data: contact,
-                edit: editContact,
-                setEdit: setEditContact,
-                inputSetter: setContact,
-              },
-              {
-                title: "About Company",
-                data: about,
-                edit: editAbout,
-                setEdit: setEditAbout,
-                inputSetter: setAbout,
-                textarea: true,
-              },
-              {
-                title: "Jobs Posted",
-                data: jobs,
-                edit: editJobs,
-                setEdit: setEditJobs,
-                inputSetter: setJobs,
-                textarea: true,
-              },
-            ].map((section, idx) => (
-              <div
-                key={idx}
-                className="bg-white border border-gray-200 shadow-md rounded-xl p-6"
-              >
-                <div className="flex justify-between items-center mb-3">
-                  <h2 className="text-lg font-bold text-gray-800">{section.title}</h2>
-                  <button
-                    onClick={() =>
-                      section.edit
-                        ? saveSection(section.setEdit)
-                        : section.setEdit(true)
-                    }
-                    className={buttonClass(section.edit)}
-                  >
-                    {section.edit ? <CheckCheck size={16} /> : <SquarePenIcon size={16} />}
-                    {section.edit ? "Save" : "Edit"}
-                  </button>
-                </div>
-                {section.edit ? (
-                  section.textarea ? (
-                    <textarea
-                      className={inputClass + " h-20"}
-                      value={section.data}
-                      onChange={(e) => section.inputSetter(e.target.value)}
-                    />
-                  ) : (
-                    Object.keys(section.data).map((key) => (
-                      <input
-                        key={key}
-                        placeholder={key.charAt(0).toUpperCase() + key.slice(1)}
-                        value={section.data[key]}
-                        onChange={(e) =>
-                          section.inputSetter({
-                            ...section.data,
-                            [key]: e.target.value,
-                          })
-                        }
-                        className={inputClass}
-                      />
-                    ))
-                  )
-                ) : section.textarea ? (
-                  <p className="text-sm text-gray-700">{section.data}</p>
-                ) : (
-                  <ul className="space-y-1 text-sm text-gray-700">
-                    {Object.keys(section.data).map((key) => (
-                      <li key={key}>
-                        <span className="font-semibold">
-                          {key.charAt(0).toUpperCase() + key.slice(1)}:
-                        </span>{" "}
-                        {section.data[key]}
-                      </li>
-                    ))}
-                  </ul>
-                )}
-              </div>
-            ))}
+        {/* Basic Info */}
+        <div className="bg-white/90 rounded-3xl shadow-sm border border-indigo-100 p-8 mb-8 transition-all hover:shadow-md">
+          <div className="flex justify-between items-center mb-6">
+            <h2 className="text-lg font-bold text-gray-800">
+              Personal Information
+            </h2>
+            <button
+              onClick={() =>
+                editFlags.basicInfo
+                  ? saveSection("basicInfo")
+                  : setEditFlags((p) => ({ ...p, basicInfo: true }))
+              }
+              className="p-4 text-indigo-700 rounded-lg cursor-pointer"
+            >
+              {editFlags.basicInfo ? (
+                <CheckCheck size={25} color="green" />
+              ) : (
+                <SquarePenIcon size={18} />
+              )}
+            </button>
           </div>
+
+          {editFlags.basicInfo ? (
+            <div className="flex flex-wrap gap-4">
+              <input
+                placeholder="Your full name"
+                value={basicInfo.name}
+                onChange={(e) =>
+                  setBasicInfo({ ...basicInfo, name: e.target.value })
+                }
+                className={`${commonInput} flex-1 min-w-[45%]`}
+              />
+              <input
+                placeholder="Email address"
+                value={basicInfo.email}
+                onChange={(e) =>
+                  setBasicInfo({ ...basicInfo, email: e.target.value })
+                }
+                className={`${commonInput} flex-1 min-w-[45%]`}
+              />
+              <input
+                placeholder="Your role or position"
+                value={basicInfo.position}
+                onChange={(e) =>
+                  setBasicInfo({ ...basicInfo, position: e.target.value })
+                }
+                className={`${commonInput} flex-1 min-w-[45%]`}
+              />
+            </div>
+          ) : (
+            <div className="flex flex-wrap gap-6 text-sm text-gray-700">
+              {[
+                ["Name", basicInfo.name],
+                ["Email", basicInfo.email],
+                ["Position", basicInfo.position],
+              ].map(([label, value]) => (
+                <div key={label} className="flex-1 min-w-[30%]">
+                  <p className="text-xs text-gray-400">{label}</p>
+                  <p className="mt-1 font-medium text-gray-800">
+                    {value || `Enter your ${label.toLowerCase()}`}
+                  </p>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Company Info */}
+        <div className="bg-white/90 rounded-3xl shadow-sm border border-indigo-100 p-8 mb-8 transition-all hover:shadow-md">
+          <div className="flex justify-between items-center mb-6">
+            <h2 className="text-lg font-bold text-gray-800">
+              Company Information
+            </h2>
+            <button
+              onClick={() =>
+                editFlags.companyInfo
+                  ? saveSection("companyInfo")
+                  : setEditFlags((p) => ({ ...p, companyInfo: true }))
+              }
+              className="p-4 text-indigo-700 rounded-lg cursor-pointer"
+            >
+              {editFlags.companyInfo ? (
+                <CheckCheck size={25} color="green" />
+              ) : (
+                <SquarePenIcon size={18} />
+              )}
+            </button>
+          </div>
+
+          {editFlags.companyInfo ? (
+            <div className="flex flex-wrap gap-4">
+              {["name", "location", "website"].map((field) => (
+                <input
+                  key={field}
+                  placeholder={`Enter company ${field}`}
+                  value={companyInfo[field] || ""}
+                  onChange={(e) =>
+                    setCompanyInfo({ ...companyInfo, [field]: e.target.value })
+                  }
+                  className={`${commonInput} flex-1 min-w-[45%]`}
+                />
+              ))}
+            </div>
+          ) : (
+            <div className="flex flex-wrap gap-6 text-sm text-gray-700">
+              {[
+                ["Company Name", companyInfo.name],
+                ["Location", companyInfo.location],
+                ["Website", companyInfo.website],
+              ].map(([label, value]) => (
+                <div key={label} className="flex-1 min-w-[30%]">
+                  <p className="text-xs text-gray-400">{label}</p>
+                  <p className="mt-1 font-medium text-gray-800">
+                    {value || `Enter company ${label.toLowerCase()}`}
+                  </p>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </div>
     </div>

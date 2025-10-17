@@ -23,19 +23,17 @@ function SidebarRecruiter() {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        // Using axios to read sidebar profile endpoint (keeps your existing backend call)
-        const res = await axios.get(
-          `${BASE_URL}/api/recruiter/profile/sidebar`,
-          { withCredentials: true }
-        );
+        // Use the existing endpoint for recruiter profile
+        const res = await axios.get(`${BASE_URL}/api/recruiter/profile/get`, {
+          withCredentials: true,
+        });
         const data = res.data || {};
         setUser({
-          name: data.basicInfo?.fullName || data.name || "Recruiter",
-          email: data.basicInfo?.email || data.email || "email@example.com",
-          profilePic: data.profilePic || null,
+          name: data.basicInfo?.name || "Recruiter",
+          email: data.basicInfo?.email || "email@example.com",
+          profilePic: data.companyInfo?.logo || null,
         });
-        // keep localStorage behavior if you want it
-        localStorage.setItem("user", JSON.stringify(res.data || {}));
+        localStorage.setItem("user", JSON.stringify(data));
       } catch (err) {
         console.error("Failed to fetch recruiter sidebar profile:", err);
       }
