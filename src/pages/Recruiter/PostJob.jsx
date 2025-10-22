@@ -96,7 +96,7 @@ const PostJob = () => {
 
   return (
     <div className="flex min-h-screen bg-gradient-to-br from-indigo-50 via-white to-sky-100">
-      <Toaster position="top-right" reverseOrder={false} />
+      
       <SidebarRecruiter />
       <div className="flex-1 p-10">
         <div className="mb-6">

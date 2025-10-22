@@ -53,17 +53,15 @@ function JobsPosted() {
   };
 
   return (
-    <div className="flex bg-gray-50 min-h-screen">
-      <Toaster position="top-right" reverseOrder={false} />
+    <div className="flex min-h-screen bg-gradient-to-br from-indigo-50 via-white to-sky-100">
+      
       <SidebarRecruiter />
-      <div className="flex-1 bg-gray-100 p-5">
-        <div className="flex items-center justify-between border-b border-gray-300 px-8 py-3 shadow-sm bg-gray-50 mb-5 rounded-lg">
-          <div>
-            <h1 className="text-2xl font-bold text-gray-800">Jobs Posted</h1>
-            <p className="text-gray-600 text-sm">
-              View all the jobs you have published.
-            </p>
-          </div>
+      <div className="flex-1  p-10">
+       <div className="flex flex-col mb-5 border-b border-gray-200">
+          <h1 className="text-3xl font-bold text-gray-800 pb-2">Jobs Posted</h1>
+          <p className="text-sm text-gray-600 mb-5">
+            View all the jobs you have published.
+          </p>
         </div>
 
         <div className="max-w-5xl ml-4 space-y-6">

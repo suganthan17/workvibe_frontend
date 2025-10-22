@@ -70,7 +70,9 @@ function BrowseJobs() {
       <SidebarSeeker />
       <div className="flex-1 p-10">
         <div className="flex flex-col mb-5 border-b border-gray-200">
-          <h1 className="text-3xl font-bold text-gray-800 pb-2">Find your job</h1>
+          <h1 className="text-3xl font-bold text-gray-800 pb-2">
+            Find your job
+          </h1>
           <p className="text-sm text-gray-600 mb-5">
             View and apply to the latest job postings.
           </p>
@@ -111,19 +113,31 @@ function BrowseJobs() {
 
                   {/* Company Logo */}
                   <div className="flex items-center space-x-3 mb-4">
-                    <div className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center text-gray-500">
-                      <i className="fa-regular fa-user text-lg"></i>
-                    </div>
+                    {job.companyLogo ? (
+                      <img
+                        src={`${BASE_URL}/${job.companyLogo}`}
+                        alt={`${job.companyName} logo`}
+                        className="w-10 h-10 rounded-full object-cover border border-gray-200"
+                      />
+                    ) : (
+                      <div className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center text-gray-500">
+                        <i className="fa-regular fa-building text-lg"></i>
+                      </div>
+                    )}
+
                     <div>
                       <p className="font-semibold text-gray-800">
                         {job.companyName}
                       </p>
                       <p className="text-xs text-gray-500">
                         {job.createdAt
-                          ? new Date(job.createdAt).toLocaleDateString("en-US", {
-                              month: "short",
-                              day: "numeric",
-                            })
+                          ? new Date(job.createdAt).toLocaleDateString(
+                              "en-US",
+                              {
+                                month: "short",
+                                day: "numeric",
+                              }
+                            )
                           : "Recently posted"}
                       </p>
                     </div>
