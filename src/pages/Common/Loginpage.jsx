@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Mail, Lock, Blend } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
-import ab1 from "/src/assets/ab1.jpg";
+import ab1 from "/src/assets/ab6.jpg";
 
 const BASE_URL =
   window.location.hostname === "localhost"
@@ -49,9 +49,8 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="w-screen h-screen flex bg-gradient-to-br from-indigo-50 via-white to-sky-100">
-      {/* Left: 50% width - Login Form */}
-      <div className="w-1/2 flex items-center justify-center p-8">
+    <div className="w-screen h-screen flex overflow-x-hidden bg-gradient-to-br from-indigo-50 via-white to-sky-100">
+      <div className="w-full md:w-1/2 flex items-center justify-center p-8">
         <div className="w-full max-w-md">
           <div className="flex items-center gap-2 mb-8">
             <Blend size={28} className="text-[#0e5ed3]" />
@@ -93,7 +92,7 @@ export default function LoginPage() {
               <button
                 type="button"
                 onClick={() => setShowPwd((s) => !s)}
-                className="text-xs font-semibold text-[#0e5ed3] hover:underline"
+                className="text-xs font-semibold text-blue-900 cursor-pointer hover:underline"
               >
                 {showPwd ? "HIDE" : "SHOW"}
               </button>
@@ -101,31 +100,43 @@ export default function LoginPage() {
 
             <button
               type="submit"
-              className="w-full py-3 rounded-xl bg-[#0e5ed3] hover:bg-[#0b4aa7] text-white font-semibold shadow-lg shadow-[#0e5ed3]/40 transition"
+              className="w-full py-3 rounded-xl bg-gradient-to-r from-blue-900 to-sky-600 hover:from-sky-600 hover:to-indigo-700 cursor-pointer text-white font-semibold shadow-lg shadow-[#0e5ed3]/40 transition"
             >
               Log In
             </button>
           </form>
-
-          <p className="mt-6 text-center text-sm text-gray-600">
-            Don’t have an account?{" "}
-            <Link
-              to="/signup"
-              className="text-[#0e5ed3] font-semibold hover:underline"
-            >
-              Sign up
-            </Link>
-          </p>
         </div>
       </div>
 
-      {/* Right: 50% width - Full image coverage */}
-      <div className="hidden md:flex w-1/2 items-center justify-center relative overflow-hidden bg-white">
+      <div className="hidden md:flex w-1/2 items-center relative overflow-hidden">
         <img
           src={ab1}
           alt="Right side visual"
           className="absolute inset-0 w-full h-full object-cover"
         />
+        <div className="absolute inset-0 bg-black/40" />
+        <div className="relative z-10 w-full h-full flex items-center">
+          <div className="px-8 md:px-20 py-12 md:py-20 lg:py-24 max-w-lg text-left">
+            <h1 className="text-white text-3xl md:text-4xl lg:text-5xl font-extrabold leading-tight mb-4 drop-shadow-lg">
+              Join WorkVibe Today
+            </h1>
+            <p className="text-white text-sm md:text-base lg:text-lg font-medium opacity-95 leading-relaxed drop-shadow-md">
+              Create your free account and start exploring career opportunities
+              that fit your vibe. Build your profile, apply to jobs, and connect
+              with employers — all in one place.
+            </p>
+
+            <div className="mt-8 flex items-center gap-4">
+              <p className="text-sm text-white/90">New to WorkVibe?</p>
+              <button
+                onClick={() => navigate("/signup")}
+                className="inline-flex bg-gradient-to-r from-blue-900 to-sky-600 hover:from-sky-600 hover:to-indigo-700 cursor-pointer items-center gap-2 px-4 py-2 rounded-md bg-white/10 hover:bg-white/20 text-white text-sm font-semibold transition"
+              >
+                Sign up now
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );
