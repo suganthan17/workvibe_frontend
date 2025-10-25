@@ -8,6 +8,7 @@ import {
 import { Toaster } from "react-hot-toast";
 
 // Common
+import LandingPage from "./pages/Common/LandingPage";
 import Loginpage from "./pages/Common/Loginpage";
 import Signuppage from "./pages/Common/Signuppage";
 import Footer from "./components/Footer";
@@ -37,7 +38,8 @@ function AppContent() {
     <>
       <Routes>
         {/* Auth */}
-        <Route path="/" element={<Loginpage />} />
+        <Route path="/" element={<LandingPage />} />
+        <Route path="/login" element={<Loginpage />} />
         <Route path="/signup" element={<Signuppage />} />
 
         {/* Seeker */}

@@ -83,6 +83,11 @@ function BrowseJobs() {
         ) : (
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
             {jobs.map((job) => {
+              // Optional debug: uncomment to inspect job object shape
+              // console.log("job item:", job);
+              console.log("JOB DATA:", job);
+
+
               const isSaved = job.savedBy?.includes(currentUserId);
               return (
                 <div
@@ -93,13 +98,15 @@ function BrowseJobs() {
                   <button
                     onClick={() => handleSaveJob(job._id)}
                     className="absolute top-4 right-4 flex items-center gap-2 cursor-pointer select-none group"
+                    aria-pressed={isSaved}
+                    type="button"
                   >
                     <Bookmark
                       size={22}
                       className={`transition-colors ${
                         isSaved
-                          ? "fill-red-400 stroke-gray-800"
-                          : "fill-white stroke-while"
+                          ? "fill-black stroke-black"
+                          : "fill-white stroke-black"
                       }`}
                     />
                     <span
@@ -111,12 +118,12 @@ function BrowseJobs() {
                     </span>
                   </button>
 
-                  {/* Company Logo */}
+                  {/* Company Logo + Name */}
                   <div className="flex items-center space-x-3 mb-4">
                     {job.companyLogo ? (
                       <img
                         src={`${BASE_URL}/${job.companyLogo}`}
-                        alt={`${job.companyName} logo`}
+                        alt={`${job.companyName || job.company?.name || "Company"} logo`}
                         className="w-10 h-10 rounded-full object-cover border border-gray-200"
                       />
                     ) : (
@@ -126,18 +133,16 @@ function BrowseJobs() {
                     )}
 
                     <div>
-                      <p className="font-semibold text-gray-800">
-                        {job.companyName}
-                      </p>
+                      {/* IMPORTANT: use div/span instead of nested <p> */}
+                      <div className="font-semibold text-gray-800">
+                        {job.companyName || job.company?.name || "Unknown Company"}
+                      </div>
                       <p className="text-xs text-gray-500">
                         {job.createdAt
-                          ? new Date(job.createdAt).toLocaleDateString(
-                              "en-US",
-                              {
-                                month: "short",
-                                day: "numeric",
-                              }
-                            )
+                          ? new Date(job.createdAt).toLocaleDateString("en-US", {
+                              month: "short",
+                              day: "numeric",
+                            })
                           : "Recently posted"}
                       </p>
                     </div>
