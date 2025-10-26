@@ -48,7 +48,7 @@ function SidebarSeeker() {
       });
       localStorage.clear();
       toast.success("Logged out successfully");
-      navigate("/");
+      navigate("/login");
     } catch {
       toast.error("Logout failed");
     }

@@ -1,3 +1,4 @@
+// src/pages/recruiter/PostJob.jsx
 import React, { useState } from "react";
 import SidebarRecruiter from "../../components/SidebarRecruiter";
 import toast, { Toaster } from "react-hot-toast";
@@ -24,7 +25,7 @@ const PostJob = () => {
     applicationLink: "",
   });
 
-  const [activeSection, setActiveSection] = useState("jobDetails"); // jobDetails | description | application
+  const [activeSection, setActiveSection] = useState("jobDetails"); // jobDetails | companyInfo | description | application
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -67,7 +68,24 @@ const PostJob = () => {
 
   const goNext = () =>
     setActiveSection((s) =>
-      s === "jobDetails" ? "description" : s === "description" ? "application" : "application"
+      s === "jobDetails"
+        ? "companyInfo"
+        : s === "companyInfo"
+        ? "description"
+        : s === "description"
+        ? "application"
+        : "application"
+    );
+
+  const goBack = () =>
+    setActiveSection((s) =>
+      s === "application"
+        ? "description"
+        : s === "description"
+        ? "companyInfo"
+        : s === "companyInfo"
+        ? "jobDetails"
+        : "jobDetails"
     );
 
   const clearForm = () =>
@@ -87,7 +105,7 @@ const PostJob = () => {
       applicationLink: "",
     });
 
-  // modern input style — uniform height, subtle inner shadow, rounded-xl
+  // styles
   const inputClass =
     "w-full h-12 px-4 text-sm bg-white rounded-xl border border-gray-200 shadow-inner focus:outline-none focus:ring-2 focus:ring-indigo-100 focus:border-indigo-400 transition";
   const textareaClass =
@@ -96,17 +114,20 @@ const PostJob = () => {
 
   return (
     <div className="flex min-h-screen bg-gradient-to-br from-indigo-50 via-white to-sky-100">
-      
       <SidebarRecruiter />
       <div className="flex-1 p-10">
+        <Toaster position="top-right" />
+
         <div className="mb-6">
           <h1 className="text-3xl font-bold text-gray-800">Post a Job</h1>
-          <p className="text-sm text-gray-600 mt-1">Publish a new job listing and connect with the right talent.</p>
+          <p className="text-sm text-gray-600 mt-1">
+            Publish a new job listing and connect with the right talent.
+          </p>
         </div>
 
         {/* Tabs */}
         <div className="max-w-5xl mx-auto mb-6">
-          <div className="flex gap-3">
+          <div className="flex gap-3 flex-wrap">
             <button
               type="button"
               onClick={() => setActiveSection("jobDetails")}
@@ -117,6 +138,18 @@ const PostJob = () => {
               }`}
             >
               Job Details
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setActiveSection("companyInfo")}
+              className={`px-4 py-2 rounded-lg text-sm font-medium cursor-pointer transition ${
+                activeSection === "companyInfo"
+                  ? "bg-indigo-600 text-white shadow"
+                  : "bg-white text-gray-700 border border-gray-200 hover:bg-indigo-50"
+              }`}
+            >
+              Company Info
             </button>
 
             <button
@@ -149,7 +182,9 @@ const PostJob = () => {
           {/* Job Details */}
           {activeSection === "jobDetails" && (
             <section className="bg-white rounded-2xl p-8 shadow-sm border border-gray-100">
-              <h2 className="text-lg font-semibold text-gray-800 mb-6">Job Details</h2>
+              <h2 className="text-lg font-semibold text-gray-800 mb-6">
+                Job Details
+              </h2>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
@@ -160,32 +195,6 @@ const PostJob = () => {
                     value={formData.jobTitle}
                     onChange={handleChange}
                     placeholder="Software Engineer"
-                    className={inputClass}
-                    required
-                  />
-                </div>
-
-                <div>
-                  <label className={labelClass}>Company Name</label>
-                  <input
-                    type="text"
-                    name="companyName"
-                    value={formData.companyName}
-                    onChange={handleChange}
-                    placeholder="WorkVibe Pvt Ltd"
-                    className={inputClass}
-                    required
-                  />
-                </div>
-
-                <div>
-                  <label className={labelClass}>Location</label>
-                  <input
-                    type="text"
-                    name="location"
-                    value={formData.location}
-                    onChange={handleChange}
-                    placeholder="Remote / New York, NY"
                     className={inputClass}
                     required
                   />
@@ -208,10 +217,17 @@ const PostJob = () => {
                       <option value="Contract">Contract</option>
                       <option value="Freelance">Freelance</option>
                     </select>
-                    {/* chevron */}
                     <div className="pointer-events-none absolute inset-y-0 right-3 flex items-center">
-                      <svg className="w-4 h-4 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
-                        <path fillRule="evenodd" d="M5.23 7.21a.75.75 0 011.06-.02L10 10.67l3.71-3.48a.75.75 0 111.04 1.08l-4.25 4a.75.75 0 01-1.04 0l-4.25-4a.75.75 0 01-.02-1.06z" clipRule="evenodd" />
+                      <svg
+                        className="w-4 h-4 text-gray-400"
+                        viewBox="0 0 20 20"
+                        fill="currentColor"
+                      >
+                        <path
+                          fillRule="evenodd"
+                          d="M5.23 7.21a.75.75 0 011.06-.02L10 10.67l3.71-3.48a.75.75 0 111.04 1.08l-4.25 4a.75.75 0 01-1.04 0l-4.25-4a.75.75 0 01-.02-1.06z"
+                          clipRule="evenodd"
+                        />
                       </svg>
                     </div>
                   </div>
@@ -234,8 +250,16 @@ const PostJob = () => {
                       <option value="Manager">Manager</option>
                     </select>
                     <div className="pointer-events-none absolute inset-y-0 right-3 flex items-center">
-                      <svg className="w-4 h-4 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
-                        <path fillRule="evenodd" d="M5.23 7.21a.75.75 0 011.06-.02L10 10.67l3.71-3.48a.75.75 0 111.04 1.08l-4.25 4a.75.75 0 01-1.04 0l-4.25-4a.75.75 0 01-.02-1.06z" clipRule="evenodd" />
+                      <svg
+                        className="w-4 h-4 text-gray-400"
+                        viewBox="0 0 20 20"
+                        fill="currentColor"
+                      >
+                        <path
+                          fillRule="evenodd"
+                          d="M5.23 7.21a.75.75 0 011.06-.02L10 10.67l3.71-3.48a.75.75 0 111.04 1.08l-4.25 4a.75.75 0 01-1.04 0l-4.25-4a.75.75 0 01-.02-1.06z"
+                          clipRule="evenodd"
+                        />
                       </svg>
                     </div>
                   </div>
@@ -258,8 +282,16 @@ const PostJob = () => {
                       <option value="Finance">Finance</option>
                     </select>
                     <div className="pointer-events-none absolute inset-y-0 right-3 flex items-center">
-                      <svg className="w-4 h-4 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
-                        <path fillRule="evenodd" d="M5.23 7.21a.75.75 0 011.06-.02L10 10.67l3.71-3.48a.75.75 0 111.04 1.08l-4.25 4a.75.75 0 01-1.04 0l-4.25-4a.75.75 0 01-.02-1.06z" clipRule="evenodd" />
+                      <svg
+                        className="w-4 h-4 text-gray-400"
+                        viewBox="0 0 20 20"
+                        fill="currentColor"
+                      >
+                        <path
+                          fillRule="evenodd"
+                          d="M5.23 7.21a.75.75 0 011.06-.02L10 10.67l3.71-3.48a.75.75 0 111.04 1.08l-4.25 4a.75.75 0 01-1.04 0l-4.25-4a.75.75 0 01-.02-1.06z"
+                          clipRule="evenodd"
+                        />
                       </svg>
                     </div>
                   </div>
@@ -292,10 +324,49 @@ const PostJob = () => {
             </section>
           )}
 
+          {/* Company Info (now a full tab like others) */}
+          {activeSection === "companyInfo" && (
+            <section className="bg-white rounded-2xl p-8 shadow-sm border border-gray-100">
+              <h2 className="text-lg font-semibold text-gray-800 mb-6">
+                Company Info
+              </h2>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label className={labelClass}>Company Name</label>
+                  <input
+                    type="text"
+                    name="companyName"
+                    value={formData.companyName}
+                    onChange={handleChange}
+                    placeholder="WorkVibe Pvt Ltd"
+                    className={inputClass}
+                    required
+                  />
+                </div>
+
+                <div>
+                  <label className={labelClass}>Location</label>
+                  <input
+                    type="text"
+                    name="location"
+                    value={formData.location}
+                    onChange={handleChange}
+                    placeholder="Remote / New York, NY"
+                    className={inputClass}
+                    required
+                  />
+                </div>
+              </div>
+            </section>
+          )}
+
           {/* Description */}
           {activeSection === "description" && (
             <section className="bg-white rounded-2xl p-8 shadow-sm border border-gray-100">
-              <h2 className="text-lg font-semibold text-gray-800 mb-6">Description</h2>
+              <h2 className="text-lg font-semibold text-gray-800 mb-6">
+                Description
+              </h2>
 
               <div className="space-y-6">
                 <div>
@@ -325,7 +396,9 @@ const PostJob = () => {
                 </div>
 
                 <div>
-                  <label className={labelClass}>Requirements / Skills Needed</label>
+                  <label className={labelClass}>
+                    Requirements / Skills Needed
+                  </label>
                   <textarea
                     name="requirements"
                     value={formData.requirements}
@@ -343,7 +416,9 @@ const PostJob = () => {
           {/* Application Info */}
           {activeSection === "application" && (
             <section className="bg-white rounded-2xl p-8 shadow-sm border border-gray-100">
-              <h2 className="text-lg font-semibold text-gray-800 mb-6">Application Info</h2>
+              <h2 className="text-lg font-semibold text-gray-800 mb-6">
+                Application Info
+              </h2>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
@@ -374,32 +449,46 @@ const PostJob = () => {
             </section>
           )}
 
-          {/* Actions */}
-          <div className="flex justify-end gap-4">
-            <button
-              type="button"
-              onClick={clearForm}
-              className="px-6 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition cursor-pointer"
-            >
-              Cancel
-            </button>
-
-            {activeSection !== "application" ? (
+          {/* Actions (Next/Back/Post) */}
+          <div className="flex justify-between max-w-5xl mx-auto">
+            <div>
               <button
                 type="button"
-                onClick={goNext}
-                className="px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition shadow cursor-pointer"
+                onClick={clearForm}
+                className="px-6 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition cursor-pointer"
               >
-                Continue
+                Cancel
               </button>
-            ) : (
-              <button
-                type="submit"
-                className="px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition shadow cursor-pointer"
-              >
-                Post Job
-              </button>
-            )}
+            </div>
+
+            <div className="flex gap-3">
+              {activeSection !== "jobDetails" && (
+                <button
+                  type="button"
+                  onClick={goBack}
+                  className="px-6 py-2 bg-white text-gray-700 rounded-lg border border-gray-200 hover:bg-gray-50 transition"
+                >
+                  Back
+                </button>
+              )}
+
+              {activeSection !== "application" ? (
+                <button
+                  type="button"
+                  onClick={goNext}
+                  className="px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition shadow"
+                >
+                  Continue
+                </button>
+              ) : (
+                <button
+                  type="submit"
+                  className="px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition shadow"
+                >
+                  Post Job
+                </button>
+              )}
+            </div>
           </div>
         </form>
       </div>

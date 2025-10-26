@@ -83,11 +83,6 @@ function BrowseJobs() {
         ) : (
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
             {jobs.map((job) => {
-              // Optional debug: uncomment to inspect job object shape
-              // console.log("job item:", job);
-              console.log("JOB DATA:", job);
-
-
               const isSaved = job.savedBy?.includes(currentUserId);
               return (
                 <div
@@ -118,41 +113,17 @@ function BrowseJobs() {
                     </span>
                   </button>
 
-                  {/* Company Logo + Name */}
-                  <div className="flex items-center space-x-3 mb-4">
-                    {job.companyLogo ? (
-                      <img
-                        src={`${BASE_URL}/${job.companyLogo}`}
-                        alt={`${job.companyName || job.company?.name || "Company"} logo`}
-                        className="w-10 h-10 rounded-full object-cover border border-gray-200"
-                      />
-                    ) : (
-                      <div className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center text-gray-500">
-                        <i className="fa-regular fa-building text-lg"></i>
-                      </div>
-                    )}
-
-                    <div>
-                      {/* IMPORTANT: use div/span instead of nested <p> */}
-                      <div className="font-semibold text-gray-800">
-                        {job.companyName || job.company?.name || "Unknown Company"}
-                      </div>
-                      <p className="text-xs text-gray-500">
-                        {job.createdAt
-                          ? new Date(job.createdAt).toLocaleDateString("en-US", {
-                              month: "short",
-                              day: "numeric",
-                            })
-                          : "Recently posted"}
-                      </p>
-                    </div>
+                  {/* Company Name Only */}
+                  <div className="mb-2 text-md text-gray-500 ">
+                    {job.companyName || "Unknown Company"}
                   </div>
 
-                  {/* Job Info */}
+                  {/* Job Title */}
                   <h2 className="text-lg font-bold text-gray-900 mb-2">
                     {job.jobTitle}
                   </h2>
 
+                  {/* Job Info */}
                   <div className="flex flex-wrap gap-2 mb-4 text-sm">
                     <span className="px-3 py-1 bg-gray-100 text-gray-700 rounded-md font-medium">
                       {job.employmentType || "Full-time"}

@@ -49,7 +49,7 @@ function SidebarRecruiter() {
       });
       localStorage.clear();
       toast.success("Logged out successfully");
-      navigate("/");
+      navigate("/login");
     } catch (err) {
       console.error(err);
       toast.error("Logout failed");
