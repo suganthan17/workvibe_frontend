@@ -31,7 +31,7 @@ export default function LandingPage() {
               Connecting Talent & Opportunity
             </p>
 
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold leading-snug text-gray-800">
+            <h1 className="text-7xl font-extrabold  text-gray-800">
               Discover Your <br /> Next Dream Job
             </h1>
 
@@ -55,7 +55,7 @@ export default function LandingPage() {
           <img
             src={ban1}
             alt="WorkVibe Job Opportunities"
-            className="w-full h-auto object-contain"
+            className="w-full h-auto"
           />
         </div>
       </div>

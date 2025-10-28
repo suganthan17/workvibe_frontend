@@ -3,15 +3,33 @@ import SidebarRecruiter from "../../components/SidebarRecruiter";
 import { MoveUpRight } from "lucide-react";
 import { Link } from "react-router-dom";
 
+const BASE_URL =
+  window.location.hostname === "localhost"
+    ? "http://localhost:5000"
+    : "https://workvibe-backend.onrender.com";
+
 const RecruiterHome = () => {
   const [jobsPostedCount, setJobsPostedCount] = useState(0);
   const totalApplicants = 0;
   const totalHired = 0;
+
   useEffect(() => {
-    const storedCount = localStorage.getItem("jobsCount");
-    if (storedCount) {
-      setJobsPostedCount(parseInt(storedCount, 10));
-    }
+    const fetchJobCount = async () => {
+      try {
+        const res = await fetch(`${BASE_URL}/api/jobs/getjobs`, {
+          method: "GET",
+          credentials: "include",
+        });
+        const data = await res.json();
+        if (res.ok && data.jobs) {
+          setJobsPostedCount(data.jobs.length);
+          localStorage.setItem("jobsCount", data.jobs.length);
+        }
+      } catch {
+        setJobsPostedCount(0);
+      }
+    };
+    fetchJobCount();
   }, []);
 
   const cardClass =

@@ -142,18 +142,6 @@ const PostJob = () => {
 
             <button
               type="button"
-              onClick={() => setActiveSection("companyInfo")}
-              className={`px-4 py-2 rounded-lg text-sm font-medium cursor-pointer transition ${
-                activeSection === "companyInfo"
-                  ? "bg-indigo-600 text-white shadow"
-                  : "bg-white text-gray-700 border border-gray-200 hover:bg-indigo-50"
-              }`}
-            >
-              Company Info
-            </button>
-
-            <button
-              type="button"
               onClick={() => setActiveSection("description")}
               className={`px-4 py-2 rounded-lg text-sm font-medium cursor-pointer transition ${
                 activeSection === "description"
@@ -318,43 +306,6 @@ const PostJob = () => {
                     onChange={handleChange}
                     placeholder="80000"
                     className={inputClass}
-                  />
-                </div>
-              </div>
-            </section>
-          )}
-
-          {/* Company Info (now a full tab like others) */}
-          {activeSection === "companyInfo" && (
-            <section className="bg-white rounded-2xl p-8 shadow-sm border border-gray-100">
-              <h2 className="text-lg font-semibold text-gray-800 mb-6">
-                Company Info
-              </h2>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                  <label className={labelClass}>Company Name</label>
-                  <input
-                    type="text"
-                    name="companyName"
-                    value={formData.companyName}
-                    onChange={handleChange}
-                    placeholder="WorkVibe Pvt Ltd"
-                    className={inputClass}
-                    required
-                  />
-                </div>
-
-                <div>
-                  <label className={labelClass}>Location</label>
-                  <input
-                    type="text"
-                    name="location"
-                    value={formData.location}
-                    onChange={handleChange}
-                    placeholder="Remote / New York, NY"
-                    className={inputClass}
-                    required
                   />
                 </div>
               </div>

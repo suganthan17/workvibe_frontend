@@ -1,7 +1,7 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import toast, { Toaster } from "react-hot-toast";
-import { Briefcase, Building2, MapPin, Clock, Tag } from "lucide-react";
+import { Briefcase, Building2, MapPin, Clock, Tag, Globe } from "lucide-react";
 
 const BASE_URL =
   window.location.hostname === "localhost"
@@ -12,6 +12,7 @@ function JobDetails() {
   const { jobId } = useParams();
   const navigate = useNavigate();
   const [job, setJob] = useState(null);
+  const [company, setCompany] = useState(null);
   const [imageFailed, setImageFailed] = useState(false);
 
   const getImageUrl = (path) => {
@@ -36,12 +37,36 @@ function JobDetails() {
           toast.error(data.message || "Failed to fetch job details");
         }
       } catch (err) {
-        console.error("Fetch job error:", err);
         toast.error(`Server Error: ${err.message}`);
       }
     };
     fetchJob();
   }, [jobId]);
+
+  useEffect(() => {
+    const fetchCompanyDetails = async () => {
+      if (!job?.postedBy) return;
+      try {
+        const res = await fetch(
+          `${BASE_URL}/api/recruiter/profile/get/${job.postedBy}`,
+          {
+            credentials: "include",
+            headers: { "Content-Type": "application/json" },
+          }
+        );
+
+        const data = await res.json();
+        if (data.success) {
+          setCompany(data.profile);
+        } else {
+          console.error("Failed to fetch company details:", data.message);
+        }
+      } catch (err) {
+        console.error("Failed to fetch company details", err);
+      }
+    };
+    fetchCompanyDetails();
+  }, [job]);
 
   if (!job) {
     return (
@@ -53,7 +78,7 @@ function JobDetails() {
 
   const posterPath =
     job.companyLogo ||
-    (job.postedBy && job.postedBy.companyInfo && job.postedBy.companyInfo.logo) ||
+    company?.companyInfo?.logo ||
     job.posterProfileImage ||
     null;
 
@@ -94,7 +119,6 @@ function JobDetails() {
                   {job.companyName?.charAt(0) || "C"}
                 </div>
               )}
-
               <div>
                 <h1 className="text-2xl md:text-3xl font-extrabold text-gray-900">
                   {job.jobTitle}
@@ -112,7 +136,6 @@ function JobDetails() {
                 </div>
               </div>
             </div>
-
             <div className="flex items-center gap-4">
               <button
                 onClick={() => toast.success("Application Submitted!")}
@@ -122,7 +145,6 @@ function JobDetails() {
               </button>
             </div>
           </div>
-
           <div className="mt-4 flex flex-wrap items-center gap-6 text-sm text-gray-600">
             <div className="flex items-center gap-2">
               <Clock size={16} className="text-gray-400" />
@@ -132,11 +154,11 @@ function JobDetails() {
             </div>
             <div className="flex items-center gap-2">
               <Building2 size={16} className="text-gray-400" />
-              <span>{job.companyName}</span>
+              <span>{company?.companyInfo?.name || job.companyName}</span>
             </div>
             <div className="flex items-center gap-2">
               <MapPin size={16} className="text-gray-400" />
-              <span>{job.location}</span>
+              <span>{company?.companyInfo?.location || job.location}</span>
             </div>
           </div>
         </div>
@@ -149,11 +171,9 @@ function JobDetails() {
               About the job
             </h2>
             <p className="text-sm text-gray-700 leading-relaxed whitespace-pre-line">
-              {job.jobDescription ||
-                "No description provided. This section explains the role, responsibilities, and what the candidate will do."}
+              {job.jobDescription || "No description provided."}
             </p>
           </div>
-
           <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
             <h3 className="text-lg font-semibold text-gray-800 mb-3">
               Responsibilities
@@ -162,9 +182,7 @@ function JobDetails() {
               {(
                 job.responsibilities &&
                 job.responsibilities.split("\n").filter(Boolean)
-              )?.map((r, i) => (
-                <li key={i}>{r}</li>
-              )) || (
+              )?.map((r, i) => <li key={i}>{r}</li>) || (
                 <>
                   <li>Deliver the project as per the baseline scope.</li>
                   <li>Maintain quality delivery within the given timeline.</li>
@@ -173,14 +191,12 @@ function JobDetails() {
               )}
             </ul>
           </div>
-
           <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
             <h3 className="text-lg font-semibold text-gray-800 mb-3">
               Requirements
             </h3>
             <p className="text-sm text-gray-700 leading-relaxed whitespace-pre-line">
-              {job.requirements ||
-                "No requirements listed. This section usually includes skills, education, and experience needed for the role."}
+              {job.requirements || "No requirements listed."}
             </p>
           </div>
         </div>
@@ -196,9 +212,7 @@ function JobDetails() {
                 {job.employmentType} • {job.location}
               </div>
             </div>
-
             <hr className="my-4 border-gray-100" />
-
             <ul className="text-sm text-gray-700 space-y-2">
               <li>
                 <span className="font-medium">Industry:</span>{" "}
@@ -229,7 +243,6 @@ function JobDetails() {
                   src={posterImage}
                   alt={`${job.companyName || "Company"} logo`}
                   className="w-10 h-10 rounded object-cover"
-                  onError={() => {}}
                 />
               ) : (
                 <div className="w-10 h-10 rounded bg-gray-50 flex items-center justify-center text-gray-800 font-semibold">
@@ -237,13 +250,28 @@ function JobDetails() {
                 </div>
               )}
               <div>
-                <div className="text-sm font-medium">{job.companyName}</div>
-                <div className="text-xs text-gray-500">{job.companySize || ""}</div>
+                <div className="text-sm font-medium">
+                  {company?.companyInfo?.name || job.companyName}
+                </div>
+                <div className="text-xs text-gray-500">
+                  {company?.companyInfo?.location}
+                </div>
               </div>
             </div>
-            <p className="text-sm text-gray-600">
-              {job.companyDescription || "Company overview not available at this time."}
+            <p className="text-sm text-gray-600 mb-2">
+              {company?.companyInfo?.description ||
+                "Company overview not available."}
             </p>
+            {company?.companyInfo?.website && (
+              <a
+                href={company.companyInfo.website}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1 text-blue-600 text-sm"
+              >
+                <Globe size={14} /> {company.companyInfo.website}
+              </a>
+            )}
           </div>
         </aside>
       </div>

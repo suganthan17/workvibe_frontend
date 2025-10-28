@@ -67,12 +67,10 @@ const RecruiterProfile = () => {
   const saveSection = async (section) => {
     try {
       const formData = new FormData();
+      formData.append("basicInfo", JSON.stringify(basicInfo));
+      formData.append("companyInfo", JSON.stringify(companyInfo));
       if (section === "logo" && logo instanceof File)
         formData.append("logo", logo);
-      if (section === "basicInfo")
-        formData.append("basicInfo", JSON.stringify(basicInfo));
-      if (section === "companyInfo")
-        formData.append("companyInfo", JSON.stringify(companyInfo));
 
       const res = await fetch(`${BASE_URL}/api/recruiter/profile/update`, {
         method: "PUT",
@@ -83,24 +81,14 @@ const RecruiterProfile = () => {
       if (res.ok) {
         const updated = await res.json();
         toast.success("Profile updated successfully!");
-        // Update local state from returned profile (keeps UI consistent)
-        setBasicInfo({
-          name: updated.basicInfo?.name || basicInfo.name,
-          email: updated.basicInfo?.email || basicInfo.email,
-          position: updated.basicInfo?.position || basicInfo.position,
-        });
-        setCompanyInfo({
-          name: updated.companyInfo?.name || companyInfo.name,
-          location: updated.companyInfo?.location || companyInfo.location,
-          website: updated.companyInfo?.website || companyInfo.website,
-        });
-        setLogo(updated.companyInfo?.logo || logo);
+        setBasicInfo(updated.basicInfo);
+        setCompanyInfo(updated.companyInfo);
+        setLogo(updated.companyInfo.logo);
         setEditFlags((prev) => ({ ...prev, [section]: false }));
       } else {
         toast.error("Failed to update profile");
       }
-    } catch (err) {
-      console.error(err);
+    } catch {
       toast.error("Error updating profile");
     }
   };
