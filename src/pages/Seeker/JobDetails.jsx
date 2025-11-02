@@ -100,10 +100,16 @@ function JobDetails() {
         <div
           className="h-36 w-full"
           style={{
-            background:
-              "linear-gradient(90deg, #ffd89b 0%, #19547b 50%, #ff7e5f 100%)",
+            background: `
+      linear-gradient(90deg, #141E30 0%, #243B55 100%),
+      linear-gradient(0deg, rgba(255,255,255,0.08) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.08) 1px, transparent 1px)
+    `,
+            backgroundSize: "cover, 28px 28px, 28px 28px",
+            backgroundBlendMode: "overlay",
           }}
         />
+
         <div className="bg-white p-6 -mt-10 rounded-b-2xl border border-gray-100">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             <div className="flex items-start gap-4">
@@ -139,7 +145,7 @@ function JobDetails() {
             <div className="flex items-center gap-4">
               <button
                 onClick={() => toast.success("Application Submitted!")}
-                className="px-5 py-2 rounded-full bg-gradient-to-r from-green-700 to-green-500 cursor-pointer text-white font-semibold shadow"
+                className="px-5 py-2 rounded-full bg-gradient-to-r from-black to-blue-900 cursor-pointer text-white font-semibold shadow"
               >
                 Apply
               </button>
@@ -258,10 +264,7 @@ function JobDetails() {
                 </div>
               </div>
             </div>
-            <p className="text-sm text-gray-600 mb-2">
-              {company?.companyInfo?.description ||
-                "Company overview not available."}
-            </p>
+
             {company?.companyInfo?.website && (
               <a
                 href={company.companyInfo.website}

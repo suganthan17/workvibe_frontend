@@ -116,7 +116,7 @@ function SidebarRecruiter() {
               <li key={item.name}>
                 <button
                   onClick={() => navigate(item.path)}
-                  className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-left transition ${
+                  className={`w-full flex items-center cursor-pointer gap-3 px-3 py-2 rounded-lg text-left transition ${
                     active
                       ? "bg-indigo-50 ring-1 ring-indigo-100 text-indigo-700"
                       : "hover:bg-gray-50"
@@ -147,7 +147,7 @@ function SidebarRecruiter() {
       <div className="mt-6">
         <button
           onClick={handleLogout}
-          className="w-full flex items-center gap-3 px-3 py-2 rounded-lg border border-transparent bg-red-50 text-red-600 hover:bg-red-100 transition"
+          className="w-full flex items-center gap-3 px-3 py-2 cursor-pointer rounded-lg border border-transparent bg-red-50 text-red-600 hover:bg-red-100 transition"
         >
           <LogOut size={18} />
           <span className="text-sm font-medium">Logout</span>
