@@ -86,7 +86,6 @@ function JobDetails() {
 
   return (
     <div className="max-w-7xl mx-auto px-6 py-8">
-      <Toaster position="top-right" />
       <div className="mb-6">
         <button
           onClick={() => navigate(-1)}
@@ -117,7 +116,7 @@ function JobDetails() {
                 <img
                   src={posterImage}
                   alt={`${job.companyName || "Company"} logo`}
-                  className="w-16 h-16 rounded-lg object-cover border bg-white shadow-inner"
+                  className="w-16 h-16 rounded-lg object-cover  bg-white shadow-inner"
                   onError={() => setImageFailed(true)}
                 />
               ) : (

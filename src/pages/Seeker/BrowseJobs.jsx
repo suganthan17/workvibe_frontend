@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import SidebarSeeker from "../../components/SidebarSeeker";
-import { Bookmark } from "lucide-react";
+import { Bookmark, MapPin, Building2 } from "lucide-react";
 import toast from "react-hot-toast";
 
 const BASE_URL =
@@ -13,8 +13,10 @@ const BASE_URL =
 function BrowseJobs() {
   const [jobs, setJobs] = useState([]);
   const [currentUserId, setCurrentUserId] = useState("");
+  const [companyDetails, setCompanyDetails] = useState({});
   const navigate = useNavigate();
 
+  // Fetch all jobs
   useEffect(() => {
     const fetchJobs = async () => {
       try {
@@ -32,6 +34,38 @@ function BrowseJobs() {
     };
     fetchJobs();
   }, []);
+
+  // Fetch company details for each job’s postedBy recruiter
+  useEffect(() => {
+    const fetchCompanyDetails = async () => {
+      const uniqueRecruiters = [
+        ...new Set(jobs.map((job) => job.postedBy).filter(Boolean)),
+      ];
+
+      for (const recruiterId of uniqueRecruiters) {
+        try {
+          const res = await fetch(
+            `${BASE_URL}/api/recruiter/profile/get/${recruiterId}`,
+            {
+              credentials: "include",
+              headers: { "Content-Type": "application/json" },
+            }
+          );
+          const data = await res.json();
+          if (data.success) {
+            setCompanyDetails((prev) => ({
+              ...prev,
+              [recruiterId]: data.profile.companyInfo,
+            }));
+          }
+        } catch (err) {
+          console.error("Error fetching company info:", err);
+        }
+      }
+    };
+
+    if (jobs.length > 0) fetchCompanyDetails();
+  }, [jobs]);
 
   const handleSaveJob = async (jobId) => {
     try {
@@ -65,6 +99,13 @@ function BrowseJobs() {
     navigate(`/jobdetails/${jobId}`);
   };
 
+  const getImageUrl = (path) => {
+    if (!path) return null;
+    const fixed = path.replace(/\\/g, "/");
+    if (/^https?:\/\//i.test(fixed)) return fixed;
+    return `${BASE_URL.replace(/\/$/, "")}/${fixed.replace(/^\//, "")}`;
+  };
+
   return (
     <div className="flex min-h-screen bg-gradient-to-br from-indigo-50 via-white to-sky-100">
       <SidebarSeeker />
@@ -84,12 +125,18 @@ function BrowseJobs() {
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
             {jobs.map((job) => {
               const isSaved = job.savedBy?.includes(currentUserId);
+              const company =
+                companyDetails[job.postedBy] || job.companyInfo || {};
+              const logo = getImageUrl(
+                job.companyLogo || company.logo || null
+              );
+
               return (
                 <div
                   key={job._id}
                   className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1 relative"
                 >
-                  {/* Save Icon + Text */}
+                  {/* Save Button */}
                   <button
                     onClick={() => handleSaveJob(job._id)}
                     className="absolute top-4 right-4 flex items-center gap-2 cursor-pointer select-none group"
@@ -104,18 +151,33 @@ function BrowseJobs() {
                           : "fill-white stroke-black"
                       }`}
                     />
-                    <span
-                      className={`text-xs font-medium ${
-                        isSaved ? "text-black" : "text-black"
-                      }`}
-                    >
+                    <span className="text-xs font-medium text-black">
                       {isSaved ? "Saved" : "Save"}
                     </span>
                   </button>
 
-                  {/* Company Name Only */}
-                  <div className="mb-2 text-md text-gray-500 ">
-                    {job.companyName || "Unknown Company"}
+                  {/* Company Logo */}
+                  <div className="flex items-center gap-3 mb-3">
+                    {logo ? (
+                      <img
+                        src={logo}
+                        alt="Company logo"
+                        className="w-10 h-10 rounded-md object-cover  bg-white shadow-inner"
+                      />
+                    ) : (
+                      <div className="w-10 h-10 rounded-md bg-gray-100 flex items-center justify-center text-gray-600 text-sm font-semibold">
+                        {job.companyName?.charAt(0) || "C"}
+                      </div>
+                    )}
+                    <div>
+                      <p className="font-semibold text-gray-800 text-sm">
+                        {company.name || job.companyName || "Unknown Company"}
+                      </p>
+                      <p className="flex items-center gap-1 text-gray-500 text-xs">
+                        <MapPin size={12} />
+                        {company.location || job.location || "Unknown location"}
+                      </p>
+                    </div>
                   </div>
 
                   {/* Job Title */}
@@ -129,22 +191,27 @@ function BrowseJobs() {
                       {job.employmentType || "Full-time"}
                     </span>
                     <span className="px-3 py-1 bg-gray-100 text-gray-700 rounded-md font-medium">
-                      {job.experienceLevel || "Senior level"}
+                      {job.experienceLevel || "Entry Level"}
                     </span>
                   </div>
 
-                  {/* Salary & Location */}
+                  {/* Salary + Button */}
                   <div className="flex items-center justify-between mt-3 text-sm">
                     <div>
-                      <p className="font-semibold text-gray-800">
-                        ₹{job.salaryMin} - ₹{job.salaryMax}
-                        <span className="text-gray-500"> /month</span>
-                      </p>
-                      <p className="text-gray-500 text-xs">{job.location}</p>
+                      {job.salaryMin && job.salaryMax ? (
+                        <p className="font-semibold text-gray-800">
+                          ₹{job.salaryMin} - ₹{job.salaryMax}
+                          <span className="text-gray-500"> /month</span>
+                        </p>
+                      ) : (
+                        <p className="font-semibold text-gray-600">
+                          Salary not disclosed
+                        </p>
+                      )}
                     </div>
                     <button
                       onClick={() => handleViewDetails(job._id)}
-                      className="bg-gradient-to-r from-indigo-600 to-cyan-500 cursor-pointer hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm font-medium"
+                      className="bg-gradient-to-r from-indigo-600 to-cyan-500 cursor-pointer hover:opacity-90 text-white px-4 py-2 rounded-lg text-sm font-medium transition"
                     >
                       View Details
                     </button>
