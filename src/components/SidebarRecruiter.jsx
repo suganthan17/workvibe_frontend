@@ -1,10 +1,8 @@
-// src/components/SidebarRecruiter.jsx
 import React, { useEffect, useState } from "react";
 import { Blend, LogOut } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { RecruiterSidebar } from "../data/data";
 import toast from "react-hot-toast";
-import axios from "axios";
 
 const BASE_URL =
   window.location.hostname === "localhost"
@@ -23,19 +21,31 @@ function SidebarRecruiter() {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        // Use the existing endpoint for recruiter profile
-        const res = await axios.get(`${BASE_URL}/api/recruiter/profile/get`, {
-          withCredentials: true,
+        const res = await fetch(`${BASE_URL}/api/recruiter/profile/get`, {
+          credentials: "include",
         });
-        const data = res.data || {};
+        if (!res.ok) {
+          toast.error("Failed to load recruiter profile", { duration: 3000 });
+          return;
+        }
+        const data = await res.json();
         setUser({
-          name: data.basicInfo?.name || "Recruiter",
-          email: data.basicInfo?.email || "email@example.com",
-          profilePic: data.companyInfo?.logo || null,
+          name:
+            data.basicInfo?.fullName ||
+            data.basicInfo?.name ||
+            data.info?.name ||
+            "Recruiter",
+          email:
+            data.basicInfo?.email ||
+            data.info?.email ||
+            data.companyInfo?.contactEmail ||
+            "email@example.com",
+          profilePic:
+            data.companyInfo?.logo || data.profilePic || data.logo || null,
         });
-        localStorage.setItem("user", JSON.stringify(data));
       } catch (err) {
-        console.error("Failed to fetch recruiter sidebar profile:", err);
+        toast.error("Failed to load recruiter profile", { duration: 3000 });
+        console.error(err);
       }
     };
     fetchUser();
@@ -43,22 +53,21 @@ function SidebarRecruiter() {
 
   const handleLogout = async () => {
     try {
-      await fetch(`${BASE_URL}/api/users/logout`, {
+      const res = await fetch(`${BASE_URL}/api/users/logout`, {
         method: "POST",
         credentials: "include",
       });
+      if (!res.ok) throw new Error("Logout failed");
       localStorage.clear();
-      toast.success("Logged out successfully");
-      navigate("/login");
-    } catch (err) {
-      console.error(err);
-      toast.error("Logout failed");
+      toast.success("Logged out successfully", { duration: 3000 });
+      setTimeout(() => navigate("/login"), 400);
+    } catch {
+      toast.error("Logout failed", { duration: 3000 });
     }
   };
 
   return (
     <aside className="w-72 min-h-screen p-6 bg-white border-r border-gray-100 shadow-sm">
-      {/* Brand */}
       <div className="flex items-center gap-3 mb-6">
         <div className="p-2 rounded-lg bg-gradient-to-br from-indigo-50 to-sky-50">
           <Blend size={28} className="text-indigo-500" />
@@ -71,14 +80,16 @@ function SidebarRecruiter() {
         </div>
       </div>
 
-      {/* Profile Card */}
       <div className="bg-gradient-to-br from-white to-slate-50 p-4 rounded-2xl mb-6 border border-gray-100 shadow-sm">
         <div className="flex items-center gap-4">
-          {/* Profile Photo or Initial */}
           <div className="w-14 h-14 rounded-full overflow-hidden ring-2 ring-white shadow-md bg-gray-100 flex items-center justify-center">
             {user.profilePic ? (
               <img
-                src={`${BASE_URL}/${user.profilePic}`}
+                src={
+                  user.profilePic.startsWith("http")
+                    ? user.profilePic
+                    : `${BASE_URL}/${user.profilePic}`
+                }
                 alt="Profile"
                 className="w-full h-full object-cover"
               />
@@ -94,8 +105,6 @@ function SidebarRecruiter() {
               </div>
             )}
           </div>
-
-          {/* Name & Email */}
           <div className="flex-1">
             <p className="text-sm font-semibold text-gray-800">
               {user.name || "Recruiter"}
@@ -107,7 +116,6 @@ function SidebarRecruiter() {
         </div>
       </div>
 
-      {/* Navigation */}
       <nav className="flex-1">
         <ul className="space-y-2">
           {RecruiterSidebar.map((item) => {
@@ -143,7 +151,6 @@ function SidebarRecruiter() {
         </ul>
       </nav>
 
-      {/* Logout */}
       <div className="mt-6">
         <button
           onClick={handleLogout}

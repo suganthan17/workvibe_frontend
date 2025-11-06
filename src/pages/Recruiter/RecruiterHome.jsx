@@ -10,7 +10,7 @@ const BASE_URL =
 
 const RecruiterHome = () => {
   const [jobsPostedCount, setJobsPostedCount] = useState(0);
-  const totalApplicants = 0;
+  const totalApplicants=0;
   const totalHired = 0;
 
   useEffect(() => {

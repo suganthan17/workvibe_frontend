@@ -1,19 +1,22 @@
+import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { useState, useEffect } from "react";
 import toast, { Toaster } from "react-hot-toast";
 import { Briefcase, Building2, MapPin, Clock, Tag, Globe } from "lucide-react";
+import ApplyPopup from "../../components/ApplyPopup";
 
 const BASE_URL =
   window.location.hostname === "localhost"
     ? "http://localhost:5000"
     : "https://workvibe-backend.onrender.com";
 
-function JobDetails() {
+function JobDetails({ job: propJob = null }) {
   const { jobId } = useParams();
   const navigate = useNavigate();
-  const [job, setJob] = useState(null);
+
+  const [job, setJob] = useState(propJob);
   const [company, setCompany] = useState(null);
   const [imageFailed, setImageFailed] = useState(false);
+  const [showPopup, setShowPopup] = useState(false);
 
   const getImageUrl = (path) => {
     if (!path) return null;
@@ -22,7 +25,15 @@ function JobDetails() {
     return `${BASE_URL.replace(/\/$/, "")}/${fixed.replace(/^\//, "")}`;
   };
 
+  // If no job prop was provided, fetch by jobId
   useEffect(() => {
+    if (propJob) {
+      setJob(propJob);
+      setImageFailed(false);
+      return;
+    }
+    if (!jobId) return;
+
     const fetchJob = async () => {
       try {
         const res = await fetch(`${BASE_URL}/api/jobs/getjob/${jobId}`, {
@@ -40,9 +51,11 @@ function JobDetails() {
         toast.error(`Server Error: ${err.message}`);
       }
     };
-    fetchJob();
-  }, [jobId]);
 
+    fetchJob();
+  }, [jobId, propJob]);
+
+  // Fetch company/profile info when job (or its postedBy) is available
   useEffect(() => {
     const fetchCompanyDetails = async () => {
       if (!job?.postedBy) return;
@@ -68,6 +81,7 @@ function JobDetails() {
     fetchCompanyDetails();
   }, [job]);
 
+  // Loading state
   if (!job) {
     return (
       <div className="flex justify-center items-center h-screen text-gray-500 text-lg bg-gradient-to-b from-gray-50 to-white">
@@ -76,6 +90,7 @@ function JobDetails() {
     );
   }
 
+  // poster image resolution and fallback
   const posterPath =
     job.companyLogo ||
     company?.companyInfo?.logo ||
@@ -86,6 +101,8 @@ function JobDetails() {
 
   return (
     <div className="max-w-7xl mx-auto px-6 py-8">
+      <Toaster position="top-right" />
+
       <div className="mb-6">
         <button
           onClick={() => navigate(-1)}
@@ -116,7 +133,7 @@ function JobDetails() {
                 <img
                   src={posterImage}
                   alt={`${job.companyName || "Company"} logo`}
-                  className="w-16 h-16 rounded-lg object-cover  bg-white shadow-inner"
+                  className="w-16 h-16 rounded-lg object-cover bg-white shadow-inner"
                   onError={() => setImageFailed(true)}
                 />
               ) : (
@@ -126,7 +143,7 @@ function JobDetails() {
               )}
               <div>
                 <h1 className="text-2xl md:text-3xl font-extrabold text-gray-900">
-                  {job.jobTitle}
+                  {job.jobTitle || job.title || "Job Title"}
                 </h1>
                 <div className="mt-1 text-sm text-gray-500 flex flex-wrap gap-3">
                   <span className="inline-flex items-center gap-2">
@@ -143,7 +160,7 @@ function JobDetails() {
             </div>
             <div className="flex items-center gap-4">
               <button
-                onClick={() => toast.success("Application Submitted!")}
+                onClick={() => setShowPopup(true)}
                 className="px-5 py-2 rounded-full bg-gradient-to-r from-black to-blue-900 cursor-pointer text-white font-semibold shadow"
               >
                 Apply
@@ -176,17 +193,22 @@ function JobDetails() {
               About the job
             </h2>
             <p className="text-sm text-gray-700 leading-relaxed whitespace-pre-line">
-              {job.jobDescription || "No description provided."}
+              {job.jobDescription ||
+                job.description ||
+                "No description provided."}
             </p>
           </div>
+
           <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
             <h3 className="text-lg font-semibold text-gray-800 mb-3">
               Responsibilities
             </h3>
             <ul className="list-disc list-inside text-sm text-gray-700 space-y-2">
               {(
-                job.responsibilities &&
-                job.responsibilities.split("\n").filter(Boolean)
+                (job.responsibilities &&
+                  job.responsibilities.split("\n").filter(Boolean)) ||
+                (job.responsibility &&
+                  job.responsibility.split("\n").filter(Boolean))
               )?.map((r, i) => <li key={i}>{r}</li>) || (
                 <>
                   <li>Deliver the project as per the baseline scope.</li>
@@ -196,6 +218,7 @@ function JobDetails() {
               )}
             </ul>
           </div>
+
           <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
             <h3 className="text-lg font-semibold text-gray-800 mb-3">
               Requirements
@@ -211,10 +234,11 @@ function JobDetails() {
             <div>
               <div className="text-xs text-gray-500">Avg. salary</div>
               <div className="text-xl font-semibold text-gray-900 mt-1">
-                ₹{job.salaryMin} - ₹{job.salaryMax}
+                ₹{job.salaryMin ?? "—"} - ₹{job.salaryMax ?? "—"}
               </div>
               <div className="text-sm text-gray-600 mt-1">
-                {job.employmentType} • {job.location}
+                {job.employmentType || "Employment"} •{" "}
+                {job.location || "Location"}
               </div>
             </div>
             <hr className="my-4 border-gray-100" />
@@ -277,6 +301,14 @@ function JobDetails() {
           </div>
         </aside>
       </div>
+
+      {/* Apply popup (propagates job._id if available) */}
+      {showPopup && (
+        <ApplyPopup
+          jobId={job._id || job.id || jobId}
+          onClose={() => setShowPopup(false)}
+        />
+      )}
     </div>
   );
 }
