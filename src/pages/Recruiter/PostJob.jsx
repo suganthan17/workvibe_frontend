@@ -152,7 +152,7 @@ const PostJob = () => {
     <div className="flex min-h-screen bg-gradient-to-br from-indigo-50 via-white to-sky-100">
       <SidebarRecruiter />
       <div className="flex-1 p-10">
-        <div className="mb-6">
+        <div className="flex flex-col mb-5 border-b border-gray-200">
           <h1 className="text-3xl font-bold text-gray-800">Post a Job</h1>
           <p className="text-sm text-gray-600 mt-1">
             Publish a new job listing and connect with the right talent.

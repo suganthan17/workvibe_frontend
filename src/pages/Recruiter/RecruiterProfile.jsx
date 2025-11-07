@@ -97,9 +97,12 @@ const RecruiterProfile = () => {
     <div className="flex min-h-screen bg-gradient-to-br from-indigo-50 via-white to-sky-100">
       <SidebarRecruiter />
       <div className="flex-1 p-10">
-        <h1 className="text-3xl font-bold mb-8 text-gray-800 tracking-tight border-b border-gray-200 pb-2">
-          My Profile
-        </h1>
+        <div className="flex flex-col mb-5 border-b border-gray-200">
+          <h1 className="text-3xl font-bold text-gray-800 pb-2">My Profile</h1>
+          <p className="text-sm text-gray-600 mb-5">
+            View and update your company’s information and contact details.
+          </p>
+        </div>
 
         {/* Company Banner */}
         <div className="relative rounded-3xl shadow-md overflow-hidden mb-10">
@@ -190,7 +193,6 @@ const RecruiterProfile = () => {
             </div>
           </div>
         </div>
-
         {/* Basic Info */}
         <div className="bg-white/90 rounded-3xl shadow-sm border border-indigo-100 p-8 mb-8 transition-all hover:shadow-md">
           <div className="flex justify-between items-center mb-6">
@@ -257,7 +259,6 @@ const RecruiterProfile = () => {
             </div>
           )}
         </div>
-
         {/* Company Info */}
         <div className="bg-white/90 rounded-3xl shadow-sm border border-indigo-100 p-8 mb-8 transition-all hover:shadow-md">
           <div className="flex justify-between items-center mb-6">

@@ -15,7 +15,7 @@ export default function Applicants() {
   useEffect(() => {
     const fetchApplicants = async () => {
       try {
-        const res = await fetch(`${BASE_URL}/api/application/recruiter`, {
+        const res = await fetch(`${BASE_URL}/api/application/recruiter/all`, {
           credentials: "include",
         });
         const data = await res.json();
@@ -58,10 +58,15 @@ export default function Applicants() {
   };
 
   return (
-    <div className="flex min-h-screen bg-gray-50">
+    <div className="flex min-h-screen bg-gradient-to-br from-indigo-50 via-white to-sky-100">
       <SidebarRecruiter />
-      <main className="flex-1 p-6">
-        <h1 className="text-2xl font-bold mb-6">Applicants</h1>
+      <main className="flex-1 p-10">
+       <div className="flex flex-col mb-5 border-b border-gray-200">
+          <h1 className="text-3xl font-bold text-gray-800 pb-2">Applicants</h1>
+          <p className="text-sm text-gray-600 mb-5">
+            View and track candidates who have applied to your job postings.
+          </p>
+        </div>
 
         {loading ? (
           <div className="text-gray-500">Loading applicants...</div>
@@ -107,7 +112,7 @@ export default function Applicants() {
                           : app.status === "Rejected"
                           ? "text-red-600"
                           : "text-yellow-600"
-                      } font-semibold`}
+                      } font-semibold `}
                     >
                       {app.status || "Pending"}
                     </span>
@@ -132,14 +137,14 @@ export default function Applicants() {
                   <div className="flex gap-2">
                     <button
                       onClick={() => updateStatus(app._id, "Hired")}
-                      className="p-2 rounded-full bg-green-100 hover:bg-green-200"
+                      className="p-2 rounded-full bg-green-100 hover:bg-green-200 cursor-pointer"
                       title="Hire"
                     >
                       <CheckCircle size={18} className="text-green-600" />
                     </button>
                     <button
                       onClick={() => updateStatus(app._id, "Rejected")}
-                      className="p-2 rounded-full bg-red-100 hover:bg-red-200"
+                      className="p-2 rounded-full bg-red-100 hover:bg-red-200 cursor-pointer"
                       title="Reject"
                     >
                       <XCircle size={18} className="text-red-600" />

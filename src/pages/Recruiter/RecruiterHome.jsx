@@ -10,8 +10,8 @@ const BASE_URL =
 
 const RecruiterHome = () => {
   const [jobsPostedCount, setJobsPostedCount] = useState(0);
-  const totalApplicants=0;
-  const totalHired = 0;
+  const [totalApplicants, setTotalApplicants] = useState(0);
+  const [totalHired, setTotalHired] = useState(0);
 
   useEffect(() => {
     const fetchJobCount = async () => {
@@ -30,6 +30,29 @@ const RecruiterHome = () => {
       }
     };
     fetchJobCount();
+  }, []);
+
+  useEffect(() => {
+    const fetchApplicantsData = async () => {
+      try {
+        const res = await fetch(`${BASE_URL}/api/application/recruiter/all`, {
+          method: "GET",
+          credentials: "include",
+        });
+        const data = await res.json();
+        if (res.ok && data.applications) {
+          setTotalApplicants(data.applications.length);
+          const hiredCount = data.applications.filter(
+            (app) => app.status === "Hired"
+          ).length;
+          setTotalHired(hiredCount);
+        }
+      } catch {
+        setTotalApplicants(0);
+        setTotalHired(0);
+      }
+    };
+    fetchApplicantsData();
   }, []);
 
   const cardClass =
