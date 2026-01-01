@@ -17,6 +17,9 @@ function JobDetails({ job: propJob = null }) {
   const [company, setCompany] = useState(null);
   const [imageFailed, setImageFailed] = useState(false);
   const [showPopup, setShowPopup] = useState(false);
+  const [hasApplied, setHasApplied] = useState(false);
+  const [contactEmail, setContactEmail] = useState("");
+  const [companyWebsite, setCompanyWebsite] = useState("");
 
   const getImageUrl = (path) => {
     if (!path) return null;
@@ -55,30 +58,49 @@ function JobDetails({ job: propJob = null }) {
     fetchJob();
   }, [jobId, propJob]);
 
-  // Fetch company/profile info when job (or its postedBy) is available
   useEffect(() => {
-    const fetchCompanyDetails = async () => {
-      if (!job?.postedBy) return;
+    if (!job?.postedBy) return;
+
+    const fetchRecruiterPublicInfo = async () => {
       try {
         const res = await fetch(
-          `${BASE_URL}/api/recruiter/profile/get/${job.postedBy}`,
-          {
-            credentials: "include",
-            headers: { "Content-Type": "application/json" },
-          }
+          `${BASE_URL}/api/recruiter/profile/public/${job.postedBy}`
         );
-
         const data = await res.json();
-        if (data.success) {
-          setCompany(data.profile);
-        } else {
-          console.error("Failed to fetch company details:", data.message);
-        }
+
+        setContactEmail(data.email || "");
+        setCompanyWebsite(data.website || "");
       } catch (err) {
-        console.error("Failed to fetch company details", err);
+        console.error("Failed to fetch recruiter public info", err);
       }
     };
-    fetchCompanyDetails();
+
+    fetchRecruiterPublicInfo();
+  }, [job]);
+
+  useEffect(() => {
+    const checkApplied = async () => {
+      const res = await fetch(
+        `${BASE_URL}/api/application/seeker/has-applied/${jobId}`,
+        { credentials: "include" }
+      );
+      const data = await res.json();
+      setHasApplied(data.applied);
+    };
+    checkApplied();
+  }, [jobId]);
+
+  useEffect(() => {
+    if (!job) return;
+
+    setCompany({
+      companyInfo: {
+        name: job.companyName,
+        location: job.location,
+        logo: job.companyLogo,
+        website: "",
+      },
+    });
   }, [job]);
 
   // Loading state
@@ -160,10 +182,15 @@ function JobDetails({ job: propJob = null }) {
             </div>
             <div className="flex items-center gap-4">
               <button
+                disabled={hasApplied}
                 onClick={() => setShowPopup(true)}
-                className="px-5 py-2 rounded-full bg-gradient-to-r from-black to-blue-900 cursor-pointer text-white font-semibold shadow"
+                className={`px-5 py-2 rounded-full font-semibold shadow ${
+                  hasApplied
+                    ? "bg-gray-300 text-gray-600 cursor-not-allowed"
+                    : "bg-gradient-to-r from-black to-blue-900 cursor-pointer text-white"
+                }`}
               >
-                Apply
+                {hasApplied ? "Applied" : "Apply"}
               </button>
             </div>
           </div>
@@ -257,7 +284,7 @@ function JobDetails({ job: propJob = null }) {
               </li>
               <li>
                 <span className="font-medium">Contact:</span>{" "}
-                {job.contactEmail || "jobs@company.com"}
+                {contactEmail || "Not provided"}
               </li>
             </ul>
           </div>
@@ -288,14 +315,14 @@ function JobDetails({ job: propJob = null }) {
               </div>
             </div>
 
-            {company?.companyInfo?.website && (
+            {companyWebsite && (
               <a
-                href={company.companyInfo.website}
+                href={companyWebsite}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-1 text-blue-600 text-sm"
               >
-                <Globe size={14} /> {company.companyInfo.website}
+                <Globe size={14} /> {companyWebsite}
               </a>
             )}
           </div>

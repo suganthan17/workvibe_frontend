@@ -22,8 +22,6 @@ const PostJob = () => {
     requirements: "",
     companyWebsite: "",
     companyAbout: "",
-    applicationDeadline: "",
-    applicationLink: "",
   });
 
   const [activeSection, setActiveSection] = useState("jobDetails");
@@ -32,7 +30,7 @@ const PostJob = () => {
   useEffect(() => {
     const fetchRecruiterProfile = async () => {
       try {
-        const res = await fetch(`${BASE_URL}/api/recruiter/profile/get`, {
+        const res = await fetch(`${BASE_URL}/api/recruiter/profile`, {
           credentials: "include",
         });
         const data = await res.json();
@@ -74,20 +72,12 @@ const PostJob = () => {
 
   const goNext = () =>
     setActiveSection((s) =>
-      s === "jobDetails"
-        ? "description"
-        : s === "description"
-        ? "companyInfo"
-        : "application"
+      s === "jobDetails" ? "description" : "companyInfo"
     );
 
   const goBack = () =>
     setActiveSection((s) =>
-      s === "application"
-        ? "companyInfo"
-        : s === "companyInfo"
-        ? "description"
-        : "jobDetails"
+      s === "companyInfo" ? "description" : "jobDetails"
     );
 
   const input =
@@ -109,7 +99,6 @@ const PostJob = () => {
       <main className="flex-1 px-12 py-10">
         <Toaster />
 
-        {/* Header */}
         <div className="mb-10">
           <h1 className="text-3xl font-bold text-gray-900">Post a Job</h1>
           <p className="text-sm text-gray-500 mt-1">
@@ -117,19 +106,17 @@ const PostJob = () => {
           </p>
         </div>
 
-        {/* Tabs */}
         <div className="flex gap-3 mb-8">
           {[
             ["jobDetails", "Job Details"],
             ["description", "Description"],
             ["companyInfo", "Company"],
-            ["application", "Application"],
           ].map(([key, text]) => (
             <button
               key={key}
               type="button"
               onClick={() => setActiveSection(key)}
-              className={`px-5 py-2 rounded-full text-sm font-medium transition ${
+              className={`px-5 py-2 rounded-full text-sm font-medium transition cursor-pointer ${
                 activeSection === key
                   ? "bg-indigo-600 text-white"
                   : "bg-white border border-gray-200 text-gray-600 hover:bg-gray-50"
@@ -141,7 +128,6 @@ const PostJob = () => {
         </div>
 
         <form onSubmit={handleSubmit} className="max-w-5xl space-y-8">
-          {/* JOB DETAILS */}
           {activeSection === "jobDetails" && (
             <section className="bg-white rounded-3xl border p-8">
               <h2 className="text-lg font-semibold mb-6">Job Details</h2>
@@ -238,7 +224,6 @@ const PostJob = () => {
             </section>
           )}
 
-          {/* DESCRIPTION */}
           {activeSection === "description" && (
             <section className="bg-white rounded-3xl border p-8">
               <h2 className="text-lg font-semibold mb-6">Job Description</h2>
@@ -283,7 +268,6 @@ const PostJob = () => {
             </section>
           )}
 
-          {/* COMPANY */}
           {activeSection === "companyInfo" && (
             <section className="bg-white rounded-3xl border p-8">
               <h2 className="text-lg font-semibold mb-6">
@@ -326,63 +310,28 @@ const PostJob = () => {
             </section>
           )}
 
-          {/* APPLICATION */}
-          {activeSection === "application" && (
-            <section className="bg-white rounded-3xl border p-8">
-              <h2 className="text-lg font-semibold mb-6">
-                Application Details
-              </h2>
-
-              <div className="grid md:grid-cols-2 gap-6">
-                <div>
-                  <label className={label}>Application Deadline</label>
-                  <input
-                    type="date"
-                    name="applicationDeadline"
-                    value={formData.applicationDeadline}
-                    onChange={handleChange}
-                    className={input}
-                    required
-                  />
-                </div>
-
-                <div>
-                  <label className={label}>Application Link / Email</label>
-                  <input
-                    name="applicationLink"
-                    value={formData.applicationLink}
-                    onChange={handleChange}
-                    className={input}
-                    required
-                  />
-                </div>
-              </div>
-            </section>
-          )}
-
-          {/* Actions */}
           <div className="flex justify-between pt-4">
             <button
               type="button"
               onClick={goBack}
               disabled={activeSection === "jobDetails"}
-              className="px-6 py-2 rounded-lg text-gray-600 hover:bg-gray-100 disabled:opacity-50"
+              className="px-6 py-2 rounded-lg text-gray-600 hover:bg-gray-100 disabled:opacity-50 cursor-pointer"
             >
               Back
             </button>
 
-            {activeSection !== "application" ? (
+            {activeSection !== "companyInfo" ? (
               <button
                 type="button"
                 onClick={goNext}
-                className="px-6 py-2 rounded-lg bg-indigo-600 text-white hover:bg-indigo-700"
+                className="px-6 py-2 rounded-lg bg-indigo-600 text-white hover:bg-indigo-700 cursor-pointer"
               >
                 Continue
               </button>
             ) : (
               <button
                 type="submit"
-                className="px-6 py-2 rounded-lg bg-indigo-600 text-white hover:bg-indigo-700"
+                className="px-6 py-2 rounded-lg bg-indigo-600 text-white hover:bg-indigo-700 cursor-pointer"
               >
                 Post Job
               </button>

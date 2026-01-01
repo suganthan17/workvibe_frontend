@@ -21,9 +21,10 @@ function SidebarRecruiter() {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const res = await fetch(`${BASE_URL}/api/recruiter/profile/get`, {
+        const res = await fetch(`${BASE_URL}/api/recruiter/profile`, {
           credentials: "include",
         });
+
         if (!res.ok) {
           toast.error("Failed to load recruiter profile", { duration: 3000 });
           return;

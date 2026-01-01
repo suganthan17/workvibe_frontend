@@ -26,20 +26,26 @@ export default function LoginPage() {
     try {
       const res = await fetch(`${BASE_URL}/api/users/login`, {
         method: "POST",
+        credentials: "include",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(login),
       });
 
       const data = await res.json();
-      if (res.ok && data.user) {
-        localStorage.setItem("user", JSON.stringify(data.user));
-        toast.success("Login successful");
-        navigate(
-          data.user.Role?.toLowerCase() === "seeker"
-            ? "/seekerhome"
-            : "/recruiterhome"
-        );
-      } else toast.error(data.message || "Invalid credentials");
+      if (!res.ok) {
+        toast.error(data.message || "Invalid credentials");
+        return;
+      }
+
+      const meRes = await fetch(`${BASE_URL}/api/users/me`, {
+        credentials: "include",
+      });
+      const me = await meRes.json();
+
+      toast.success("Login successful");
+      navigate(
+        me.Role?.toLowerCase() === "seeker" ? "/seekerhome" : "/recruiterhome"
+      );
     } catch {
       toast.error("Something went wrong");
     }
@@ -47,7 +53,6 @@ export default function LoginPage() {
 
   return (
     <div className="h-screen w-full overflow-hidden flex bg-gradient-to-br from-indigo-50 via-white to-sky-100">
-      {/* LEFT */}
       <div className="w-full md:w-1/2 flex items-center justify-center px-8">
         <div className="w-full max-w-md">
           <div
@@ -109,7 +114,6 @@ export default function LoginPage() {
         </div>
       </div>
 
-      {/* RIGHT */}
       <div className="hidden md:flex w-1/2 relative overflow-hidden">
         <img
           src={ab1}
@@ -126,8 +130,8 @@ export default function LoginPage() {
 
             <p className="text-white/90 text-base leading-relaxed">
               Log in to access your dashboard, track job applications, explore
-              new opportunities, and stay connected with recruiters — all in
-              one place.
+              new opportunities, and stay connected with recruiters — all in one
+              place.
             </p>
 
             <div className="mt-8 flex items-center gap-4">

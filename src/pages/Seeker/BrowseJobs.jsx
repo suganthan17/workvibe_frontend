@@ -1,8 +1,7 @@
-// src/pages/seeker/BrowseJobs.jsx
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import SidebarSeeker from "../../components/SidebarSeeker";
-import { Bookmark, MapPin, Building2 } from "lucide-react";
+import { Bookmark, MapPin } from "lucide-react";
 import toast from "react-hot-toast";
 
 const BASE_URL =
@@ -13,10 +12,8 @@ const BASE_URL =
 function BrowseJobs() {
   const [jobs, setJobs] = useState([]);
   const [currentUserId, setCurrentUserId] = useState("");
-  const [companyDetails, setCompanyDetails] = useState({});
   const navigate = useNavigate();
 
-  // Fetch all jobs
   useEffect(() => {
     const fetchJobs = async () => {
       try {
@@ -34,38 +31,6 @@ function BrowseJobs() {
     };
     fetchJobs();
   }, []);
-
-  // Fetch company details for each job’s postedBy recruiter
-  useEffect(() => {
-    const fetchCompanyDetails = async () => {
-      const uniqueRecruiters = [
-        ...new Set(jobs.map((job) => job.postedBy).filter(Boolean)),
-      ];
-
-      for (const recruiterId of uniqueRecruiters) {
-        try {
-          const res = await fetch(
-            `${BASE_URL}/api/recruiter/profile/get/${recruiterId}`,
-            {
-              credentials: "include",
-              headers: { "Content-Type": "application/json" },
-            }
-          );
-          const data = await res.json();
-          if (data.success) {
-            setCompanyDetails((prev) => ({
-              ...prev,
-              [recruiterId]: data.profile.companyInfo,
-            }));
-          }
-        } catch (err) {
-          console.error("Error fetching company info:", err);
-        }
-      }
-    };
-
-    if (jobs.length > 0) fetchCompanyDetails();
-  }, [jobs]);
 
   const handleSaveJob = async (jobId) => {
     try {
@@ -125,18 +90,13 @@ function BrowseJobs() {
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
             {jobs.map((job) => {
               const isSaved = job.savedBy?.includes(currentUserId);
-              const company =
-                companyDetails[job.postedBy] || job.companyInfo || {};
-              const logo = getImageUrl(
-                job.companyLogo || company.logo || null
-              );
+              const logo = getImageUrl(job.companyLogo);
 
               return (
                 <div
                   key={job._id}
                   className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1 relative"
                 >
-                  {/* Save Button */}
                   <button
                     onClick={() => handleSaveJob(job._id)}
                     className="absolute top-4 right-4 flex items-center gap-2 cursor-pointer select-none group"
@@ -156,13 +116,12 @@ function BrowseJobs() {
                     </span>
                   </button>
 
-                  {/* Company Logo */}
                   <div className="flex items-center gap-3 mb-3">
                     {logo ? (
                       <img
                         src={logo}
                         alt="Company logo"
-                        className="w-10 h-10 rounded-md object-cover  bg-white shadow-inner"
+                        className="w-10 h-10 rounded-md object-cover bg-white shadow-inner"
                       />
                     ) : (
                       <div className="w-10 h-10 rounded-md bg-gray-100 flex items-center justify-center text-gray-600 text-sm font-semibold">
@@ -171,21 +130,19 @@ function BrowseJobs() {
                     )}
                     <div>
                       <p className="font-semibold text-gray-800 text-sm">
-                        {company.name || job.companyName || "Unknown Company"}
+                        {job.companyName || "Unknown Company"}
                       </p>
                       <p className="flex items-center gap-1 text-gray-500 text-xs">
                         <MapPin size={12} />
-                        {company.location || job.location || "Unknown location"}
+                        {job.location || "Unknown location"}
                       </p>
                     </div>
                   </div>
 
-                  {/* Job Title */}
                   <h2 className="text-lg font-bold text-gray-900 mb-2">
                     {job.jobTitle}
                   </h2>
 
-                  {/* Job Info */}
                   <div className="flex flex-wrap gap-2 mb-4 text-sm">
                     <span className="px-3 py-1 bg-gray-100 text-gray-700 rounded-md font-medium">
                       {job.employmentType || "Full-time"}
@@ -195,7 +152,6 @@ function BrowseJobs() {
                     </span>
                   </div>
 
-                  {/* Salary + Button */}
                   <div className="flex items-center justify-between mt-3 text-sm">
                     <div>
                       {job.salaryMin && job.salaryMax ? (

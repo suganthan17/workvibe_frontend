@@ -22,21 +22,30 @@ function SidebarSeeker() {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const res = await fetch(`${BASE_URL}/api/seeker/profile`, {
+        const meRes = await fetch(`${BASE_URL}/api/users/me`, {
           credentials: "include",
         });
-        if (!res.ok) return;
+        if (!meRes.ok) return;
+        const me = await meRes.json();
 
-        const data = await res.json();
-        setUser({
-          name: data.basicInfo?.fullName || data.info?.name || "Job Seeker",
-          email: data.basicInfo?.email || data.info?.email || "you@example.com",
-          profilePic: data.profilePic || null,
+        const profileRes = await fetch(`${BASE_URL}/api/seeker/profile`, {
+          credentials: "include",
         });
-      } catch (err) {
-        console.error(err);
-      }
+
+        let profilePic = null;
+        if (profileRes.ok) {
+          const profile = await profileRes.json();
+          profilePic = profile.profilePic || null;
+        }
+
+        setUser({
+          name: me.Username || "Job Seeker",
+          email: me.Email || "you@example.com",
+          profilePic,
+        });
+      } catch {"err"}
     };
+
     fetchUser();
   }, []);
 

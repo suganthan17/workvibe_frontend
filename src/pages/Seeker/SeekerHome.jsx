@@ -6,26 +6,54 @@ import { Link } from "react-router-dom";
 const BASE_URL =
   window.location.hostname === "localhost"
     ? "http://localhost:5000"
-    : "https://workvibe-backend.onrender.com";
+    : "http://localhost:5000";
 
 const SeekerHome = () => {
   const [saved, setSaved] = useState(0);
   const [applied, setApplied] = useState(0);
 
   useEffect(() => {
-    fetch(`${BASE_URL}/api/jobs/savedjobs`, {
-      credentials: "include",
-    })
-      .then((res) => res.json())
-      .then((data) => setSaved(data?.jobs?.length || 0))
-      .catch(() => setSaved(0));
+    const fetchSavedJobs = async () => {
+      try {
+        const res = await fetch(`${BASE_URL}/api/jobs/savedjobs`, {
+          credentials: "include",
+        });
 
-    fetch(`${BASE_URL}/api/application/seeker/applications/count`, {
-      credentials: "include",
-    })
-      .then((res) => res.json())
-      .then((data) => setApplied(data?.count || 0))
-      .catch(() => setApplied(0));
+        if (!res.ok) {
+          setSaved(0);
+          return;
+        }
+
+        const data = await res.json();
+        setSaved(data?.jobs?.length || 0);
+      } catch (err) {err
+        setSaved(0);
+      }
+    };
+
+    const fetchAppliedCount = async () => {
+      try {
+        const res = await fetch(
+          `${BASE_URL}/api/application/seeker/applications/count`,
+          {
+            credentials: "include",
+          }
+        );
+
+        if (!res.ok) {
+          setApplied(0);
+          return;
+        }
+
+        const data = await res.json();
+        setApplied(data?.count || 0);
+      } catch (err) {err
+        setApplied(0);
+      }
+    };
+
+    fetchSavedJobs();
+    fetchAppliedCount();
   }, []);
 
   return (
@@ -33,19 +61,14 @@ const SeekerHome = () => {
       <SidebarSeeker />
 
       <main className="flex-1 px-12 py-10">
-        {/* Header */}
         <div className="mb-12">
-          <h1 className="text-3xl font-bold text-gray-900">
-            Dashboard
-          </h1>
+          <h1 className="text-3xl font-bold text-gray-900">Dashboard</h1>
           <p className="text-sm text-gray-500 mt-1">
             Overview of your job activity
           </p>
         </div>
 
-        {/* Stat Cards */}
         <div className="flex gap-8 mb-14">
-          {/* Jobs Saved */}
           <Link
             to="/savedjobs"
             className="relative w-80 h-40 rounded-3xl p-6 text-white
@@ -56,15 +79,10 @@ const SeekerHome = () => {
               <ArrowUpRight size={16} />
             </div>
 
-            <p className="text-sm font-medium opacity-90">
-              Jobs Saved
-            </p>
-            <p className="text-5xl font-extrabold mt-6">
-              {saved}
-            </p>
+            <p className="text-sm font-medium opacity-90">Jobs Saved</p>
+            <p className="text-5xl font-extrabold mt-6">{saved}</p>
           </Link>
 
-          {/* Jobs Applied */}
           <Link
             to="/appliedjobs"
             className="relative w-80 h-40 rounded-3xl p-6 bg-white
@@ -75,16 +93,13 @@ const SeekerHome = () => {
               <ArrowUpRight size={16} />
             </div>
 
-            <p className="text-sm font-medium text-gray-600">
-              Jobs Applied
-            </p>
+            <p className="text-sm font-medium text-gray-600">Jobs Applied</p>
             <p className="text-5xl font-extrabold text-gray-900 mt-6">
               {applied}
             </p>
           </Link>
         </div>
 
-        {/* Job Search Status */}
         <div className="max-w-4xl bg-white rounded-3xl border border-gray-200 p-8">
           <h2 className="text-xl font-semibold text-gray-900 mb-4">
             Your Job Search Status
@@ -94,25 +109,21 @@ const SeekerHome = () => {
             {applied > 0 ? (
               <p>
                 You’ve applied to{" "}
-                <span className="font-semibold text-gray-900">
-                  {applied}
-                </span>{" "}
-                job{applied > 1 ? "s" : ""}. Keep tracking responses
-                and refining your profile.
+                <span className="font-semibold text-gray-900">{applied}</span>{" "}
+                job{applied > 1 ? "s" : ""}. Keep tracking responses and
+                refining your profile.
               </p>
             ) : (
               <p>
-                You haven’t applied to any jobs yet. Start applying
-                to increase your visibility.
+                You haven’t applied to any jobs yet. Start applying to increase
+                your visibility.
               </p>
             )}
 
             {saved > 0 && (
               <p>
                 You also have{" "}
-                <span className="font-semibold text-gray-900">
-                  {saved}
-                </span>{" "}
+                <span className="font-semibold text-gray-900">{saved}</span>{" "}
                 saved job{saved > 1 ? "s" : ""}. Review them regularly.
               </p>
             )}

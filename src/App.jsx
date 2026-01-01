@@ -29,6 +29,8 @@ import PostJob from "./pages/Recruiter/PostJob";
 import JobsPosted from "./pages/Recruiter/JobsPosted";
 import Applicants from "./pages/Recruiter/Applicants";
 
+import ProfileGuard from "./components/ProfileGuard";
+
 function AppContent() {
   const location = useLocation();
   const hideFooter =
@@ -43,20 +45,92 @@ function AppContent() {
         <Route path="/signup" element={<Signuppage />} />
 
         {/* Seeker */}
-        <Route path="/seekerhome" element={<SeekerHome />} />
-        <Route path="/seekerprofile" element={<SeekerProfile />} />
-        <Route path="/browsejobs" element={<BrowseJobs />} />
-        <Route path="/jobdetails/:jobId" element={<JobDetails />} />
-        <Route path="/appliedjobs" element={<AppliedJobs />} />
-        <Route path="/savedjobs" element={<SavedJobs />} />
-        <Route path="/createresume" element={<CreateResume />} />
+        <Route path="/seeker/profile" element={<SeekerProfile />} />
+
+        <Route
+          path="/seekerhome"
+          element={
+            <ProfileGuard role="seeker">
+              <SeekerHome />
+            </ProfileGuard>
+          }
+        />
+        <Route
+          path="/browsejobs"
+          element={
+            <ProfileGuard role="seeker">
+              <BrowseJobs />
+            </ProfileGuard>
+          }
+        />
+        <Route
+          path="/jobdetails/:jobId"
+          element={
+            <ProfileGuard role="seeker">
+              <JobDetails />
+            </ProfileGuard>
+          }
+        />
+        <Route
+          path="/appliedjobs"
+          element={
+            <ProfileGuard role="seeker">
+              <AppliedJobs />
+            </ProfileGuard>
+          }
+        />
+        <Route
+          path="/savedjobs"
+          element={
+            <ProfileGuard role="seeker">
+              <SavedJobs />
+            </ProfileGuard>
+          }
+        />
+        <Route
+          path="/createresume"
+          element={
+            <ProfileGuard role="seeker">
+              <CreateResume />
+            </ProfileGuard>
+          }
+        />
 
         {/* Recruiter */}
-        <Route path="/recruiterhome" element={<RecruiterHome />} />
-        <Route path="/recruiterprofile" element={<RecruiterProfile />} />
-        <Route path="/postjob" element={<PostJob />} />
-        <Route path="/jobsposted" element={<JobsPosted />} />
-        <Route path="/applicants" element={<Applicants />} />
+        <Route path="/recruiter/profile" element={<RecruiterProfile />} />
+
+        <Route
+          path="/recruiterhome"
+          element={
+            <ProfileGuard role="recruiter">
+              <RecruiterHome />
+            </ProfileGuard>
+          }
+        />
+        <Route
+          path="/postjob"
+          element={
+            <ProfileGuard role="recruiter">
+              <PostJob />
+            </ProfileGuard>
+          }
+        />
+        <Route
+          path="/jobsposted"
+          element={
+            <ProfileGuard role="recruiter">
+              <JobsPosted />
+            </ProfileGuard>
+          }
+        />
+        <Route
+          path="/applicants"
+          element={
+            <ProfileGuard role="recruiter">
+              <Applicants />
+            </ProfileGuard>
+          }
+        />
 
         <Route
           path="*"
@@ -76,13 +150,12 @@ function AppContent() {
 function App() {
   return (
     <Router>
-     
       <Toaster
         position="top-right"
         reverseOrder={false}
         toastOptions={{
           duration: 2500,
-          className: "custom-toast", 
+          className: "custom-toast",
           style: {
             background: "rgba(0,0,0,0.85)",
             color: "#fff",
